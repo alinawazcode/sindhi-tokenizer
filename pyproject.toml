@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sindhi-tokenizer"
+version = "1.0.0"
+description = "A SentencePiece Unigram tokenizer purpose-built for the Sindhi language with byte-fallback and full character coverage."
+readme = "README.md"
+authors = [
+  { name = "Ali Nawaz" }
+]
+license = { text = "MIT" }
+keywords = ["sindhi", "tokenizer", "sentencepiece", "unigram", "nlp", "low-resource-languages"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.8"
+dependencies = [
+  "sentencepiece>=0.1.99",
+  "transformers>=4.30.0",
+  "huggingface_hub>=0.16.0",
+  "datasets>=2.14.0",
+  "numpy>=1.22.0",
+  "pandas>=1.5.0",
+  "gradio>=4.0.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/Ali-Nawaz-devt/sindhi-tokenizer"
+Repository = "https://github.com/Ali-Nawaz-devt/sindhi-tokenizer"
+Models = "https://huggingface.co/alinawazmahar/sindhi-tokenizer"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["evaluation*", "training*"]

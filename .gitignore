@@ -1,0 +1,31 @@
+# Python & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment & IDE
+.env
+.venv/
+venv/
+.DS_Store
+.vscode/
+.idea/
+
+# Local model artifacts & training caches
+corpus*.txt
+models/
+spm_train/
+custom_models/
+*.model
+*.vocab
+
+# Archive & raw dumps
+archive/
+*.zip

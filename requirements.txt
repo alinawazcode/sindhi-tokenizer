@@ -1,0 +1,7 @@
+sentencepiece
+transformers
+huggingface_hub
+datasets
+numpy
+pandas
+gradio
