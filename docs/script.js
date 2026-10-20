@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Sindhi Tokenizer Documentation Website - Interactive Logic
+   Sindhi Tokenizer Documentation — Interactive Logic & Documentation Engine
    ========================================================================== */
 
 // Sample Sindhi Sentences for Interactive Playground
@@ -65,33 +65,34 @@ const PRECOMPUTED_TOKENS = {
   }
 };
 
-// Benchmark Data across 18 Models
+// Complete Verified 17-Model Macro Benchmark Matrix (Source of Truth: paper.md & README.md)
 const BENCHMARK_DATA = [
-  { model: "CustomSindhi_150k", type: "custom", vocab: "150,000", fertility: "1.103", single: "92.2%", unk: "0.000%", loss: "0.0000%", note: "Lowest fertility overall" },
-  { model: "CustomSindhi_100k", type: "custom", vocab: "100,000", fertility: "1.119", single: "90.8%", unk: "0.000%", loss: "0.0000%", note: "Extremely high coverage" },
-  { model: "CustomSindhi_64k (Flagship)", type: "custom", vocab: "64,000", fertility: "1.147", single: "88.6%", unk: "0.000%", loss: "0.0000%", note: "Recommended optimal balance" },
-  { model: "CustomSindhi_32k", type: "custom", vocab: "32,000", fertility: "1.204", single: "84.3%", unk: "0.000%", loss: "0.0000%", note: "Compact edge model" },
-  { model: "TinyLlama_Sindhi", type: "sindhi", vocab: "42,681", fertility: "1.208", single: "84.4%", unk: "0.000%*", loss: "0.4150%", note: "Silently drops U+06C1 & corrupts Arabic forms (24.9% sent)" },
-  { model: "hellosindh_SindhiBERT_NER", type: "sindhi", vocab: "32,001", fertility: "1.218", single: "83.7%", unk: "0.194%", loss: "0.0750%", note: "WordPiece tokenizer" },
-  { model: "mBERT_Sindhi_Kashif786", type: "sindhi", vocab: "119,547", fertility: "1.278", single: "78.4%", unk: "0.143%", loss: "0.0020%", note: "mBERT + 20k Sindhi tokens" },
-  { model: "hellosindh_SindhiBERT", type: "sindhi", vocab: "32,000", fertility: "1.289", single: "78.5%", unk: "0.201%", loss: "0.0750%", note: "WordPiece tokenizer" },
-  { model: "XLM-RoBERTa", type: "multilingual", vocab: "250,002", fertility: "1.512", single: "65.4%", unk: "0.034%", loss: "0.0040%", note: "Multilingual BPE baseline" },
-  { model: "SindhiLM_v3", type: "sindhi", vocab: "32,000", fertility: "1.730", single: "55.8%", unk: "3.605%", loss: "0.0750%", note: "High UNK rate on contemporary text" },
-  { model: "mT5", type: "multilingual", vocab: "250,100", fertility: "1.734", single: "55.4%", unk: "0.000%", loss: "0.0000%", note: "Multilingual Unigram" },
-  { model: "FahadQazi_BPE", type: "sindhi", vocab: "13,031", fertility: "1.919", single: "39.1%", unk: "0.000%*", loss: "0.8460%", note: "Silently drops Latin letters (16.2% sent)" },
-  { model: "Qwen2.5 / SindhiLM_v2", type: "multilingual", vocab: "151,643", fertility: "2.568", single: "24.2%", unk: "0.000%", loss: "0.0000%", note: "Identical tokenization (wrapper)" },
-  { model: "BLOOM", type: "multilingual", vocab: "250,680", fertility: "2.627", single: "24.7%", unk: "0.000%", loss: "0.0000%", note: "Multilingual BPE baseline" },
-  { model: "Llama3.2", type: "multilingual", vocab: "128,000", fertility: "2.896", single: "18.2%", unk: "0.000%", loss: "0.0000%", note: "Severe character fragmentation in Sindhi" },
-  { model: "SindhiLM_v1", type: "sindhi", vocab: "32,000", fertility: "4.306", single: "0.1%", unk: "14.017%", loss: "0.0000%", note: "Massive UNK rate (>14%)" }
+  { model: "CustomSindhi_150k", type: "custom", vocab: "150,000", fertility: "1.125", single: "89.7%", unk: "0.000%", fallback: "0.154%", loss: "0.0000%", note: "SentencePiece Unigram; lowest overall fertility" },
+  { model: "CustomSindhi_100k", type: "custom", vocab: "100,000", fertility: "1.133", single: "89.3%", unk: "0.000%", fallback: "0.149%", loss: "0.0000%", note: "SentencePiece Unigram; ultra-high lexical coverage" },
+  { model: "CustomSindhi_64k (Flagship)", type: "custom", vocab: "64,000", fertility: "1.147", single: "88.6%", unk: "0.000%", fallback: "0.138%", loss: "0.0000%", note: "Flagship model; optimal Pareto balance of memory & speed" },
+  { model: "CustomSindhi_32k", type: "custom", vocab: "32,000", fertility: "1.184", single: "86.5%", unk: "0.000%", fallback: "0.113%", loss: "0.0000%", note: "SentencePiece Unigram; compact edge deployment model" },
+  { model: "TinyLlama_Sindhi", type: "sindhi", vocab: "42,681", fertility: "1.208", single: "84.4%", unk: "0.000%*", fallback: "0.000%*", loss: "0.4147%", note: "Silently deletes U+06C1 (HEH GOAL), corrupting 24.9% of sentences" },
+  { model: "hellosindh_SindhiBERT_NER", type: "sindhi", vocab: "32,001", fertility: "1.218", single: "83.7%", unk: "0.194%", fallback: "0.197%", loss: "0.0075%", note: "WordPiece tokenizer trained for Named Entity Recognition" },
+  { model: "mBERT_Sindhi_Kashif786", type: "sindhi", vocab: "119,547", fertility: "1.278", single: "78.4%", unk: "0.143%", fallback: "0.000%", loss: "0.0021%", note: "Multilingual BERT expanded with 20k Sindhi tokens" },
+  { model: "XLM-RoBERTa", type: "multilingual", vocab: "250,002", fertility: "1.512", single: "65.4%", unk: "0.034%", fallback: "1.402%", loss: "0.0040%", note: "Multilingual SentencePiece BPE baseline" },
+  { model: "SindhiLM_v3", type: "sindhi", vocab: "32,000", fertility: "1.730", single: "55.8%", unk: "3.605%", fallback: "0.000%", loss: "0.0750%", note: "High UNK rate on contemporary text registers" },
+  { model: "FahadQazi_BPE", type: "sindhi", vocab: "13,031", fertility: "1.919", single: "39.1%", unk: "0.000%*", fallback: "7.127%*", loss: "0.8461%", note: "Silently discards Latin letters, corrupting 16.2% of sentences" },
+  { model: "hellosindh_SindhiBERT", type: "sindhi", vocab: "32,000", fertility: "1.960", single: "35.5%", unk: "0.122%", fallback: "0.114%", loss: "0.0089%", note: "WordPiece tokenizer baseline" },
+  { model: "mT5", type: "multilingual", vocab: "250,100", fertility: "2.280", single: "21.7%", unk: "0.022%", fallback: "12.746%", loss: "0.0040%", note: "Multilingual SentencePiece Unigram baseline" },
+  { model: "Gemma3", type: "multilingual", vocab: "262,144", fertility: "2.308", single: "26.8%", unk: "0.000%", fallback: "0.105%", loss: "0.0000%", note: "Large vocabulary multilingual BPE baseline" },
+  { model: "Qwen2.5 / SindhiLM_v2", type: "multilingual", vocab: "151,643", fertility: "2.580", single: "23.8%", unk: "0.000%", fallback: "8.665%", loss: "0.0000%", note: "Byte-level BPE; SindhiLM_v2 is a wrapper with identical tokenization" },
+  { model: "BLOOM", type: "multilingual", vocab: "250,680", fertility: "2.627", single: "24.7%", unk: "0.000%", fallback: "31.660%", loss: "0.0000%", note: "Byte-level BPE; severe byte fallback in Sindhi" },
+  { model: "Llama3.2", type: "multilingual", vocab: "128,000", fertility: "2.896", single: "18.2%", unk: "0.000%", fallback: "28.472%", loss: "0.0000%", note: "Severe character fragmentation (2.90 tok/wd, 28.5% byte fallback)" },
+  { model: "SindhiLM_v1", type: "sindhi", vocab: "43", fertility: "4.306", single: "0.1%", unk: "14.017%", fallback: "0.000%", loss: "0.0000%", note: "Deficient 43-token alphabet; unacceptable >14% UNK rate" }
 ];
 
-// Color palette for token chips
+// Token chip colors
 const TOKEN_COLORS = [
-  "#4f46e5", "#0284c7", "#059669", "#d97706", 
-  "#7c3aed", "#db2777", "#2563eb", "#0d9488"
+  "#2060a0", "#1a73e8", "#2e7d32", "#c0392b", 
+  "#6a1b9a", "#d97706", "#00838f", "#4e342e"
 ];
 
-// Deterministic hash to token ID
+// Hash token string to stable integer
 function hashToken(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -101,7 +102,7 @@ function hashToken(str) {
   return Math.abs(hash % 64000) + 100;
 }
 
-// Client-side generic Sindhi tokenizer simulator for arbitrary input
+// Client-side Sindhi subword simulation for arbitrary input
 function simulateTokenize(text, model) {
   const words = text.trim().split(/\s+/).filter(w => w.length > 0);
   if (words.length === 0) return [];
@@ -109,9 +110,9 @@ function simulateTokenize(text, model) {
   let tokens = [];
 
   if (model === "custom_64k") {
-    // High-quality Unigram: words remain mostly intact or split on inflectional endings
-    words.forEach((word) => {
-      if (word.length > 7 && (word.endsWith("ن") || word.endsWith("جي") || word.endsWith("جو"))) {
+    // Unigram preservation: stems stay whole, only frequent clitics detach
+    words.forEach(word => {
+      if (word.length > 7 && (word.endsWith("ن") || word.endsWith("جي") || word.endsWith("جو") || word.endsWith("ين"))) {
         const root = word.slice(0, -2);
         const suffix = word.slice(-2);
         tokens.push(" " + root);
@@ -121,7 +122,7 @@ function simulateTokenize(text, model) {
       }
     });
   } else if (model === "tinyllama") {
-    words.forEach((word) => {
+    words.forEach(word => {
       if (word.length > 4) {
         tokens.push(" " + word.slice(0, 3));
         tokens.push(word.slice(3));
@@ -130,14 +131,14 @@ function simulateTokenize(text, model) {
       }
     });
   } else if (model === "xlm_roberta") {
-    words.forEach((word) => {
+    words.forEach(word => {
       for (let i = 0; i < word.length; i += 2) {
         tokens.push((i === 0 ? " " : "") + word.slice(i, i + 2));
       }
     });
   } else {
-    // LLaMA / extreme fragmentation
-    words.forEach((word) => {
+    // LLaMA byte/character fragmentation
+    words.forEach(word => {
       for (let i = 0; i < word.length; i++) {
         tokens.push(word[i]);
       }
@@ -152,17 +153,20 @@ function simulateTokenize(text, model) {
 // DOM Initialization
 document.addEventListener("DOMContentLoaded", () => {
   initTheme();
+  initMobileNav();
+  initTableOfContents();
   initPlayground();
   initBenchmarkTable();
   initFAQ();
   initScrollSpy();
   initCopyButtons();
+  initSearch();
 });
 
 // Theme Management
 function initTheme() {
   const toggleBtn = document.getElementById("theme-toggle");
-  const savedTheme = localStorage.getItem("theme") || "dark";
+  const savedTheme = localStorage.getItem("sindhi_doc_theme") || "light";
   document.documentElement.setAttribute("data-theme", savedTheme);
 
   if (toggleBtn) {
@@ -170,9 +174,84 @@ function initTheme() {
       const current = document.documentElement.getAttribute("data-theme");
       const next = current === "dark" ? "light" : "dark";
       document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem("theme", next);
+      localStorage.setItem("sindhi_doc_theme", next);
     });
   }
+}
+
+// Mobile Drawer Navigation
+function initMobileNav() {
+  const toggleBtn = document.getElementById("nav-toggle");
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("sidebar-overlay");
+
+  if (!toggleBtn || !sidebar || !overlay) return;
+
+  function openDrawer() {
+    sidebar.classList.add("open");
+    overlay.classList.add("active");
+  }
+
+  function closeDrawer() {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("active");
+  }
+
+  toggleBtn.addEventListener("click", () => {
+    if (sidebar.classList.contains("open")) {
+      closeDrawer();
+    } else {
+      openDrawer();
+    }
+  });
+
+  overlay.addEventListener("click", closeDrawer);
+
+  sidebar.querySelectorAll(".nav-link").forEach(link => {
+    link.addEventListener("click", () => {
+      if (window.innerWidth <= 768) {
+        closeDrawer();
+      }
+    });
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && sidebar.classList.contains("open")) {
+      closeDrawer();
+    }
+  });
+}
+
+// Dynamic Right-Sidebar Table of Contents
+function initTableOfContents() {
+  const tocList = document.getElementById("toc-list");
+  if (!tocList) return;
+
+  const headings = document.querySelectorAll(".doc-article h2, .doc-article h3");
+  if (headings.length === 0) return;
+
+  tocList.innerHTML = "";
+
+  headings.forEach(heading => {
+    let id = heading.getAttribute("id");
+    if (!id) {
+      id = heading.textContent.toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      heading.setAttribute("id", id);
+    }
+
+    const li = document.createElement("li");
+    li.className = "toc-item";
+
+    const a = document.createElement("a");
+    a.href = `#${id}`;
+    a.className = heading.tagName.toLowerCase() === "h3" ? "toc-link toc-link-h3" : "toc-link";
+    a.textContent = heading.textContent.replace(/^[0-9]+\.\s*/, "").replace(/[→↓↑].*$/, "").trim();
+
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
 }
 
 // Playground Logic
@@ -190,7 +269,6 @@ function initPlayground() {
 
   let currentSampleId = "sent1";
 
-  // Render Sample Pills
   if (sampleContainer) {
     sampleContainer.innerHTML = SAMPLE_SENTENCES.map(s => 
       `<button class="pill-btn ${s.id === currentSampleId ? 'active' : ''}" data-id="${s.id}">${s.label}</button>`
@@ -215,19 +293,17 @@ function initPlayground() {
     const text = textarea.value.trim();
     const model = modelSelect ? modelSelect.value : "custom_64k";
     const words = text ? text.split(/\s+/).filter(w => w.length > 0) : [];
-    
+
     let tokens = [];
 
-    // Check if matching preset
     if (currentSampleId && PRECOMPUTED_TOKENS[currentSampleId] && PRECOMPUTED_TOKENS[currentSampleId][model]) {
       tokens = PRECOMPUTED_TOKENS[currentSampleId][model];
     } else {
       tokens = simulateTokenize(text, model);
     }
 
-    // Render Chips
     if (tokens.length === 0) {
-      tokenBox.innerHTML = '<span style="color: var(--text-muted); font-family: var(--font-sans); direction: ltr;">Enter text above to inspect tokens...</span>';
+      tokenBox.innerHTML = '<span style="color:var(--color-text-faint);font-family:var(--font-body);direction:ltr;font-size:0.85rem;">Enter text above or select a preset to inspect tokens...</span>';
       if (statTokens) statTokens.textContent = "0";
       if (statWords) statWords.textContent = "0";
       if (statFertility) statFertility.textContent = "0.00";
@@ -237,7 +313,7 @@ function initPlayground() {
     tokenBox.innerHTML = tokens.map((tok, idx) => {
       const color = TOKEN_COLORS[idx % TOKEN_COLORS.length];
       const id = hashToken(tok);
-      return `<span class="token-chip" style="background: ${color}">
+      return `<span class="token-chip" style="background:${color}">
         <span>${escapeHtml(tok)}</span>
         <span class="token-id">#${id}</span>
       </span>`;
@@ -253,10 +329,10 @@ function initPlayground() {
     if (statFidelity) {
       if (model === "tinyllama") {
         statFidelity.textContent = "99.58% (Drops U+06C1)";
-        statFidelity.style.color = "var(--accent-rose)";
+        statFidelity.style.color = "var(--cd-b)";
       } else {
-        statFidelity.textContent = "100% (Lossless)";
-        statFidelity.style.color = "var(--accent-emerald)";
+        statFidelity.textContent = "100.00% (Lossless)";
+        statFidelity.style.color = "var(--ct-b)";
       }
     }
   }
@@ -271,12 +347,11 @@ function initPlayground() {
     modelSelect.addEventListener("change", renderTokens);
   }
 
-  // Initial Run
   textarea.value = SAMPLE_SENTENCES[0].text;
   renderTokens();
 }
 
-// Benchmark Matrix Table
+// Benchmark Matrix Table Engine
 function initBenchmarkTable() {
   const tbody = document.getElementById("benchmark-tbody");
   const filterTabs = document.querySelectorAll(".filter-tab");
@@ -299,19 +374,27 @@ function initBenchmarkTable() {
 
     tbody.innerHTML = filtered.map(row => {
       const isCustom = row.type === "custom";
+      const isFlagship = row.model.includes("Flagship");
       const hasDefect = row.loss !== "0.0000%";
-      const lossBadge = hasDefect 
-        ? `<span class="badge-defect">${row.loss} Loss</span>` 
-        : `<span class="badge-clean">0.0000% Loss</span>`;
+      const rowClass = isFlagship ? "row-flagship" : (isCustom ? "row-custom" : "");
 
-      return `<tr class="${row.model.includes('Flagship') ? 'highlight-row' : ''}">
-        <td><strong>${row.model}</strong></td>
+      const badgeType = isCustom ? "tb-custom" : (row.type === "sindhi" ? "tb-sindhi" : "tb-multi");
+      const lossBadge = hasDefect
+        ? `<span class="type-badge tb-defect">${row.loss} Loss</span>`
+        : `<span class="type-badge tb-custom">0.0000%</span>`;
+
+      return `<tr class="${rowClass}">
+        <td>
+          <span class="type-badge ${badgeType}" style="margin-right:6px;">${row.type}</span>
+          <strong>${row.model}</strong>
+        </td>
         <td><code>${row.vocab}</code></td>
-        <td><strong style="color: ${isCustom ? 'var(--accent-emerald)' : 'inherit'}">${row.fertility}</strong></td>
+        <td><strong style="color:${isCustom ? 'var(--ct-b)' : 'inherit'}">${row.fertility}</strong></td>
         <td>${row.single}</td>
         <td>${row.unk}</td>
+        <td><code>${row.fallback}</code></td>
         <td>${lossBadge}</td>
-        <td><small style="color: var(--text-secondary)">${row.note}</small></td>
+        <td><span style="font-size:0.8125rem;color:var(--color-text-muted);">${row.note}</span></td>
       </tr>`;
     }).join("");
   }
@@ -335,7 +418,7 @@ function initBenchmarkTable() {
   renderTable();
 }
 
-// Accordion FAQ
+// Collapsible FAQ Accordion
 function initFAQ() {
   document.querySelectorAll(".faq-question").forEach(q => {
     q.addEventListener("click", () => {
@@ -345,30 +428,46 @@ function initFAQ() {
   });
 }
 
-// ScrollSpy Navigation
+// ScrollSpy Navigation (Sidebar & TOC)
 function initScrollSpy() {
-  const links = document.querySelectorAll(".sidebar .nav-link");
-  const sections = document.querySelectorAll(".doc-section");
+  const navLinks = document.querySelectorAll(".sidebar .nav-link");
+  const tocLinks = document.querySelectorAll(".toc-sidebar .toc-link");
+  const sections = document.querySelectorAll(".doc-article section");
 
   window.addEventListener("scroll", () => {
-    let current = "";
+    let currentId = "";
     sections.forEach(sec => {
-      const secTop = sec.offsetTop - 120;
+      const secTop = sec.offsetTop - 100;
       if (window.scrollY >= secTop) {
-        current = sec.getAttribute("id");
+        currentId = sec.getAttribute("id");
       }
     });
 
-    links.forEach(link => {
-      link.classList.remove("active");
-      if (link.getAttribute("href") === "#" + current) {
+    if (!currentId && sections.length > 0) {
+      currentId = sections[0].getAttribute("id");
+    }
+
+    navLinks.forEach(link => {
+      const href = link.getAttribute("href");
+      if (href === "#" + currentId) {
         link.classList.add("active");
+      } else {
+        link.classList.remove("active");
+      }
+    });
+
+    tocLinks.forEach(link => {
+      const href = link.getAttribute("href");
+      if (href === "#" + currentId) {
+        link.classList.add("active");
+      } else {
+        link.classList.remove("active");
       }
     });
   });
 }
 
-// Copy Buttons
+// Copy Code Buttons
 function initCopyButtons() {
   document.querySelectorAll(".btn-copy").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -378,32 +477,67 @@ function initCopyButtons() {
 
       const text = targetElem.innerText || targetElem.textContent;
       navigator.clipboard.writeText(text).then(() => {
-        showToast("Copied to clipboard!");
+        showToast("Code copied to clipboard");
+        const originalText = btn.textContent;
         btn.textContent = "Copied!";
         setTimeout(() => {
-          btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy`;
+          btn.textContent = originalText;
         }, 2000);
       });
     });
   });
 }
 
+// Header Search Keyboard Shortcut & Navigation
+function initSearch() {
+  const searchInput = document.getElementById("site-search");
+  if (!searchInput) return;
+
+  // Press "/" to focus search
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "/" && document.activeElement !== searchInput && !["TEXTAREA", "INPUT"].includes(document.activeElement.tagName)) {
+      e.preventDefault();
+      searchInput.focus();
+    } else if (e.key === "Escape" && document.activeElement === searchInput) {
+      searchInput.blur();
+    }
+  });
+
+  // Search through headings on Enter
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const q = searchInput.value.toLowerCase().trim();
+      if (!q) return;
+
+      const headings = Array.from(document.querySelectorAll(".doc-article h2, .doc-article h3"));
+      const match = headings.find(h => h.textContent.toLowerCase().includes(q));
+      if (match) {
+        match.scrollIntoView({ behavior: "smooth" });
+        showToast(`Navigated to: ${match.textContent.trim()}`);
+      } else {
+        showToast(`No section found matching "${q}"`);
+      }
+    }
+  });
+}
+
 // Toast System
 function showToast(msg) {
-  let toast = document.querySelector(".toast-notice");
+  let toast = document.getElementById("toast-notice");
   if (!toast) {
     toast = document.createElement("div");
+    toast.id = "toast-notice";
     toast.className = "toast-notice";
     document.body.appendChild(toast);
   }
-  toast.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> ${msg}`;
+  toast.textContent = msg;
   toast.classList.add("show");
   setTimeout(() => {
     toast.classList.remove("show");
   }, 2500);
 }
 
-// Helper
+// Helper: Escape HTML
 function escapeHtml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
