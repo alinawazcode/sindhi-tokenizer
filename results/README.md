@@ -9,7 +9,7 @@ This directory contains benchmark tables and evaluation outputs for all evaluate
 ## Key Findings Summary
 
 Across all registers evaluated at full scale:
-- **CustomSindhi (64k, 100k, 150k)** outperforms all 17 baseline tokenizers on fertility and single-token retention without exception.
+- **CustomSindhi (64k, 100k, 150k)** outperforms all 14 baseline tokenizers on fertility and single-token retention without exception.
 - **CustomSindhi (32k)** outperforms all baselines on 3 registers, narrowly trailing TinyLlama on FLORES+.
 - **Zero Character Loss**: Custom models achieve 0.0000% character loss on round-trip fidelity, while detecting critical defects in competitors (silent deletion of `U+06C1` in TinyLlama and Latin character loss in FahadQazi BPE).
 

@@ -340,31 +340,32 @@ All 18 candidate tokenizers were evaluated across the four evaluation registers 
 
 ### Macro Benchmark Summary (Mean across 4 Registers)
 
-| Tokenizer | Vocab Size | Fertility (tokens/word) ↓ | Single-Token Word % ↑ | UNK Rate % ↓ | Worst Round-Trip Loss % ↓ |
-|---|---|---|---|---|---|
-| **CustomSindhi_150k** | 150,000 | **1.103** | **92.2%** | **0.000%** | **0.0000%** |
-| **CustomSindhi_100k** | 100,000 | **1.119** | **90.8%** | **0.000%** | **0.0000%** |
-| **CustomSindhi_64k (Flagship)** | 64,000 | **1.147** | **88.6%** | **0.000%** | **0.0000%** |
-| **CustomSindhi_32k** | 32,000 | **1.204** | **84.3%** | **0.000%** | **0.0000%** |
-| TinyLlama_Sindhi | 42,681 | 1.208 | 84.4% | 0.000%* | **0.4150% (Corrupts 24.9% sent)** |
-| hellosindh_SindhiBERT_NER | 32,001 | 1.218 | 83.7% | 0.194% | 0.0750% |
-| mBERT_Sindhi_Kashif786 | 119,547 | 1.278 | 78.4% | 0.143% | 0.0020% |
-| hellosindh_SindhiBERT | 32,000 | 1.289 | 78.5% | 0.201% | 0.0750% |
-| XLM-RoBERTa | 250,002 | 1.512 | 65.4% | 0.034% | 0.0040% |
-| SindhiLM_v3 | 32,000 | 1.730 | 55.8% | 3.605% | 0.0750% |
-| mT5 | 250,100 | 1.734 | 55.4% | 0.000% | 0.0000% |
-| FahadQazi_BPE | 13,031 | 1.919 | 39.1% | 0.000%* | **0.8460% (Corrupts 16.2% sent)** |
-| Qwen2.5 / SindhiLM_v2 | 151,643 | 2.568 | 24.2% | 0.000% | 0.0000% |
-| BLOOM | 250,680 | 2.627 | 24.7% | 0.000% | 0.0000% |
-| Llama3.2 | 128,000 | 2.896 | 18.2% | 0.000% | 0.0000% |
-| SindhiLM_v1 | 32,000 | 4.306 | 0.1% | 14.017% | 0.0000% |
+| Tokenizer | Vocab Size | Fertility (tokens/word) ↓ | Single-Token Word % ↑ | UNK Rate % ↓ | Byte-Fallback % ↓ | Worst Round-Trip Loss % ↓ |
+|---|---|---|---|---|---|---|
+| **CustomSindhi_150k** | 150,000 | **1.125** | **89.7%** | **0.000%** | 0.154% | **0.0000%** |
+| **CustomSindhi_100k** | 100,000 | **1.133** | **89.3%** | **0.000%** | 0.149% | **0.0000%** |
+| **CustomSindhi_64k (Flagship)** | 64,000 | **1.147** | **88.6%** | **0.000%** | 0.138% | **0.0000%** |
+| **CustomSindhi_32k** | 32,000 | **1.184** | **86.5%** | **0.000%** | 0.113% | **0.0000%** |
+| TinyLlama_Sindhi | 42,681 | 1.208 | 84.4% | 0.000%* | 0.000%* | **0.4147% (Corrupts 24.9% sent)** |
+| hellosindh_SindhiBERT_NER | 32,001 | 1.218 | 83.7% | 0.194% | 0.197% | 0.0075% |
+| mBERT_Sindhi_Kashif786 | 119,547 | 1.278 | 78.4% | 0.143% | 0.000% | 0.0021% |
+| XLM-RoBERTa | 250,002 | 1.512 | 65.4% | 0.034% | 1.402% | 0.0040% |
+| SindhiLM_v3 | 32,000 | 1.730 | 55.8% | 3.605% | 0.000% | 0.0750% |
+| FahadQazi_BPE | 13,031 | 1.919 | 39.1% | 0.000%* | 7.127%* | **0.8461% (Corrupts 16.2% sent)** |
+| hellosindh_SindhiBERT | 32,000 | 1.960 | 35.5% | 0.122% | 0.114% | 0.0089% |
+| mT5 | 250,100 | 2.280 | 21.7% | 0.022% | 12.746% | 0.0040% |
+| Gemma3 | 262,144 | 2.308 | 26.8% | 0.000% | 0.105% | 0.0000% |
+| Qwen2.5 / SindhiLM_v2 | 151,643 | 2.580 | 23.8% | 0.000% | 8.665% | 0.0000% |
+| BLOOM | 250,680 | 2.627 | 24.7% | 0.000% | 31.660% | 0.0000% |
+| Llama3.2 | 128,000 | 2.896 | 18.2% | 0.000% | 28.472% | 0.0000% |
+| SindhiLM_v1 | 43 | 4.306 | 0.1% | 14.017% | 0.000% | 0.0000% |
 
-*\* Apparent 0.000% UNK rates in TinyLlama and FahadQazi occur because both models silently delete unsupported characters rather than emitting an UNK token.*
+*\* TinyLlama_Sindhi and FahadQazi_BPE show apparent 0.000% UNK rates because both models silently delete unsupported characters rather than emitting a UNK token. FahadQazi_BPE's high byte-fallback rate reflects real encoding artifacts alongside its character-deletion defect. SindhiLM_v2 is numerically identical to Qwen2.5 across all metrics; both are listed in the table for completeness.*
 
 ### Evaluation Takeaways
-1. **Unconditional Superiority at $\ge$64k**: CustomSindhi (64k, 100k, 150k) beats all 14 baseline tokenizers across all four registers simultaneously.
+1. **Unconditional Superiority at ≥64k**: CustomSindhi (64k, 100k, 150k) achieves a clean sweep over all 14 baseline tokenizers across all four registers simultaneously. At 32k, one narrow exception exists: TinyLlama_Sindhi beats CustomSindhi_32k on FLORES+ fertility, though it carries a critical character-deletion defect.
 2. **Clean Sweep at 64k**: Fertility improves by **24.1% over XLM-RoBERTa** and **60.4% over LLaMA 3.2**.
-3. **Flawless Data Integrity**: Custom models demonstrate 0.0000% character drop, preserving Unicode NFKC fidelity unconditionally.
+3. **Flawless Data Integrity**: Custom models demonstrate 0.0000% character drop across all four registers, while two competitors — TinyLlama_Sindhi and FahadQazi_BPE — exhibit real, mechanistically distinct data-integrity defects.
 
 ---
 
