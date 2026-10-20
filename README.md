@@ -1,5 +1,9 @@
 # Sindhi Tokenizer: A Corpus-Driven SentencePiece Unigram Tokenizer
 
+<p align="center">
+  <img src="assets/banner.png" alt="Sindhi Tokenizer" width="100%">
+</p>
+
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Hugging Face Models](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-alinawazmahar%2Fsindhi--tokenizer-yellow)](https://huggingface.co/alinawazmahar/sindhi-tokenizer)
