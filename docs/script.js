@@ -72,10 +72,10 @@ const BENCHMARK_DATA = [
   { model: "CustomSindhi_64k (Flagship)", type: "custom", vocab: "64,000", fertility: "1.147", single: "88.6%", unk: "0.000%", fallback: "0.138%", loss: "0.0000%", note: "Flagship model; optimal Pareto balance of memory & speed" },
   { model: "CustomSindhi_32k", type: "custom", vocab: "32,000", fertility: "1.184", single: "86.5%", unk: "0.000%", fallback: "0.113%", loss: "0.0000%", note: "SentencePiece Unigram; compact edge deployment model" },
   { model: "TinyLlama_Sindhi", type: "sindhi", vocab: "42,681", fertility: "1.208", single: "84.4%", unk: "0.000%*", fallback: "0.000%*", loss: "0.4147%", note: "Silently deletes U+06C1 (HEH GOAL), corrupting 24.9% of sentences" },
-  { model: "hellosindh_SindhiBERT_NER", type: "sindhi", vocab: "32,001", fertility: "1.218", single: "83.7%", unk: "0.194%", fallback: "0.197%", loss: "0.0075%", note: "WordPiece tokenizer trained for Named Entity Recognition" },
+  { model: "hellosindh_SindhiBERT_NER", type: "sindhi", vocab: "32,001", fertility: "1.218", single: "83.7%", unk: "0.194%", fallback: "0.197%", loss: "0.0751%", note: "WordPiece tokenizer trained for Named Entity Recognition" },
   { model: "mBERT_Sindhi_Kashif786", type: "sindhi", vocab: "119,547", fertility: "1.278", single: "78.4%", unk: "0.143%", fallback: "0.000%", loss: "0.0021%", note: "Multilingual BERT expanded with 20k Sindhi tokens" },
   { model: "XLM-RoBERTa", type: "multilingual", vocab: "250,002", fertility: "1.512", single: "65.4%", unk: "0.034%", fallback: "1.402%", loss: "0.0040%", note: "Multilingual SentencePiece BPE baseline" },
-  { model: "SindhiLM_v3", type: "sindhi", vocab: "32,000", fertility: "1.730", single: "55.8%", unk: "3.605%", fallback: "0.000%", loss: "0.0750%", note: "High UNK rate on contemporary text registers" },
+  { model: "SindhiLM_v3", type: "sindhi", vocab: "32,000", fertility: "1.730", single: "55.8%", unk: "3.605%", fallback: "0.000%", loss: "0.0754%", note: "High UNK rate on contemporary text registers" },
   { model: "FahadQazi_BPE", type: "sindhi", vocab: "13,031", fertility: "1.919", single: "39.1%", unk: "0.000%*", fallback: "7.127%*", loss: "0.8461%", note: "Silently discards Latin letters, corrupting 16.2% of sentences" },
   { model: "hellosindh_SindhiBERT", type: "sindhi", vocab: "32,000", fertility: "1.960", single: "35.5%", unk: "0.122%", fallback: "0.114%", loss: "0.0089%", note: "WordPiece tokenizer baseline" },
   { model: "mT5", type: "multilingual", vocab: "250,100", fertility: "2.280", single: "21.7%", unk: "0.022%", fallback: "12.746%", loss: "0.0040%", note: "Multilingual SentencePiece Unigram baseline" },
@@ -83,7 +83,7 @@ const BENCHMARK_DATA = [
   { model: "Qwen2.5 / SindhiLM_v2", type: "multilingual", vocab: "151,643", fertility: "2.580", single: "23.8%", unk: "0.000%", fallback: "8.665%", loss: "0.0000%", note: "Byte-level BPE; SindhiLM_v2 is a wrapper with identical tokenization" },
   { model: "BLOOM", type: "multilingual", vocab: "250,680", fertility: "2.627", single: "24.7%", unk: "0.000%", fallback: "31.660%", loss: "0.0000%", note: "Byte-level BPE; severe byte fallback in Sindhi" },
   { model: "Llama3.2", type: "multilingual", vocab: "128,000", fertility: "2.896", single: "18.2%", unk: "0.000%", fallback: "28.472%", loss: "0.0000%", note: "Severe character fragmentation (2.90 tok/wd, 28.5% byte fallback)" },
-  { model: "SindhiLM_v1", type: "sindhi", vocab: "43", fertility: "4.306", single: "0.1%", unk: "14.017%", fallback: "0.000%", loss: "0.0000%", note: "Deficient 43-token alphabet; unacceptable >14% UNK rate" }
+  { model: "SindhiLM_v1", type: "sindhi", vocab: "43", fertility: "4.306", single: "0.1%", unk: "14.017%", fallback: "0.000%", loss: "0.0790%", note: "Deficient 43-token alphabet; unacceptable >14% UNK rate" }
 ];
 
 // Token chip colors

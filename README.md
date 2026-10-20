@@ -11,7 +11,7 @@
 [![Tests](https://github.com/alinawazcode/sindhi-tokenizer/actions/workflows/python-tests.yml/badge.svg)](https://github.com/alinawazcode/sindhi-tokenizer/actions)
 [![Fidelity: 0.000% Loss](https://img.shields.io/badge/Character%20Fidelity-100%25%20Lossless-brightgreen)](#round-trip-character-fidelity)
 
-A production-grade, publication-validated subword tokenizer purpose-built for the **Sindhi language** (سنڌي) in the Perso-Arabic script. Trained with **SentencePiece Unigram** with full character coverage and byte-level fallback across 1.46M+ diverse sentences, and systematically benchmarked against **14 baseline tokenizers** (across 18 candidate models) on four independent registers with **zero measurable character loss**.
+A benchmark-validated subword tokenizer purpose-built for the **Sindhi language** (سنڌي) in the Perso-Arabic script. Trained with **SentencePiece Unigram** with full character coverage and byte-level fallback across 1.46M+ diverse sentences, and systematically benchmarked against **14 baseline tokenizers** (across 18 candidate models) on four independent registers with **0.0000% character loss after Unicode normalization**.
 
 ---
 
@@ -67,16 +67,16 @@ This repository provides:
 ## Motivation and Problem Statement
 
 ### 1. Unique Script and Extended Perso-Arabic Orthography
-Sindhi uses a 52-letter extended Perso-Arabic alphabet containing implosive consonants (ٻ, ڄ, ڏ, ڳ), aspirated digraphs (ڀ, ٿ, ڇ, ٺ, ڦ, ڻ), and specialized diacritics. General Arabic or Urdu tokenizers frequently split these single graphemes into multi-byte fallback sequences, dramatically inflating token counts.
+Sindhi uses a 52-letter extended Perso-Arabic alphabet containing implosive consonants (ٻ, ڄ, ڏ, ڳ), aspirated digraphs (ڀ, ٿ, ڇ, ٺ), retroflex consonants (including ڻ), and specialized diacritics. General Arabic or Urdu tokenizers frequently split these single graphemes into multi-byte fallback sequences, dramatically inflating token counts.
 
 ### 2. The Token Fertility Tax
-When a tokenizer splits a single word into 3–5 subword fragments, context window efficiency drops proportionally. A 2048-token context window that can fit ~1,500 English words can only accommodate ~500 Sindhi words under multilingual baselines (e.g. LLaMA 3.2 fertility is 2.89; XLM-RoBERTa is 1.51).
+When a tokenizer splits a single word into 3–5 subword fragments, context window efficiency drops proportionally. A 2048-token context window accommodates only ~707 Sindhi words under LLaMA 3.2 (fertility 2.896) or ~1,354 words under XLM-RoBERTa (1.512), compared to ~1,786 Sindhi words under CustomSindhi_64k (1.147).
 
 ### 3. Silent Character Deletion in Competing Models
 Standard tokenizer benchmarks only record token fertility and `UNK` rate. However, during pre-publication auditing for this project, our new **round-trip character fidelity check** revealed that existing tokenizers silently destroy text:
 - **`TinyLlama_Sindhi`**: Drops native Sindhi letters such as `U+06C1` (HEH GOAL) and corrupts text encoded with Arabic Presentation Forms, destroying data in up to **24.9%** of sentences.
 - **`FahadQazi_BPE`**: Silently deletes Latin characters in code-switched technical text, corrupting up to **16.2%** of sentences.
-- **Our Model**: Achieves **0.0000% character loss** with byte-level fallback.
+- **Our Model**: Achieves **0.0000% character loss after Unicode normalization** with byte-level fallback.
 
 ---
 
@@ -230,9 +230,9 @@ The tokenizer was trained on a strictly non-overlapping, multi-source corpus. De
 | Source Dataset | Origin / Provider | Volume Used | Preprocessing & Filtering Rules | License |
 |---|---|---|---|---|
 | **Sindhi Wikipedia** | `wikimedia/wikipedia` (`20231101.sd`) | 6,000 articles | Articles 2,001–8,000 (first 2,000 reserved for evaluation). Filtered to 3–100 words. | CC BY-SA 3.0 |
-| **Sindhi-NLP** | `Sindhi-NLP/sindhi-NLP-dataset` | 4 CSV collections | Tweets, Awami Awaz articles, and Daily Kawish newspaper items. | MIT |
-| **shaikhsalman Corpus** | `shaikhsalman/sindhi-llm-corpus` | 20,000 rows | Seed 7 shuffle. Sentences with >30% Latin characters dropped (removed ~11% noise). | Unlicensed (Research-only) |
-| **Multilingual Anchor** | Urdu, Persian, Arabic Wikipedia | 1,500 articles each | Balanced to represent 15% of total corpus characters. Prevents borrowed word fragmentation. | CC BY-SA 3.0 |
+| **Sindhi-NLP** | `GitHub: Sindhi-NLP/sindhi-NLP-dataset` | 4 CSV collections | Primarily news (98.4% Awami Awaz and Daily Kawish articles) with 1.6% social tweets. | MIT |
+| **shaikhsalman Corpus** | `shaikhsalman/sindhi-llm-corpus` | 20,000 rows | Seed 7 shuffle. Sentences with >30% Latin characters dropped (removed ~11% noise). | Unstated on card (Research-use; see DATA_SOURCES.md) |
+| **Multilingual Anchor** | Urdu, Persian, Arabic Wikipedia | 1,500 articles each | Balanced to represent 15% of total corpus characters. Exposes model to shared Perso-Arabic roots. | CC BY-SA 3.0 |
 
 ### Evaluation Registers (Unsampled Benchmarks)
 
@@ -240,7 +240,7 @@ The tokenizer was trained on a strictly non-overlapping, multi-source corpus. De
 |---|---|---|---|
 | **`flores200_anchor`** | `openlanguagedata/flores_plus` (`snd_Arab`) | 1,012 | Standardized translation benchmark; formal and modern register. |
 | **`wikipedia_formal`** | `wikimedia/wikipedia` (`20231101.sd`) | 25,480 | Formal encyclopedic Sindhi prose (first 2,000 articles, disjoint from train). |
-| **`sentiment_informal`** | `alinawazmahar/Sindhi_Sentiment_dataset` | 3,536 | Colloquial news and social sentiment discourse. |
+| **`sentiment_informal`** | `alinawazmahar/Sindhi_Sentiment_dataset` | 3,536 | Kawish/Awami Awaz news texts pseudo-labeled for sentiment analysis. |
 | **`sindh_line_news`** | Mozilla Data Collective (`Sindh Line Publishers`) | 87,158 | Contemporary, daily regional news coverage (CC BY-SA 4.0). |
 
 ---
@@ -292,7 +292,7 @@ python training/train_tokenizer.py \
 
 ### 2. Documented Negative Results (What Failed and Why)
 In accordance with rigorous research standards, two negative experimental results are preserved in [`docs/explainer.md`](docs/explainer.md):
-1. **Forced Postposition Tokens**: Forcing common postpositions (e.g., `جو`, `جي`, `کي`) and loanwords to remain single tokens degraded the training objective (perplexity rose from 9.6 unforced to 14.9 forced at 32k vocab). Given enough data, Unigram naturally discovers these tokens with superior probability allocations.
+1. **Forced Postposition Tokens**: Forcing common postpositions (e.g., `جو`, `جي`, `کي`) and loanwords to remain single tokens degraded the training objective (final objective value rose from ≈9.6 unforced to ≈14.9 forced at 32k vocab). Given enough data, Unigram naturally discovers these tokens with superior probability allocations.
 2. **Pre-marking Clitic Boundaries**: Pre-segmenting supposed fused clitics with whitespace proved harmful. Investigation revealed that suspected "fused forms" were simply coincidental orthographic overlaps with unrelated lexical roots.
 
 ---
@@ -342,7 +342,7 @@ print("Decoded:", sp.decode(token_ids))
 
 All 18 candidate tokenizers were evaluated across the four evaluation registers without subsampling.
 
-### Macro Benchmark Summary (Mean across 4 Registers)
+### Macro Benchmark Summary (Unweighted Mean across 4 Registers)
 
 | Tokenizer | Vocab Size | Fertility (tokens/word) ↓ | Single-Token Word % ↑ | UNK Rate % ↓ | Byte-Fallback % ↓ | Worst Round-Trip Loss % ↓ |
 |---|---|---|---|---|---|---|
@@ -351,10 +351,10 @@ All 18 candidate tokenizers were evaluated across the four evaluation registers 
 | **CustomSindhi_64k (Flagship)** | 64,000 | **1.147** | **88.6%** | **0.000%** | 0.138% | **0.0000%** |
 | **CustomSindhi_32k** | 32,000 | **1.184** | **86.5%** | **0.000%** | 0.113% | **0.0000%** |
 | TinyLlama_Sindhi | 42,681 | 1.208 | 84.4% | 0.000%* | 0.000%* | **0.4147% (Corrupts 24.9% sent)** |
-| hellosindh_SindhiBERT_NER | 32,001 | 1.218 | 83.7% | 0.194% | 0.197% | 0.0075% |
+| hellosindh_SindhiBERT_NER | 32,001 | 1.218 | 83.7% | 0.194% | 0.197% | 0.0751% |
 | mBERT_Sindhi_Kashif786 | 119,547 | 1.278 | 78.4% | 0.143% | 0.000% | 0.0021% |
 | XLM-RoBERTa | 250,002 | 1.512 | 65.4% | 0.034% | 1.402% | 0.0040% |
-| SindhiLM_v3 | 32,000 | 1.730 | 55.8% | 3.605% | 0.000% | 0.0750% |
+| SindhiLM_v3 | 32,000 | 1.730 | 55.8% | 3.605% | 0.000% | 0.0754% |
 | FahadQazi_BPE | 13,031 | 1.919 | 39.1% | 0.000%* | 7.127%* | **0.8461% (Corrupts 16.2% sent)** |
 | hellosindh_SindhiBERT | 32,000 | 1.960 | 35.5% | 0.122% | 0.114% | 0.0089% |
 | mT5 | 250,100 | 2.280 | 21.7% | 0.022% | 12.746% | 0.0040% |
@@ -362,14 +362,14 @@ All 18 candidate tokenizers were evaluated across the four evaluation registers 
 | Qwen2.5 / SindhiLM_v2 | 151,643 | 2.580 | 23.8% | 0.000% | 8.665% | 0.0000% |
 | BLOOM | 250,680 | 2.627 | 24.7% | 0.000% | 31.660% | 0.0000% |
 | Llama3.2 | 128,000 | 2.896 | 18.2% | 0.000% | 28.472% | 0.0000% |
-| SindhiLM_v1 | 43 | 4.306 | 0.1% | 14.017% | 0.000% | 0.0000% |
+| SindhiLM_v1 | 43 | 4.306 | 0.1% | 14.017% | 0.000% | 0.0790% |
 
-*\* TinyLlama_Sindhi and FahadQazi_BPE show apparent 0.000% UNK rates because both models silently delete unsupported characters rather than emitting a UNK token. FahadQazi_BPE's high byte-fallback rate reflects real encoding artifacts alongside its character-deletion defect. SindhiLM_v2 is numerically identical to Qwen2.5 across all metrics; both are listed in the table for completeness.*
+*\* TinyLlama_Sindhi and FahadQazi_BPE show apparent 0.000% UNK rates because both models silently delete unsupported characters rather than emitting a UNK token. FahadQazi_BPE shows real, severe character loss on round-trip fidelity testing alongside high byte-fallback. SindhiLM_v2 is numerically identical to Qwen2.5 across all metrics; both are listed in the table for completeness.*
 
 ### Evaluation Takeaways
-1. **Unconditional Superiority at ≥64k**: CustomSindhi (64k, 100k, 150k) achieves a clean sweep over all 14 baseline tokenizers across all four registers simultaneously. At 32k, one narrow exception exists: TinyLlama_Sindhi beats CustomSindhi_32k on FLORES+ fertility, though it carries a critical character-deletion defect.
+1. **Unconditional Superiority at ≥64k for Fertility & Single-Token Retention**: CustomSindhi (64k, 100k, 150k) achieves the lowest fertility and highest single-token retention across all four registers simultaneously. At 32k, one narrow exception exists: TinyLlama_Sindhi beats CustomSindhi_32k on FLORES+ fertility (though it carries a critical character-deletion defect). On byte-fallback, CustomSindhi_64k (0.138%) achieves near-lowest fallback, with Gemma 3 slightly lower at 0.105%.
 2. **Clean Sweep at 64k**: Fertility improves by **24.1% over XLM-RoBERTa** and **60.4% over LLaMA 3.2**.
-3. **Flawless Data Integrity**: Custom models demonstrate 0.0000% character drop across all four registers, while two competitors — TinyLlama_Sindhi and FahadQazi_BPE — exhibit real, mechanistically distinct data-integrity defects.
+3. **Flawless Data Integrity**: Custom models demonstrate 0.0000% character drop after Unicode normalization across all four registers, while two competitors — TinyLlama_Sindhi and FahadQazi_BPE — exhibit real, mechanistically distinct data-integrity defects.
 
 ---
 
@@ -378,30 +378,39 @@ All 18 candidate tokenizers were evaluated across the four evaluation registers 
 To verify that vocabulary expansion did not simply overfit high-frequency substrings, all tokenizers were evaluated on a targeted 22-word linguistic test suite spanning four distinct categories:
 
 1. **Genitive & Possessive Constructions** (`دنيا جو`, `پاڻي جي`, `ماڻهن جو`): All Custom models split these cleanly into base noun + postposition clitic.
-2. **Inflectional Suffixes** (`ڪتابن`, `شهرن`, `توهانڪي`, `منهنجو`): Preserved as single tokens in Custom 64k models.
-3. **Sindhi Retroflex & Implosive Digraphs** (`ٻار`, `ڄاڻ`, `ڏينهن`, `ڳوٺ`, `ڀاءُ`, `ٿورو`, `ڇوڪرو`): Never broken into disconnected diacritics or fallback bytes.
+2. **Inflectional Suffixes** (`ڪتابن`, `شهرن`, `توهانکي`, `منهنجو`): Preserved as single tokens in Custom 64k models.
+3. **Sindhi Implosives & Aspirated Digraphs** (`ٻار`, `ڄاڻ`, `ڏينهن`, `ڳوٺ`, `ڀاءُ`, `ٿورو`, `ڇوڪرو`): Never broken into disconnected diacritics or fallback bytes.
 4. **Loanwords & Technical Terms** (`ڪمپيوٽر`, `انٽرنيٽ`, `اسڪول`, `تعليم`): Retained as intact single lexical units.
 
-See [`docs/paper.md#appendix-b`](docs/paper.md) for individual word breakdowns.
+> [!NOTE]
+> **Aggregate vs. Word-Level Distinction**: Across the 22-word test suite, the Custom tokenizer ties the best competitor on 21 of 22 words and loses one (`هنجي`, to FahadQazi_BPE and mBERT_Sindhi jointly). The primary advantage of CustomSindhi is consistency across aggregate, full-scale text registers rather than hand-picked individual words. See [`docs/paper.md#appendix-b`](docs/paper.md#appendix-b) for the full 22-word breakdown.
 
 ---
 
-## Downstream NLP Applications
+## Intended Downstream NLP Applications & Hypotheses
 
-| Application | Benefit of Custom Sindhi Tokenizer |
+*Note: As documented in the paper (§6), the tokenizer is designed for textual NLP representation; downstream task-specific fine-tuning (e.g. BLEU/ROUGE benchmarks) represents intended future work.*
+
+| Intended Application | Hypothesized Architectural Benefit |
 |---|---|
-| **Sindhi Large Language Models** | Decreases token sequence length by 50–60%, effectively doubling or tripling context length capacity during pretraining and inference. |
-| **Machine Translation** | Preserves postpositions and implosive graphemes, preventing hallucination during sequence-to-sequence translation. |
-| **Sentiment Analysis & Text Classification** | Retains full grammatical morphemes, yielding richer dense embeddings. |
-| **Named Entity Recognition (NER)** | Eliminates character drop bugs that corrupt proper nouns, locations, and person names. |
+| **Sindhi Large Language Models (LLMs)** | Decreases token sequence length by 50–60% vs general multilingual LLMs (LLaMA, BLOOM), effectively doubling or tripling context length capacity during pretraining and inference. |
+| **Machine Translation (MT)** | Preserves postpositions and implosive graphemes intact, intended to reduce subword fragmentation and hallucination during sequence-to-sequence translation. |
+| **Sentiment Analysis & Text Classification** | Retains full grammatical morphemes, yielding richer dense embeddings for subword encoders. |
+| **Named Entity Recognition (NER)** | Eliminates character drop bugs that corrupt proper nouns, locations, and transliterated person names. |
 
 ---
 
 ## Limitations and Known Issues
 
-1. **Absence of Classical / Literary Register**: While modern news, social media, and encyclopedic registers are thoroughly tested, an authentic classical literary register (e.g. *Shah Jo Risalo*) could not be included due to licensing restrictions, scan OCR defects, or platform paywalls.
-2. **Downstream Acoustic Modeling**: This tokenizer is designed for textual NLP and LLM representation; acoustic speech recognition (ASR) phonetic units remain unstudied.
-3. **FLORES+ 32k Edge Case**: At 32,000 vocabulary size, TinyLlama_Sindhi narrowly achieves lower fertility on FLORES+ specifically (though it suffers from a 0.415% silent character deletion defect).
+In accordance with rigorous academic transparency (see [`docs/paper.md` §6](docs/paper.md)), seven limitations are explicitly recorded:
+
+1. **Absence of Classical / Literary Register**: No classical or literary Sindhi register is included. Five independent candidate sources were investigated: a corrupted CSV export, an unrelated SQL dump, two unusable OCR scans (one incompatibly licensed), and a government-affiliated platform gated behind an institutional subscription.
+2. **Partial Source Overlap in Evaluation**: The Sentiment register and the Sindhi-NLP component of the training corpus share adjacent news-source provenance; full genre-level independence is not established for this pair.
+3. **Narrowing Margin Against Strongest Competitors**: Against TinyLlama_Sindhi, hellosindh_SindhiBERT_NER, and mBERT_Sindhi, the advantage is real but modest; against FLORES+ specifically, CustomSindhi_32k has one confirmed loss. The "clean sweep" holds unconditionally only at 64,000 and above.
+4. **Qualitative Test Does Not Differentiate at Word Level**: On the 22-word test list, the new tokenizer ties rather than beats the best competitor on 21 of 22 words; the demonstrated advantage is aggregate across full corpora, not example-level.
+5. **Search for Existing Tokenizers May Be Incomplete**: Four additional tokenizers were discovered after initial benchmarking; while subsequent searches found no further models, the open-source NLP space is active enough that this cannot be guaranteed exhaustive.
+6. **Downstream Applications Undetermined**: The tokenizer's target use is future Sindhi language modeling. It is not validated for Automatic Speech Recognition (ASR) or Text-to-Speech (TTS).
+7. **Register Weighting Choice**: The four evaluation registers differ substantially in size; an unweighted macro mean was used rather than a token-pooled mean, which would have been dominated by Sindh Line News (~2.5× the other three combined).
 
 ---
 
@@ -410,8 +419,8 @@ See [`docs/paper.md#appendix-b`](docs/paper.md) for individual word breakdowns.
 | Document | Path | Purpose |
 |---|---|---|
 | **Root Guide & Navigation Hub** | [`README.md`](README.md) | Central repository overview, quickstart, and full benchmark summary |
-| **Formal Academic Paper** | [`docs/paper.md`](docs/paper.md) | Complete pre-print manuscript with literature review, methodology, and 18-tokenizer tables |
-| **Technical Explainer Log** | [`docs/explainer.md`](docs/explainer.md) | 21-page deep dive into empirical failures, metric corrections, and design rationale |
+| **Formal Academic Paper** | [`docs/paper.md`](docs/paper.md) | Complete preprint manuscript with state of the art analysis, methodology, and 18-tokenizer tables |
+| **Technical Explainer Log** | [`docs/explainer.md`](docs/explainer.md) | In-depth engineering explainer into empirical failures, metric corrections, and design rationale |
 | **Dataset Provenance Card** | [`DATA_SOURCES.md`](DATA_SOURCES.md) | Complete documentation of all training corpora and evaluation sets, licensing, and volumes |
 | **Evaluation Module Guide** | [`evaluation/README.md`](evaluation/README.md) | Technical documentation of metrics algorithms, CLI arguments, and Python API |
 | **Training Pipeline Guide** | [`training/README.md`](training/README.md) | Exact SentencePiece training recipe, filtering thresholds, and negative findings |
@@ -432,6 +441,8 @@ See [`docs/paper.md#appendix-b`](docs/paper.md) for individual word breakdowns.
 5. **Qwen Team (2024).** *Qwen2.5 Technical Report.* [arXiv:2412.15115](https://arxiv.org/abs/2412.15115)
 6. **Meta AI (2024).** *Llama 3.2 Model Card & Architecture Overview.* [https://huggingface.co/meta-llama](https://huggingface.co/meta-llama)
 
+*Note: For the complete list of 21 baseline model citations and references, please refer to [`docs/paper.md`](docs/paper.md).*
+
 ---
 
 ## Team and Acknowledgments
@@ -450,7 +461,7 @@ This research and tokenizer implementation were developed at the **Department of
 
 ### License
 - **Software Code**: Licensed under the open-source [MIT License](LICENSE).
-- **Trained Tokenizer Models**: Distributed via Hugging Face under the [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/) license.
+- **Trained Tokenizer Models**: Distributed via Hugging Face under the [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/) license as a cautious default pending community licensing clarification of raw corpora.
 - **Corpus Texts**: Refer to [`DATA_SOURCES.md`](DATA_SOURCES.md) for original source licenses.
 
 ### Citation
@@ -459,7 +470,7 @@ If you use this tokenizer, benchmark code, or findings in your academic research
 ```bibtex
 @misc{nawaz2026sindhitokenizer,
   author = {Nawaz, Ali and Fareed, Muqadas and Sadaf, Soonh and Sahito, Attaullah},
-  title  = {Sindhi Tokenizer: A Corpus-Driven SentencePiece Unigram Tokenizer for Sindhi, Benchmarked Against 14 Existing Tokenizers},
+  title  = {A Corpus-Driven Sindhi Subword Tokenizer: Design, Empirical Validation, and Benchmark Comparison Against Fourteen Existing Tokenizers},
   year   = {2026},
   howpublished = {\url{https://github.com/alinawazcode/sindhi-tokenizer}},
   note   = {Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan}
@@ -472,20 +483,20 @@ If you use this tokenizer, benchmark code, or findings in your academic research
 
 <details>
 <summary><b>1. Why choose the 64k model over 32k or 150k?</b></summary>
-The 64,000 vocabulary size represents the empirical sweet spot between fertility efficiency (1.147 tokens/word) and embedding matrix parameter overhead. The 150k model provides marginal fertility gains (1.103) but more than doubles the vocabulary table, while the 32k model exhibits one minor loss on the standardized FLORES+ benchmark.
+The 64,000 vocabulary size represents the empirical sweet spot between fertility efficiency (1.147 tokens/word) and embedding matrix parameter overhead. Scaling to 100k or 150k provides marginal fertility gains (1.133 and 1.125 respectively) but more than doubles the vocabulary table size, while the 32k model exhibits one minor loss on the standardized FLORES+ benchmark.
 </details>
 
 <details>
 <summary><b>2. How does the round-trip character fidelity check work?</b></summary>
-It takes a test sentence, normalizes it using Unicode NFKC, strips zero-width formatters, encodes it through the tokenizer, decodes it back to text, and computes the Levenshtein-aligned character loss rate. If characters were silently dropped by the tokenizer, this metric flags the exact affected sentences and characters.
+It takes a test sentence, normalizes it using Unicode NFKC, strips zero-width formatters and whitespace, encodes it through the tokenizer, decodes it back to text, and computes the normalized character loss rate (`diff = len(original) - len(decoded)`). If characters were silently dropped by the tokenizer, this metric flags the exact affected sentences and characters.
 </details>
 
 <details>
 <summary><b>3. Why is there a 15% mix of Urdu, Persian, and Arabic in the training corpus?</b></summary>
-Sindhi shares the Perso-Arabic alphabet and borrows significant religious, legal, and cultural vocabulary from Arabic and Persian, as well as shared regional terms with Urdu. Without this controlled 15% anchor, shared loanwords frequently split into single-character fragments.
+Sindhi shares the Perso-Arabic alphabet and borrows significant religious, legal, and cultural vocabulary from Arabic and Persian, as well as shared regional terms with Urdu. This controlled 15% anchor was added by design to expose the subword vocabulary to shared Perso-Arabic root morphemes.
 </details>
 
 <details>
 <summary><b>4. Why should I avoid transformers.LlamaTokenizer for loading this model?</b></summary>
-Certain versions of Hugging Face Transformers' <code>LlamaTokenizer</code> fast-binding parser fail to read SentencePiece Unigram model headers correctly, silently substituting an empty or 3-token fallback vocabulary without throwing an exception. Always use <code>sentencepiece.SentencePieceProcessor</code> directly or via our verified <code>SPMTokenizerAdapter</code>.
+Certain versions of Hugging Face Transformers' <code>LlamaTokenizer</code> fail to load custom SentencePiece Unigram models correctly, silently substituting an empty or 3-token fallback vocabulary without throwing an exception. Always use <code>sentencepiece.SentencePieceProcessor</code> directly or via our verified <code>SPMTokenizerAdapter</code>.
 </details>

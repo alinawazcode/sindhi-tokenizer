@@ -28,7 +28,7 @@ Fourteen existing tokenizers were included as baselines, in three groups:
 
 - Sindhi-specific, identified during a pre-publication search (4): mBERT_Sindhi_Kashif786 (mBERT extended with a 20K-token Sindhi Unigram vocabulary), TinyLlama_Sindhi_jamalimubashirali (TinyLlama extended with 10,681 Sindhi tokens), and two tokenizers from the hellosindh organization, hellosindh_SindhiBERT and hellosindh_SindhiBERT_NER, confirmed during this study to be genuinely distinct tokenizers (different vocabulary sizes, different underlying file formats, different tokenization behavior on identical input) rather than one tokenizer reused across two repositories.
 
-During evaluation we established, via direct tokenizer comparison, that SindhiLM_v2 is a re-published wrapper around Qwen2.5\'s tokenizer rather than an independently trained model: fertility, single-token retention, and total token counts are identical to Qwen2.5\'s to three decimal places across every register and every independent verification run conducted in this study. We retain SindhiLM_v2 in the quantitative tables for completeness but exclude it from the qualitative morpheme analysis (Section 5.4), where its row would be a verbatim duplicate of Qwen2.5\'s. The late discovery of four additional tokenizers after initial benchmarking illustrates that even a systematic search is unlikely to be fully exhaustive in a fast-moving space; we recommend a final discoverability check immediately before publication as standard practice for comparative tokenizer work.
+During evaluation we established, via direct tokenizer comparison, that SindhiLM_v2 is a re-published wrapper around Qwen2.5\'s tokenizer rather than an independently trained model: fertility, single-token retention, and total token counts are identical to Qwen2.5\'s to three decimal places across every register and every independent verification run conducted in this study. We retain SindhiLM_v2 in the quantitative tables for completeness but exclude it from the qualitative morpheme analysis (Section 4.4), where its row would be a verbatim duplicate of Qwen2.5\'s. The late discovery of four additional tokenizers after initial benchmarking illustrates that even a systematic search is unlikely to be fully exhaustive in a fast-moving space; we recommend a final discoverability check immediately before publication as standard practice for comparative tokenizer work.
 
 # **3 Methodology** {#methodology}
 
@@ -78,15 +78,13 @@ The Wikipedia register is defined once, applied consistently throughout this stu
 
 - Fertility --- mean tokens per whitespace-delimited word.
 
-- Compression ratio --- mean characters per token.
-
 - Single-token retention --- percentage of words that remain a single token.
 
 - UNK rate --- percentage of output tokens equal to the tokenizer\'s unknown-token placeholder.
 
-- Byte-fallback rate --- percentage of output tokens that, decoded individually, yield a UTF-8 replacement character. An initial regex-based implementation was found to silently report 0% for four tokenizers with substantial true fallback, discussed further in Section 7.
+- Byte-fallback rate --- percentage of output tokens that, decoded individually, yield a UTF-8 replacement character. An initial regex-based implementation was found to silently report 0% for four tokenizers with substantial true fallback, discussed further in Section 5.
 
-- Round-trip character fidelity (introduced in this work) --- the percentage of characters lost when a sentence is encoded then decoded, after NFKC normalization and removal of zero-width/bidirectional control characters on both sides to exclude benign, expected normalization from the measurement. Neither UNK rate nor byte-fallback rate can detect a tokenizer that silently omits characters from its output without marking them in any way; this metric was added specifically because such a defect was found in a competitor during pre-publication verification (Section 5.3).
+- Round-trip character fidelity (introduced in this work) --- the percentage of characters lost when a sentence is encoded then decoded, after NFKC normalization and removal of zero-width/bidirectional control characters on both sides to exclude benign, expected normalization from the measurement. Neither UNK rate nor byte-fallback rate can detect a tokenizer that silently omits characters from its output without marking them in any way; this metric was added specifically because such a defect was found in a competitor during pre-publication verification (Section 4.3).
 
 # **4 Results** {#results}
 
@@ -165,7 +163,7 @@ The new tokenizer\'s advantage is attributable to two concrete, checkable factor
 
 The round-trip fidelity defects found in FahadQazi_BPE and TinyLlama_Sindhi illustrate a specific risk in tokenizer evaluation: a tokenizer that silently discards unrecognized input will appear to have excellent UNK and byte-fallback statistics for the wrong reason. We recommend round-trip fidelity testing, at minimum via the normalized-length check used here, as a standard component of future comparative tokenizer studies, alongside fertility and UNK rate rather than as an optional addition.
 
-The byte-fallback detection correction made earlier in this project (Section 7) is, independent of the tokenizer comparison itself, a methodological finding of note: a plausible, commonly used detection heuristic was found to silently misreport results not only for byte-level BPE tokenizers, a known limitation of that method, but also for a SentencePiece-based tokenizer, XLM-RoBERTa, whose reported byte-fallback rate changed from 0.000% to over 1% under correction.
+The byte-fallback detection correction made earlier in this project (detailed in the technical methodology explainer) is, independent of the tokenizer comparison itself, a methodological finding of note: a plausible, commonly used detection heuristic was found to silently misreport results not only for byte-level BPE tokenizers, a known limitation of that method, but also for a SentencePiece-based tokenizer, XLM-RoBERTa, whose reported byte-fallback rate changed from 0.000% to over 1% under correction.
 
 # **6 Limitations** {#limitations}
 
@@ -321,7 +319,7 @@ Complete per-register breakdown underlying the register-mean summary in Table 3,
 
 *Table A1. Full per-register results, 18 rows per metric (14 baselines, 4 custom sizes), 4 registers each.*
 
-# **Appendix B: Full Morpheme/Category Test Results**
+# **Appendix B: Full Morpheme/Category Test Results** {#appendix-b}
 
 All 22 words from the qualitative morpheme/category analysis (Section 4.4), with the best-performing candidate vocabulary size of the new tokenizer and the best-performing baseline (of thirteen, excluding the confirmed SindhiLM_v2/Qwen2.5 duplicate) for each word, compared by raw token count.
 

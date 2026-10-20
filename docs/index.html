@@ -681,8 +681,8 @@ def normalize_sindhi(text: str) -> str:
               <code>&lt;unk&gt;</code> token. Must be 0.000%.</li>
             <li><strong>Byte-Fallback Rate % ↓:</strong> Percentage of tokens emitted as raw UTF-8 byte pieces (e.g.,
               <code>&lt;0xD8&gt;</code>).</li>
-            <li><strong>Round-Trip Character Loss % ↓:</strong> Normalized Character Error Rate (CER) between original
-              string $S$ and $S' = \text{decode}(\text{encode}(S))$. Evaluated unconditionally across all registers.
+            <li><strong>Round-Trip Character Loss % ↓:</strong> Character deletion rate between original string $S$
+              and $S' = \text{decode}(\text{encode}(S))$ after NFKC canonicalization: $\frac{\text{len}(S) - \text{len}(S')}{\text{len}(S)}$. Evaluated unconditionally across all registers.
             </li>
           </ul>
         </section>
@@ -735,9 +735,11 @@ def normalize_sindhi(text: str) -> str:
 
           <h3>Key Takeaways from the Matrix</h3>
           <ol>
-            <li><strong>Unconditional Superiority at ≥64k:</strong> CustomSindhi (64k, 100k, 150k) outperforms all 13
-              baseline tokenizers across all 4 registers simultaneously. At 32k, only TinyLlama_Sindhi records lower
-              fertility on the FLORES+ split, but it carries a fatal character-deletion defect.</li>
+            <li><strong>Efficiency Sweep at ≥64k:</strong> CustomSindhi (64k, 100k, 150k) outperforms all 13
+              baseline tokenizers across all 4 registers in subword fertility and single-token retention simultaneously.
+              (On byte fallback, Gemma 3 achieves 0.105% vs Custom 64k's 0.138% due to Gemma's 256k multilingual vocabulary,
+              though Custom maintains far superior fertility: 1.147 vs 1.344). At 32k, only TinyLlama_Sindhi records
+              lower fertility on the FLORES+ split, but it carries a fatal character-deletion defect.</li>
             <li><strong>Drastic Multilingual Fragmentation:</strong> LLaMA 3.2 fragments Sindhi at 2.896 tokens per word
               with 28.5% byte fallback, while BLOOM fragments at 2.627 with 31.7% byte fallback. Our 64k model improves
               efficiency by 60.4% over LLaMA 3.2.</li>
@@ -887,7 +889,7 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
               <button class="btn-copy" data-target="#code-bibtex">Copy</button>
             </div>
             <pre><code id="code-bibtex">@article{nawaz2026sindhitokenizer,
-  title={Sindhi Tokenizer: A High-Coverage Lossless SentencePiece Unigram Model for the Perso-Arabic Script},
+  title={Sindhi Tokenizer: High-Coverage SentencePiece Unigram Subword Tokenization for the Perso-Arabic Script},
   author={Nawaz, Ali and Fareed, Muqadas and Sadaf, Soonh and Sahito, Attaullah},
   journal={arXiv preprint},
   year={2026},
@@ -946,10 +948,7 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
                 <span class="faq-chevron">▼</span>
               </button>
               <div class="faq-answer">
-                In many legacy Hugging Face tokenizer configurations, missing characters without a mapped UNK token are
-                silently dropped during parsing. This created an illusion of zero unknown tokens while quietly
-                destroying 24.9% of sentences. Our round-trip normalized edit distance test was explicitly designed to
-                expose this silent data loss.
+                TinyLlama's vocabulary (built with <code>LlamaTokenizer</code>) entirely omitted key Perso-Arabic characters such as U+06C1 (HEH GOAL) without defining byte fallback. Because the missing codepoints had no valid mapping or explicit fallback subword, the decoder emitted empty strings for those slices rather than an explicit <code>&lt;unk&gt;</code> symbol. This masked the defect as 0.000% UNK while silently dropping characters across 24.9% of sentences. Our round-trip character-loss evaluation ($S \to \text{encode} \to \text{decode} \to S'$ after NFKC canonicalization) exposed this silent data loss.
               </div>
             </div>
 
