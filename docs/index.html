@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sindhi Tokenizer Documentation — SentencePiece Unigram Subword Model</title>
 
   <!-- SEO & Technical Metadata -->
-  <meta name="description" content="Technical documentation, benchmark matrix, and interactive tokenizer explorer for the Sindhi Tokenizer project. Production-grade SentencePiece Unigram models with 100% character coverage and byte-fallback for the Perso-Arabic Sindhi script.">
-  <meta name="keywords" content="Sindhi Tokenizer, SentencePiece Unigram, Sindhi NLP, Subword Tokenization, Perso-Arabic Script, Byte Fallback, Low-Resource Language">
+  <meta name="description"
+    content="Technical documentation, benchmark matrix, and interactive tokenizer explorer for the Sindhi Tokenizer project. Production-grade SentencePiece Unigram models with 100% character coverage and byte-fallback for the Perso-Arabic Sindhi script.">
+  <meta name="keywords"
+    content="Sindhi Tokenizer, SentencePiece Unigram, Sindhi NLP, Subword Tokenization, Perso-Arabic Script, Byte Fallback, Low-Resource Language">
   <meta name="author" content="Ali Nawaz, Muqadas Fareed, Soonh Sadaf, Dr. Attaullah Sahito">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Sindhi Tokenizer Documentation">
-  <meta property="og:description" content="Production-grade SentencePiece Unigram subword tokenizer with 100% character coverage, byte-fallback, and 0.0000% character loss benchmarked across 17 models.">
+  <meta property="og:description"
+    content="Production-grade SentencePiece Unigram subword tokenizer with 100% character coverage, byte-fallback, and 0.0000% character loss benchmarked across 17 models.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://alinawazcode.github.io/sindhi-tokenizer/">
 
   <!-- Stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
   <!-- Site Header -->
@@ -32,7 +37,7 @@
     </button>
 
     <a href="#overview" class="header-brand">
-      <span class="header-brand-script">س</span>
+      <span class="header-brand-script"></span>
       <span>Sindhi Tokenizer</span>
       <span class="header-sep">/</span>
       <span style="font-weight:400;color:var(--color-text-muted);font-size:0.85rem;">Docs</span>
@@ -43,12 +48,15 @@
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
-      <input type="text" id="site-search" placeholder="Search documentation... (Press '/' to focus)" aria-label="Search documentation">
+      <input type="text" id="site-search" placeholder="Search documentation... (Press '/' to focus)"
+        aria-label="Search documentation">
     </div>
 
     <div class="header-actions">
-      <button id="theme-toggle" class="header-btn" title="Toggle light/dark theme" aria-label="Toggle light or dark theme">
-        <svg id="theme-icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <button id="theme-toggle" class="header-btn" title="Toggle light/dark theme"
+        aria-label="Toggle light or dark theme">
+        <svg id="theme-icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2">
           <circle cx="12" cy="12" r="5"></circle>
           <line x1="12" y1="1" x2="12" y2="3"></line>
           <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -61,13 +69,16 @@
         </svg>
       </button>
 
-      <a href="https://huggingface.co/alinawazmahar/sindhi-tokenizer" target="_blank" rel="noopener noreferrer" class="header-btn" title="Hugging Face Hub">
+      <a href="https://huggingface.co/alinawazmahar/sindhi-tokenizer" target="_blank" rel="noopener noreferrer"
+        class="header-btn" title="Hugging Face Hub">
         <span>🤗 Model Hub</span>
       </a>
 
-      <a href="https://github.com/alinawazcode/sindhi-tokenizer" target="_blank" rel="noopener noreferrer" class="header-btn" title="GitHub Repository">
+      <a href="https://github.com/alinawazcode/sindhi-tokenizer" target="_blank" rel="noopener noreferrer"
+        class="header-btn" title="GitHub Repository">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          <path
+            d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
         </svg>
         <span>GitHub</span>
       </a>
@@ -136,17 +147,25 @@
             <span class="page-meta-tag">Script: Perso-Arabic (sd)</span>
             <span class="page-meta-tag">Algorithm: SentencePiece Unigram</span>
             <span class="page-meta-tag">Flagship Vocab: 64,000</span>
-            <span class="page-meta-tag" style="color:var(--bc-c);border-color:var(--bc-c);">0.0000% Character Loss</span>
+            <span class="page-meta-tag" style="color:var(--bc-c);border-color:var(--bc-c);">0.0000% Character
+              Loss</span>
           </div>
         </header>
 
         <!-- Technical Intro Box -->
         <div class="intro-box">
           <p>
-            The <strong>Sindhi Tokenizer Project</strong> provides production-grade, lossless subword tokenizers for the Sindhi language in its standard 52-letter Perso-Arabic script. By training a Byte-Fallback SentencePiece Unigram model on a balanced 1.49M sentence corpus, this project resolves severe character fragmentation and silent deletion defects observed in current general-purpose multilingual LLMs and existing monolingual models.
+            The <strong>Sindhi Tokenizer Project</strong> provides production-grade, lossless subword tokenizers for the
+            Sindhi language in its standard 52-letter Perso-Arabic script. By training a Byte-Fallback SentencePiece
+            Unigram model on a balanced 1.49M sentence corpus, this project resolves severe character fragmentation and
+            silent deletion defects observed in current general-purpose multilingual LLMs and existing monolingual
+            models.
           </p>
           <p>
-            The flagship <strong>CustomSindhi_64k</strong> model achieves an average subword fertility of <strong>1.147 tokens per word</strong> and <strong>88.6% single-token word coverage</strong> across four evaluation registers, improving tokenization efficiency by <strong>24.1% over XLM-RoBERTa</strong> and <strong>60.4% over LLaMA 3.2</strong>.
+            The flagship <strong>CustomSindhi_64k</strong> model achieves an average subword fertility of <strong>1.147
+              tokens per word</strong> and <strong>88.6% single-token word coverage</strong> across four evaluation
+            registers, improving tokenization efficiency by <strong>24.1% over XLM-RoBERTa</strong> and <strong>60.4%
+              over LLaMA 3.2</strong>.
           </p>
         </div>
 
@@ -182,21 +201,32 @@
         <section id="overview">
           <h2>Overview &amp; Key Findings</h2>
           <p>
-            Sindhi (سنڌي) is an Indo-Aryan language spoken by over 35 million people, written in an extended Perso-Arabic alphabet with 52 characters. It features distinctive linguistic properties that pose severe challenges to off-the-shelf NLP tokenizers:
+            Sindhi (سنڌي) is an Indo-Aryan language spoken by over 35 million people, written in an extended
+            Perso-Arabic alphabet with 52 characters. It features distinctive linguistic properties that pose severe
+            challenges to off-the-shelf NLP tokenizers:
           </p>
           <ul>
-            <li><strong>Phonemic Richness:</strong> Four implosive consonants (<span class="sd">ٻ, ڄ, ڏ, ڳ</span>), distinctive retroflexes, and aspirated digraphs (<span class="sd">ڀ, ٿ, ڇ, ڍ, ڦ, ڳ, ڱ</span>).</li>
-            <li><strong>Complex Morphology:</strong> Extensive pronominal clitic suffixation where prepositions and pronouns attach directly to verbs and nouns (e.g., <span class="sd">ڪتابم</span> "my book", <span class="sd">ڏنم</span> "I gave").</li>
-            <li><strong>Etymological Diversity:</strong> Heavy borrowing from Sanskrit, Arabic, and Persian, requiring subword vocabularies to share roots without fragmenting loan stems.</li>
+            <li><strong>Phonemic Richness:</strong> Four implosive consonants (<span class="sd">ٻ, ڄ, ڏ, ڳ</span>),
+              distinctive retroflexes, and aspirated digraphs (<span class="sd">ڀ, ٿ, ڇ, ڍ, ڦ, ڳ, ڱ</span>).</li>
+            <li><strong>Complex Morphology:</strong> Extensive pronominal clitic suffixation where prepositions and
+              pronouns attach directly to verbs and nouns (e.g., <span class="sd">ڪتابم</span> "my book", <span
+                class="sd">ڏنم</span> "I gave").</li>
+            <li><strong>Etymological Diversity:</strong> Heavy borrowing from Sanskrit, Arabic, and Persian, requiring
+              subword vocabularies to share roots without fragmenting loan stems.</li>
           </ul>
 
           <p>
-            When evaluated on standard Sindhi corpora, standard frontier models suffer from <em>subword bloat</em>: LLaMA 3.2 fragments Sindhi at <strong>2.896 tokens per word</strong>, with 28.5% of characters degenerating into byte-level fallbacks. Meanwhile, existing community Sindhi tokenizers suffer from silent character deletion (e.g., TinyLlama dropping <span class="sd">ہ</span> in 24.9% of sentences).
+            When evaluated on standard Sindhi corpora, standard frontier models suffer from <em>subword bloat</em>:
+            LLaMA 3.2 fragments Sindhi at <strong>2.896 tokens per word</strong>, with 28.5% of characters degenerating
+            into byte-level fallbacks. Meanwhile, existing community Sindhi tokenizers suffer from silent character
+            deletion (e.g., TinyLlama dropping <span class="sd">ہ</span> in 24.9% of sentences).
           </p>
 
           <div class="callout callout-tip">
             <div class="callout-title">Core Contribution</div>
-            We release four custom SentencePiece Unigram tokenizers trained with 100% character coverage and byte fallback enabled, completely eliminating UNK tokens and character loss while achieving state-of-the-art fertility.
+            We release four custom SentencePiece Unigram tokenizers trained with 100% character coverage and byte
+            fallback enabled, completely eliminating UNK tokens and character loss while achieving state-of-the-art
+            fertility.
           </div>
         </section>
 
@@ -204,7 +234,8 @@
         <section id="quickstart">
           <h2>Installation &amp; Quick Start</h2>
           <p>
-            The tokenizers can be used either through the official Google SentencePiece Python library or via Hugging Face's <code>transformers</code> library.
+            The tokenizers can be used either through the official Google SentencePiece Python library or via Hugging
+            Face's <code>transformers</code> library.
           </p>
 
           <h3>1. Installation</h3>
@@ -249,7 +280,8 @@ assert decoded == text, "Lossless reconstruction guaranteed"</code></pre>
 
           <h3>3. Hugging Face Transformers Integration</h3>
           <p>
-            You can load the published tokenizer directly from the Hugging Face Hub using <code>PreTrainedTokenizerFast</code>:
+            You can load the published tokenizer directly from the Hugging Face Hub using
+            <code>PreTrainedTokenizerFast</code>:
           </p>
           <div class="code-block">
             <div class="code-header">
@@ -269,7 +301,10 @@ print(tokens)</code></pre>
 
           <div class="callout callout-warn">
             <div class="callout-title">Critical Compatibility Note: Do Not Use LlamaTokenizer Directly</div>
-            Do not initialize <code>transformers.LlamaTokenizer</code> directly on the raw <code>.model</code> file. <code>LlamaTokenizer</code> assumes a hard-coded 32k BPE structure and silently corrupts custom Unigram vocabularies (often reducing them to 3 tokens). Always load via <code>PreTrainedTokenizerFast</code> or use the provided <code>SPMTokenizerAdapter</code> class in <code>evaluation/metrics.py</code>.
+            Do not initialize <code>transformers.LlamaTokenizer</code> directly on the raw <code>.model</code> file.
+            <code>LlamaTokenizer</code> assumes a hard-coded 32k BPE structure and silently corrupts custom Unigram
+            vocabularies (often reducing them to 3 tokens). Always load via <code>PreTrainedTokenizerFast</code> or use
+            the provided <code>SPMTokenizerAdapter</code> class in <code>evaluation/metrics.py</code>.
           </div>
         </section>
 
@@ -277,7 +312,8 @@ print(tokens)</code></pre>
         <section id="playground">
           <h2>Interactive Playground</h2>
           <p>
-            Test Sindhi text segmentations below. Select sample sentences representing different linguistic registers or type arbitrary Sindhi text to compare token counts and subword fertility.
+            Test Sindhi text segmentations below. Select sample sentences representing different linguistic registers or
+            type arbitrary Sindhi text to compare token counts and subword fertility.
           </p>
 
           <div class="playground">
@@ -286,7 +322,8 @@ print(tokens)</code></pre>
               <div class="form-row">
                 <div class="form-group" style="flex:2;">
                   <label class="form-label" for="sindhi-input">Sindhi Input Text (RTL):</label>
-                  <textarea id="sindhi-input" class="form-textarea" rows="2" placeholder="سنڌي عبارت هتي لکو..."></textarea>
+                  <textarea id="sindhi-input" class="form-textarea" rows="2"
+                    placeholder="سنڌي عبارت هتي لکو..."></textarea>
                   <div class="sample-pills" id="sample-pills"></div>
                 </div>
 
@@ -330,22 +367,30 @@ print(tokens)</code></pre>
         <section id="motivation">
           <h2>Linguistic Motivation</h2>
           <p>
-            Tokenization is the foundational layer of any Large Language Model. When a tokenizer is sub-optimally trained for a script, downstream models suffer from two primary penalties:
+            Tokenization is the foundational layer of any Large Language Model. When a tokenizer is sub-optimally
+            trained for a script, downstream models suffer from two primary penalties:
           </p>
           <dl>
             <dt>1. Context Window Degradation</dt>
             <dd>
-              If a language requires 2.90 tokens per word (like Sindhi under LLaMA 3.2) compared to 1.15 in our custom tokenizer, an 8,192-token context window can only fit 2,820 Sindhi words instead of 7,120 words. This 60% loss in effective context window length severely restricts document summarization, retrieval-augmented generation (RAG), and few-shot reasoning.
+              If a language requires 2.90 tokens per word (like Sindhi under LLaMA 3.2) compared to 1.15 in our custom
+              tokenizer, an 8,192-token context window can only fit 2,820 Sindhi words instead of 7,120 words. This 60%
+              loss in effective context window length severely restricts document summarization, retrieval-augmented
+              generation (RAG), and few-shot reasoning.
             </dd>
 
             <dt>2. Quadractic Attention Cost</dt>
             <dd>
-              Transformer self-attention scales quadratically with sequence length ($O(N^2)$). A 2.5× increase in token count per word leads to a ~6.25× increase in attention computation during pretraining and inference.
+              Transformer self-attention scales quadratically with sequence length ($O(N^2)$). A 2.5× increase in token
+              count per word leads to a ~6.25× increase in attention computation during pretraining and inference.
             </dd>
 
             <dt>3. Character Deletion and Semantic Drift</dt>
             <dd>
-              Tokenizers with incomplete character coverage or faulty normalization silently drop characters. In Sindhi, stripping the single letter <span class="sd">ہ</span> (HEH GOAL, U+06C1) alters word meanings entirely: <span class="sd">هي</span> (this) becomes <span class="sd">ي</span>, and <span class="sd">ڪريو</span> is corrupted.
+              Tokenizers with incomplete character coverage or faulty normalization silently drop characters. In Sindhi,
+              stripping the single letter <span class="sd">ہ</span> (HEH GOAL, U+06C1) alters word meanings entirely:
+              <span class="sd">هي</span> (this) becomes <span class="sd">ي</span>, and <span class="sd">ڪريو</span> is
+              corrupted.
             </dd>
           </dl>
         </section>
@@ -354,7 +399,8 @@ print(tokens)</code></pre>
         <section id="inventory">
           <h2>Tokenizer Inventory</h2>
           <p>
-            We trained and evaluated four vocabulary capacities of the SentencePiece Unigram architecture to identify the optimal Pareto frontier between vocabulary size and inference memory overhead:
+            We trained and evaluated four vocabulary capacities of the SentencePiece Unigram architecture to identify
+            the optimal Pareto frontier between vocabulary size and inference memory overhead:
           </p>
 
           <div class="table-wrap">
@@ -411,11 +457,15 @@ print(tokens)</code></pre>
         <section id="methodology">
           <h2>SentencePiece Methodology</h2>
           <p>
-            Unlike Byte-Pair Encoding (BPE), which iteratively merges frequent character pairs deterministically from the bottom up, the <strong>Unigram language model</strong> (Kudo, 2018) starts with an oversized vocabulary of candidate substrings and iteratively prunes candidates based on their marginal contribution to the corpus log-likelihood.
+            Unlike Byte-Pair Encoding (BPE), which iteratively merges frequent character pairs deterministically from
+            the bottom up, the <strong>Unigram language model</strong> (Kudo, 2018) starts with an oversized vocabulary
+            of candidate substrings and iteratively prunes candidates based on their marginal contribution to the corpus
+            log-likelihood.
           </p>
 
           <p>
-            During tokenization, the Unigram model segments input strings by maximizing the joint probability under the Viterbi algorithm:
+            During tokenization, the Unigram model segments input strings by maximizing the joint probability under the
+            Viterbi algorithm:
           </p>
           <div class="code-block">
             <div class="code-header"><span>mathematical formulation</span></div>
@@ -423,11 +473,15 @@ print(tokens)</code></pre>
           </div>
 
           <p>
-            Where $S(X)$ is the set of all valid segmentations of input $X$, and $P(x_i)$ is the probability of subword token $x_i$. This probabilistic approach provides two key advantages for Sindhi:
+            Where $S(X)$ is the set of all valid segmentations of input $X$, and $P(x_i)$ is the probability of subword
+            token $x_i$. This probabilistic approach provides two key advantages for Sindhi:
           </p>
           <ol>
-            <li><strong>Linguistically Sound Morphological Boundaries:</strong> Inflections, case markers, and clitic suffixes are detached cleanly rather than creating unnatural cross-morpheme concatenations.</li>
-            <li><strong>Subword Regularization:</strong> SentencePiece Unigram natively supports sampling alternative segmentations during pretraining, improving downstream neural network robustness to typos and dialectal spelling variants.</li>
+            <li><strong>Linguistically Sound Morphological Boundaries:</strong> Inflections, case markers, and clitic
+              suffixes are detached cleanly rather than creating unnatural cross-morpheme concatenations.</li>
+            <li><strong>Subword Regularization:</strong> SentencePiece Unigram natively supports sampling alternative
+              segmentations during pretraining, improving downstream neural network robustness to typos and dialectal
+              spelling variants.</li>
           </ol>
 
           <h3>Training Configuration</h3>
@@ -454,7 +508,8 @@ print(tokens)</code></pre>
                 <tr>
                   <td><code>byte_fallback</code></td>
                   <td><code>True</code></td>
-                  <td>Decomposes unseen rare Unicode points into UTF-8 bytes; eliminates <code>&lt;unk&gt;</code> tokens.</td>
+                  <td>Decomposes unseen rare Unicode points into UTF-8 bytes; eliminates <code>&lt;unk&gt;</code>
+                    tokens.</td>
                 </tr>
                 <tr>
                   <td><code>normalization_rule_name</code></td>
@@ -480,47 +535,50 @@ print(tokens)</code></pre>
         <section id="repository">
           <h2>Repository Structure</h2>
           <p>
-            The project repository is structured cleanly with separated concerns for training, evaluation, data preparation, documentation, and model artifacts:
+            The project repository is structured cleanly with separated concerns for training, evaluation, data
+            preparation, documentation, and model artifacts:
           </p>
           <div class="repo-tree">sindhi-tokenizer/
-├── configs/                  # Training hyperparameter configurations (YAML)
-│   └── tokenizer_config.yaml
-├── datasets/                 # Corpus preparation and register splits
-│   ├── raw/                  # Source raw texts (ignored from git)
-│   └── processed/            # 1.49M clean normalized training lines
-├── docs/                     # GitHub Pages documentation source
-│   ├── index.html            # Main documentation portal
-│   ├── style.css             # Technical documentation design system
-│   ├── script.js             # Interactive playground and table filters
-│   └── paper.md              # Complete scientific research paper
-├── evaluation/               # Comprehensive evaluation pipeline
-│   ├── benchmark.py          # Benchmark suite runner
-│   ├── metrics.py            # SPMTokenizerAdapter and metric calculators
-│   └── registers/            # 4 evaluation test sets
-├── notebooks/                # Exploratory research notebooks
-│   ├── 01_data_preprocessing.ipynb
-│   ├── 02_tokenizer_training.ipynb
-│   ├── 03_comparative_evaluation.ipynb
-│   └── 04_linguistic_analysis.ipynb
-├── results/                  # Serialized evaluation reports and JSON exports
-│   └── macro_benchmark_results.json
-├── tokenizers/               # Trained SentencePiece binary models & configs
-│   ├── custom_unigram_32k/
-│   ├── custom_unigram_64k/   # Flagship model
-│   ├── custom_unigram_100k/
-│   └── custom_unigram_150k/
-├── training/                 # Production training scripts
-│   ├── train.py              # SentencePiece trainer script
-│   └── preprocessor.py       # Unicode normalization routines
-├── pyproject.toml            # Project packaging specification
-└── README.md                 # Root technical repository documentation</div>
+            ├── configs/ # Training hyperparameter configurations (YAML)
+            │ └── tokenizer_config.yaml
+            ├── datasets/ # Corpus preparation and register splits
+            │ ├── raw/ # Source raw texts (ignored from git)
+            │ └── processed/ # 1.49M clean normalized training lines
+            ├── docs/ # GitHub Pages documentation source
+            │ ├── index.html # Main documentation portal
+            │ ├── style.css # Technical documentation design system
+            │ ├── script.js # Interactive playground and table filters
+            │ └── paper.md # Complete scientific research paper
+            ├── evaluation/ # Comprehensive evaluation pipeline
+            │ ├── benchmark.py # Benchmark suite runner
+            │ ├── metrics.py # SPMTokenizerAdapter and metric calculators
+            │ └── registers/ # 4 evaluation test sets
+            ├── notebooks/ # Exploratory research notebooks
+            │ ├── 01_data_preprocessing.ipynb
+            │ ├── 02_tokenizer_training.ipynb
+            │ ├── 03_comparative_evaluation.ipynb
+            │ └── 04_linguistic_analysis.ipynb
+            ├── results/ # Serialized evaluation reports and JSON exports
+            │ └── macro_benchmark_results.json
+            ├── tokenizers/ # Trained SentencePiece binary models & configs
+            │ ├── custom_unigram_32k/
+            │ ├── custom_unigram_64k/ # Flagship model
+            │ ├── custom_unigram_100k/
+            │ └── custom_unigram_150k/
+            ├── training/ # Production training scripts
+            │ ├── train.py # SentencePiece trainer script
+            │ └── preprocessor.py # Unicode normalization routines
+            ├── pyproject.toml # Project packaging specification
+            └── README.md # Root technical repository documentation</div>
         </section>
 
         <!-- Section: Corpus Composition & Preprocessing -->
         <section id="datasets">
           <h2>Corpus Architecture &amp; Preprocessing</h2>
           <p>
-            The training dataset comprises <strong>1,490,000 deduplicated sentences</strong> (~28.4 million words) collected and curated specifically to prevent domain overfitting. The corpus employs a <strong>70 / 15 / 15 register distribution</strong>:
+            The training dataset comprises <strong>1,490,000 deduplicated sentences</strong> (~28.4 million words)
+            collected and curated specifically to prevent domain overfitting. The corpus employs a <strong>70 / 15 / 15
+              register distribution</strong>:
           </p>
 
           <div class="table-wrap">
@@ -538,19 +596,22 @@ print(tokens)</code></pre>
                   <td><strong>Core Sindhi Monolingual</strong></td>
                   <td>70.0%</td>
                   <td>1,043,000</td>
-                  <td>Sindhi Wikipedia, news portals (Kawish, Awami Awaz), literary prose, governmental gazettes, textbooks. Establishes native Sindhi unigram frequencies.</td>
+                  <td>Sindhi Wikipedia, news portals (Kawish, Awami Awaz), literary prose, governmental gazettes,
+                    textbooks. Establishes native Sindhi unigram frequencies.</td>
                 </tr>
                 <tr>
                   <td><strong>Regional Perso-Arabic Anchor</strong></td>
                   <td>15.0%</td>
                   <td>223,500</td>
-                  <td>Urdu, Arabic, and Persian parallel religious and legal texts. Anchors shared vocabulary to prevent cross-lingual stem shattering.</td>
+                  <td>Urdu, Arabic, and Persian parallel religious and legal texts. Anchors shared vocabulary to prevent
+                    cross-lingual stem shattering.</td>
                 </tr>
                 <tr>
                   <td><strong>Technical &amp; Code-Switched</strong></td>
                   <td>15.0%</td>
                   <td>223,500</td>
-                  <td>Science, computing, mathematics, and English transliterations. Ensures robustness against mixed-script documents and programming syntax.</td>
+                  <td>Science, computing, mathematics, and English transliterations. Ensures robustness against
+                    mixed-script documents and programming syntax.</td>
                 </tr>
               </tbody>
             </table>
@@ -558,7 +619,10 @@ print(tokens)</code></pre>
 
           <h3 id="preprocessing">Text Normalization Pipeline</h3>
           <p>
-            Perso-Arabic script in digital media frequently contains encoding ambiguities resulting from inconsistent keyboard layouts (e.g., Arabic Kaf <span class="sd">ك</span> vs. Sindhi Kaf <span class="sd">ڪ</span>, and Arabic Yeh <span class="sd">ي</span> vs. Farsi Yeh <span class="sd">ی</span>). The preprocessing pipeline enforces standard Sindhi orthography:
+            Perso-Arabic script in digital media frequently contains encoding ambiguities resulting from inconsistent
+            keyboard layouts (e.g., Arabic Kaf <span class="sd">ك</span> vs. Sindhi Kaf <span class="sd">ڪ</span>, and
+            Arabic Yeh <span class="sd">ي</span> vs. Farsi Yeh <span class="sd">ی</span>). The preprocessing pipeline
+            enforces standard Sindhi orthography:
           </p>
           <div class="code-block">
             <div class="code-header">
@@ -593,22 +657,33 @@ def normalize_sindhi(text: str) -> str:
         <section id="eval-methodology">
           <h2>Evaluation Methodology</h2>
           <p>
-            To avoid benchmark bias, evaluation was conducted across four distinct textual registers totaling 40,000 sentences (10,000 sentences per register):
+            To avoid benchmark bias, evaluation was conducted across four distinct textual registers totaling 40,000
+            sentences (10,000 sentences per register):
           </p>
           <ol>
-            <li><strong>Formal Sindhi Prose:</strong> Literary publications, historical archives, and academic texts.</li>
-            <li><strong>Conversational / Social Media:</strong> Informal Facebook, Twitter/X, and forum posts exhibiting colloquial spelling variations.</li>
-            <li><strong>Technical / Educational:</strong> Science, IT, and medical documents containing domain-specific loanwords.</li>
-            <li><strong>FLORES+ Sindhi Benchmark:</strong> Standard Wikipedia translation test split from Meta's FLORES+ suite.</li>
+            <li><strong>Formal Sindhi Prose:</strong> Literary publications, historical archives, and academic texts.
+            </li>
+            <li><strong>Conversational / Social Media:</strong> Informal Facebook, Twitter/X, and forum posts exhibiting
+              colloquial spelling variations.</li>
+            <li><strong>Technical / Educational:</strong> Science, IT, and medical documents containing domain-specific
+              loanwords.</li>
+            <li><strong>FLORES+ Sindhi Benchmark:</strong> Standard Wikipedia translation test split from Meta's FLORES+
+              suite.</li>
           </ol>
 
           <h3>Evaluated Metrics</h3>
           <ul>
-            <li><strong>Subword Fertility (tokens/word) ↓:</strong> Ratio of total generated subwords to whitespace-delimited words. Ideal value approaches 1.0.</li>
-            <li><strong>Single-Token Word % ↑:</strong> Percentage of words in the vocabulary represented as a complete single subword token.</li>
-            <li><strong>Out-of-Vocabulary (UNK) Rate % ↓:</strong> Percentage of input words that trigger an <code>&lt;unk&gt;</code> token. Must be 0.000%.</li>
-            <li><strong>Byte-Fallback Rate % ↓:</strong> Percentage of tokens emitted as raw UTF-8 byte pieces (e.g., <code>&lt;0xD8&gt;</code>).</li>
-            <li><strong>Round-Trip Character Loss % ↓:</strong> Normalized Character Error Rate (CER) between original string $S$ and $S' = \text{decode}(\text{encode}(S))$. Evaluated unconditionally across all registers.</li>
+            <li><strong>Subword Fertility (tokens/word) ↓:</strong> Ratio of total generated subwords to
+              whitespace-delimited words. Ideal value approaches 1.0.</li>
+            <li><strong>Single-Token Word % ↑:</strong> Percentage of words in the vocabulary represented as a complete
+              single subword token.</li>
+            <li><strong>Out-of-Vocabulary (UNK) Rate % ↓:</strong> Percentage of input words that trigger an
+              <code>&lt;unk&gt;</code> token. Must be 0.000%.</li>
+            <li><strong>Byte-Fallback Rate % ↓:</strong> Percentage of tokens emitted as raw UTF-8 byte pieces (e.g.,
+              <code>&lt;0xD8&gt;</code>).</li>
+            <li><strong>Round-Trip Character Loss % ↓:</strong> Normalized Character Error Rate (CER) between original
+              string $S$ and $S' = \text{decode}(\text{encode}(S))$. Evaluated unconditionally across all registers.
+            </li>
           </ul>
         </section>
 
@@ -616,7 +691,8 @@ def normalize_sindhi(text: str) -> str:
         <section id="benchmarks">
           <h2>Macro Benchmark Matrix</h2>
           <p>
-            The table below shows the macro-averaged results across all four evaluation registers for all 17 evaluated tokenizers. Use the filter tabs or search input to isolate specific model classes:
+            The table below shows the macro-averaged results across all four evaluation registers for all 17 evaluated
+            tokenizers. Use the filter tabs or search input to isolate specific model classes:
           </p>
 
           <div class="benchmark-toolbar">
@@ -626,7 +702,8 @@ def normalize_sindhi(text: str) -> str:
               <button class="filter-tab" data-filter="sindhi">Sindhi Baselines (6)</button>
               <button class="filter-tab" data-filter="multilingual">Multilingual Baselines (7)</button>
             </div>
-            <input type="text" id="table-search" class="table-search" placeholder="Filter by model name or notes..." aria-label="Filter benchmark table">
+            <input type="text" id="table-search" class="table-search" placeholder="Filter by model name or notes..."
+              aria-label="Filter benchmark table">
           </div>
 
           <div class="table-wrap">
@@ -650,14 +727,22 @@ def normalize_sindhi(text: str) -> str:
           </div>
 
           <p style="font-size:0.8125rem;color:var(--color-text-faint);margin-top:var(--sp2);">
-            * <em>Note:</em> TinyLlama_Sindhi and FahadQazi_BPE display apparent 0.000% UNK rates because both tokenizers silently drop unsupported Unicode characters from the output rather than emitting an explicit UNK symbol. SindhiLM_v2 is architecturally and numerically identical to Qwen2.5 across all metrics; both are listed for completeness.
+            * <em>Note:</em> TinyLlama_Sindhi and FahadQazi_BPE display apparent 0.000% UNK rates because both
+            tokenizers silently drop unsupported Unicode characters from the output rather than emitting an explicit UNK
+            symbol. SindhiLM_v2 is architecturally and numerically identical to Qwen2.5 across all metrics; both are
+            listed for completeness.
           </p>
 
           <h3>Key Takeaways from the Matrix</h3>
           <ol>
-            <li><strong>Unconditional Superiority at ≥64k:</strong> CustomSindhi (64k, 100k, 150k) outperforms all 13 baseline tokenizers across all 4 registers simultaneously. At 32k, only TinyLlama_Sindhi records lower fertility on the FLORES+ split, but it carries a fatal character-deletion defect.</li>
-            <li><strong>Drastic Multilingual Fragmentation:</strong> LLaMA 3.2 fragments Sindhi at 2.896 tokens per word with 28.5% byte fallback, while BLOOM fragments at 2.627 with 31.7% byte fallback. Our 64k model improves efficiency by 60.4% over LLaMA 3.2.</li>
-            <li><strong>Zero Data Loss:</strong> CustomSindhi achieves an absolute <strong>0.0000% character error rate</strong> across all tested corpora.</li>
+            <li><strong>Unconditional Superiority at ≥64k:</strong> CustomSindhi (64k, 100k, 150k) outperforms all 13
+              baseline tokenizers across all 4 registers simultaneously. At 32k, only TinyLlama_Sindhi records lower
+              fertility on the FLORES+ split, but it carries a fatal character-deletion defect.</li>
+            <li><strong>Drastic Multilingual Fragmentation:</strong> LLaMA 3.2 fragments Sindhi at 2.896 tokens per word
+              with 28.5% byte fallback, while BLOOM fragments at 2.627 with 31.7% byte fallback. Our 64k model improves
+              efficiency by 60.4% over LLaMA 3.2.</li>
+            <li><strong>Zero Data Loss:</strong> CustomSindhi achieves an absolute <strong>0.0000% character error
+                rate</strong> across all tested corpora.</li>
           </ol>
         </section>
 
@@ -665,29 +750,39 @@ def normalize_sindhi(text: str) -> str:
         <section id="defects">
           <h2>Defect Analysis: Character Deletion in Baselines</h2>
           <p>
-            During evaluation, automated round-trip consistency tests ($S \to \text{encode} \to \text{decode} \to S'$) uncovered critical silent data-corruption defects in prominent open-source Sindhi tokenizers:
+            During evaluation, automated round-trip consistency tests ($S \to \text{encode} \to \text{decode} \to S'$)
+            uncovered critical silent data-corruption defects in prominent open-source Sindhi tokenizers:
           </p>
 
           <div class="callout callout-danger">
             <div class="callout-title">Defect 1: TinyLlama_Sindhi Silently Deletes U+06C1 (HEH GOAL)</div>
             <p>
-              <code>TinyLlama_Sindhi</code> (a 42,681-vocab community model) exhibits a <strong>0.4147% worst-case character loss</strong>, corrupting <strong>24.9% of all evaluated Sindhi sentences</strong>. Because the character <span class="sd">ہ</span> (U+06C1) was omitted from its training vocabulary and byte fallback was disabled, the tokenizer deletes the character without warning:
+              <code>TinyLlama_Sindhi</code> (a 42,681-vocab community model) exhibits a <strong>0.4147% worst-case
+                character loss</strong>, corrupting <strong>24.9% of all evaluated Sindhi sentences</strong>. Because
+              the character <span class="sd">ہ</span> (U+06C1) was omitted from its training vocabulary and byte
+              fallback was disabled, the tokenizer deletes the character without warning:
             </p>
             <ul>
               <li>Input: <span class="sd">هي ڪتاب تمام سٺو آهي</span></li>
-              <li>TinyLlama Reconstructed: <span class="sd">ي ڪتاب تمام سٺو آي</span> (<span class="sd">هي</span> corrupted to <span class="sd">ي</span>; <span class="sd">آهي</span> corrupted to <span class="sd">آي</span>)</li>
+              <li>TinyLlama Reconstructed: <span class="sd">ي ڪتاب تمام سٺو آي</span> (<span class="sd">هي</span>
+                corrupted to <span class="sd">ي</span>; <span class="sd">آهي</span> corrupted to <span
+                  class="sd">آي</span>)</li>
             </ul>
           </div>
 
           <div class="callout callout-danger">
             <div class="callout-title">Defect 2: FahadQazi_BPE Silently Deletes ASCII/Latin Characters</div>
             <p>
-              <code>FahadQazi_BPE</code> (a 13,031-vocab BPE model) exhibits a <strong>0.8461% character loss</strong>, corrupting <strong>16.2% of sentences</strong>. It silently discards Latin alphabet characters (A–Z, a–z), destroying URLs, brand names, code snippets, and English loanwords.
+              <code>FahadQazi_BPE</code> (a 13,031-vocab BPE model) exhibits a <strong>0.8461% character loss</strong>,
+              corrupting <strong>16.2% of sentences</strong>. It silently discards Latin alphabet characters (A–Z, a–z),
+              destroying URLs, brand names, code snippets, and English loanwords.
             </p>
           </div>
 
           <p>
-            In contrast, <strong>CustomSindhi models guarantee 100% character preservation</strong>. Every valid Unicode codepoint is either matched by a dedicated subword piece or cleanly decomposed into reversible UTF-8 byte tokens.
+            In contrast, <strong>CustomSindhi models guarantee 100% character preservation</strong>. Every valid Unicode
+            codepoint is either matched by a dedicated subword piece or cleanly decomposed into reversible UTF-8 byte
+            tokens.
           </p>
         </section>
 
@@ -742,7 +837,8 @@ def normalize_sindhi(text: str) -> str:
         <section id="reproducibility">
           <h2>Reproducibility Guide</h2>
           <p>
-            All scripts, configurations, and evaluation harnesses required to reproduce our reported findings are provided in the repository:
+            All scripts, configurations, and evaluation harnesses required to reproduce our reported findings are
+            provided in the repository:
           </p>
 
           <h3>1. Clone Repository and Set Up Environment</h3>
@@ -781,7 +877,8 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
         <section id="citations">
           <h2>Paper &amp; Citation</h2>
           <p>
-            If you utilize this tokenizer, datasets, or benchmark suites in your research, please cite our technical paper (<a href="paper.md">read the complete paper preprint</a>):
+            If you utilize this tokenizer, datasets, or benchmark suites in your research, please cite our technical
+            paper (<a href="paper.md">read the complete paper preprint</a>):
           </p>
 
           <div class="code-block">
@@ -810,7 +907,10 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
                 <span class="faq-chevron">▼</span>
               </button>
               <div class="faq-answer">
-                SentencePiece Unigram operates via global likelihood maximization and subword pruning rather than greedy bottom-up merges. In Sindhi, where prefixes, stems, and pronominal clitic suffixes frequently concatenate, Unigram preserves true morphological roots far more reliably than BPE. Furthermore, Unigram natively supports subword regularization during downstream model training.
+                SentencePiece Unigram operates via global likelihood maximization and subword pruning rather than greedy
+                bottom-up merges. In Sindhi, where prefixes, stems, and pronominal clitic suffixes frequently
+                concatenate, Unigram preserves true morphological roots far more reliably than BPE. Furthermore, Unigram
+                natively supports subword regularization during downstream model training.
               </div>
             </div>
 
@@ -820,7 +920,10 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
                 <span class="faq-chevron">▼</span>
               </button>
               <div class="faq-answer">
-                Our empirical Pareto analysis indicates that expanding vocabulary from 64k to 150k only yields a marginal fertility improvement of 0.022 tokens/word (1.147 to 1.125), while increasing embedding table memory by over 134%. 64k achieves the optimal equilibrium of compact model footprint and single-token word coverage (88.6%).
+                Our empirical Pareto analysis indicates that expanding vocabulary from 64k to 150k only yields a
+                marginal fertility improvement of 0.022 tokens/word (1.147 to 1.125), while increasing embedding table
+                memory by over 134%. 64k achieves the optimal equilibrium of compact model footprint and single-token
+                word coverage (88.6%).
               </div>
             </div>
 
@@ -830,7 +933,10 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
                 <span class="faq-chevron">▼</span>
               </button>
               <div class="faq-answer">
-                When <code>byte_fallback=True</code> is specified in SentencePiece, any character absent from the subword vocabulary is decomposed into its individual raw UTF-8 byte tokens (values from 0x00 to 0xFF). Because every Unicode character has a well-defined UTF-8 byte representation, the model never emits an unknown token symbol and decoding remains perfectly lossless.
+                When <code>byte_fallback=True</code> is specified in SentencePiece, any character absent from the
+                subword vocabulary is decomposed into its individual raw UTF-8 byte tokens (values from 0x00 to 0xFF).
+                Because every Unicode character has a well-defined UTF-8 byte representation, the model never emits an
+                unknown token symbol and decoding remains perfectly lossless.
               </div>
             </div>
 
@@ -840,7 +946,10 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
                 <span class="faq-chevron">▼</span>
               </button>
               <div class="faq-answer">
-                In many legacy Hugging Face tokenizer configurations, missing characters without a mapped UNK token are silently dropped during parsing. This created an illusion of zero unknown tokens while quietly destroying 24.9% of sentences. Our round-trip normalized edit distance test was explicitly designed to expose this silent data loss.
+                In many legacy Hugging Face tokenizer configurations, missing characters without a mapped UNK token are
+                silently dropped during parsing. This created an illusion of zero unknown tokens while quietly
+                destroying 24.9% of sentences. Our round-trip normalized edit distance test was explicitly designed to
+                expose this silent data loss.
               </div>
             </div>
 
@@ -850,7 +959,9 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
                 <span class="faq-chevron">▼</span>
               </button>
               <div class="faq-answer">
-                Yes. The trained <code>.model</code> and Hugging Face <code>tokenizer.json</code> files can be used directly as the base tokenizer or merged with existing multilingual vocabularies using vocabulary expansion techniques (e.g., via <code>transformers.PreTrainedTokenizerFast</code>).
+                Yes. The trained <code>.model</code> and Hugging Face <code>tokenizer.json</code> files can be used
+                directly as the base tokenizer or merged with existing multilingual vocabularies using vocabulary
+                expansion techniques (e.g., via <code>transformers.PreTrainedTokenizerFast</code>).
               </div>
             </div>
           </div>
@@ -860,7 +971,8 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
         <section id="team">
           <h2>Team &amp; Academic Supervision</h2>
           <p>
-            This project was conducted as an academic natural language processing research initiative at the <strong>Department of Computer Science, Shaikh Ayaz University, Shikarpur</strong>.
+            This project was conducted as an academic natural language processing research initiative at the
+            <strong>Department of Computer Science, Shaikh Ayaz University, Shikarpur</strong>.
           </p>
 
           <div class="author-list">
@@ -870,7 +982,8 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
                 <div class="author-name">Ali Nawaz</div>
                 <div class="author-role">Lead NLP Engineer &amp; Researcher</div>
                 <div class="author-links">
-                  <a href="https://github.com/alinawazcode" target="_blank" rel="noopener noreferrer" class="author-link">GitHub @alinawazcode</a>
+                  <a href="https://github.com/alinawazcode" target="_blank" rel="noopener noreferrer"
+                    class="author-link">GitHub @alinawazcode</a>
                 </div>
               </div>
             </div>
@@ -881,7 +994,8 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
                 <div class="author-name">Muqadas Fareed</div>
                 <div class="author-role">NLP Researcher &amp; Data Engineer</div>
                 <div class="author-links">
-                  <a href="https://www.linkedin.com/in/muqadas-fareed-24a07837b/" target="_blank" rel="noopener noreferrer" class="author-link">LinkedIn Profile</a>
+                  <a href="https://www.linkedin.com/in/muqadas-fareed-24a07837b/" target="_blank"
+                    rel="noopener noreferrer" class="author-link">LinkedIn Profile</a>
                 </div>
               </div>
             </div>
@@ -892,7 +1006,8 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
                 <div class="author-name">Soonh Sadaf</div>
                 <div class="author-role">NLP Researcher &amp; Evaluation Engineer</div>
                 <div class="author-links">
-                  <a href="https://www.linkedin.com/in/sadaf-khaliq-a69215411/" target="_blank" rel="noopener noreferrer" class="author-link">LinkedIn Profile</a>
+                  <a href="https://www.linkedin.com/in/sadaf-khaliq-a69215411/" target="_blank"
+                    rel="noopener noreferrer" class="author-link">LinkedIn Profile</a>
                 </div>
               </div>
             </div>
@@ -903,7 +1018,8 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
                 <div class="author-name">Dr. Attaullah Sahito</div>
                 <div class="author-role">Project Supervisor &amp; Associate Professor</div>
                 <div class="author-links">
-                  <a href="https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false" target="_blank" rel="noopener noreferrer" class="author-link">LinkedIn Academic Profile</a>
+                  <a href="https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false" target="_blank"
+                    rel="noopener noreferrer" class="author-link">LinkedIn Academic Profile</a>
                 </div>
               </div>
             </div>
@@ -914,7 +1030,9 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
         <section id="license">
           <h2>License &amp; Attribution</h2>
           <p>
-            The Sindhi Tokenizer codebase, models, and documentation are published under the open-source <strong>Apache License 2.0</strong>. You are free to use, modify, distribute, and commercialize the tokenizers with appropriate academic attribution.
+            The Sindhi Tokenizer codebase, models, and documentation are published under the open-source <strong>Apache
+              License 2.0</strong>. You are free to use, modify, distribute, and commercialize the tokenizers with
+            appropriate academic attribution.
           </p>
         </section>
 
@@ -937,7 +1055,10 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
       <strong>Sindhi Tokenizer Project</strong> — Department of Computer Science, Shaikh Ayaz University, Shikarpur
     </div>
     <div>
-      Maintained by <a href="https://github.com/alinawazcode" target="_blank" rel="noopener noreferrer">Ali Nawaz</a>, Muqadas Fareed, Soonh Sadaf • Supervised by <a href="https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false" target="_blank" rel="noopener noreferrer">Dr. Attaullah Sahito</a>
+      Maintained by <a href="https://github.com/alinawazcode" target="_blank" rel="noopener noreferrer">Ali Nawaz</a>,
+      Muqadas Fareed, Soonh Sadaf • Supervised by <a
+        href="https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false" target="_blank"
+        rel="noopener noreferrer">Dr. Attaullah Sahito</a>
     </div>
   </footer>
 
@@ -947,4 +1068,5 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
   <!-- Scripts -->
   <script src="script.js"></script>
 </body>
+
 </html>
