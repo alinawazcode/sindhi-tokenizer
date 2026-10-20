@@ -1,6 +1,6 @@
 **A Corpus-Driven Sindhi Subword Tokenizer: Design, Empirical Validation, and Benchmark Comparison Against Fourteen Existing Tokenizers**
 
-**Ali Nawaz**¹, **Muqadas Fareed**¹, **Snooh Sadaf (Sadaf Khaliq)**¹
+**Ali Nawaz**¹, **Muqadas Fareed**¹, **Soonh Sadaf (Sadaf Khaliq)**¹
 
 ¹*Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan*
 
@@ -194,7 +194,7 @@ Future work includes: resolving the classical/literary register gap; establishin
 This research and software development were conducted at the Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan, under the supervision and academic guidance of **Dr. Attaullah Sahito** ([LinkedIn](https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false)). The tokenizer engineering and evaluation suite were co-developed by:
 - **Ali Nawaz** (Lead Developer): [GitHub](https://github.com/alinawazcode)
 - **Muqadas Fareed**: [LinkedIn](https://www.linkedin.com/in/muqadas-fareed-24a07837b/)
-- **Snooh Sadaf (Sadaf Khaliq)**: [LinkedIn](https://www.linkedin.com/in/sadaf-khaliq-a69215411/)
+- **Soonh Sadaf (Sadaf Khaliq)**: [LinkedIn](https://www.linkedin.com/in/sadaf-khaliq-a69215411/)
 
 # **References**
 

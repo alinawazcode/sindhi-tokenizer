@@ -226,7 +226,7 @@ with gr.Blocks(title="Sindhi Tokenizer Comparison") as demo:
         "**Sindhi Tokenizer Project** · Developed at Department of Computer Science, Shaikh Ayaz University, Shikarpur\n\n"
         "**Team:** Ali Nawaz ([GitHub](https://github.com/alinawazcode)), "
         "Muqadas Fareed ([LinkedIn](https://www.linkedin.com/in/muqadas-fareed-24a07837b/)), "
-        "Snooh Sadaf ([LinkedIn](https://www.linkedin.com/in/sadaf-khaliq-a69215411/)) · "
+        "Soonh Sadaf ([LinkedIn](https://www.linkedin.com/in/sadaf-khaliq-a69215411/)) · "
         "**Supervision:** [Dr. Attaullah Sahito](https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false)"
     )
 

@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sindhi Tokenizer | State-of-the-Art SentencePiece Unigram Tokenizer for Sindhi</title>
+  
+  <!-- SEO & AEO Meta Tags -->
+  <meta name="description" content="Official documentation and interactive benchmark explorer for the Sindhi Tokenizer. Purpose-built SentencePiece Unigram model with byte-level fallback, 0.000% character loss, and comprehensive evaluation across 18 tokenizers.">
+  <meta name="keywords" content="Sindhi Tokenizer, Sindhi NLP, SentencePiece Unigram, Subword Tokenization, Natural Language Processing, Low Resource Languages, Machine Translation, Perso-Arabic Script">
+  <meta name="author" content="Ali Nawaz, Muqadas Fareed, Soonh Sadaf, Dr. Attaullah Sahito">
+  
+  <!-- Open Graph / Social Preview -->
+  <meta property="og:title" content="Sindhi Tokenizer - SentencePiece Unigram Subword Model">
+  <meta property="og:description" content="Production-grade Sindhi subword tokenizer with 100% character coverage, byte fallback, and 0.0000% character loss benchmarked against 14 baseline tokenizers.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://alinawazcode.github.io/sindhi-tokenizer/">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header class="top-header">
+    <a href="#" class="brand">
+      <div class="brand-icon">س</div>
+      <div>
+        <div class="brand-title">Sindhi Tokenizer</div>
+      </div>
+      <span class="brand-badge">v1.0 Flagship (64k)</span>
+    </a>
+
+    <div class="header-actions">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="site-search" placeholder="Search documentation...">
+      </div>
+
+      <button id="theme-toggle" class="btn-icon" title="Toggle Theme" aria-label="Toggle dark/light theme">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      </button>
+
+      <a href="https://huggingface.co/alinawazmahar/sindhi-tokenizer" target="_blank" rel="noopener noreferrer" class="btn-icon" title="Hugging Face Model Hub">
+        <span style="font-size: 1.15rem;">🤗</span>
+      </a>
+
+      <a href="https://github.com/alinawazcode/sindhi-tokenizer" target="_blank" rel="noopener noreferrer" class="btn-link-gh">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        GitHub
+      </a>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="nav-group-title">Documentation</div>
+      <a href="#overview" class="nav-link active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        Overview
+      </a>
+      <a href="#playground" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        Live Playground
+        <span class="nav-badge">Interactive</span>
+      </a>
+      <a href="#benchmarks" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        Benchmark Matrix
+      </a>
+      <a href="#linguistics" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        Linguistics & Morphemes
+      </a>
+
+      <div class="nav-group-title">Corpus & Pipeline</div>
+      <a href="#datasets" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+        Corpus & Datasets
+      </a>
+      <a href="#methodology" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        Training Pipeline
+      </a>
+
+      <div class="nav-group-title">Integration</div>
+      <a href="#usage" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        Quickstart & Python API
+      </a>
+      <a href="#downstream" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+        Downstream NLP
+      </a>
+      <a href="#repository-map" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        Repository Index
+      </a>
+
+      <div class="nav-group-title">Research & Team</div>
+      <a href="#team" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Team & Supervision
+      </a>
+      <a href="#citation" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Citation & License
+      </a>
+      <a href="#faq" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        FAQ
+      </a>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      
+      <!-- Hero Section -->
+      <section class="hero-section" id="overview">
+        <div class="badge-row">
+          <span class="meta-badge">SentencePiece Unigram</span>
+          <span class="meta-badge emerald">100% Lossless Character Fidelity</span>
+          <span class="meta-badge">1.46M+ Sentence Corpus</span>
+          <span class="meta-badge">18-Model Benchmark</span>
+        </div>
+
+        <h1 class="hero-title">
+          A Corpus-Driven Subword Tokenizer for <span class="gradient-text">Sindhi</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Purpose-built for the extended Perso-Arabic alphabet (سنڌي). Eliminates severe token fragmentation, out-of-vocabulary fallback, and silent character deletion across all four independent evaluation registers.
+        </p>
+
+        <div class="hero-cta">
+          <a href="#playground" class="btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            Try Live Playground
+          </a>
+          <a href="https://huggingface.co/alinawazmahar/sindhi-tokenizer" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+            🤗 Download Models (HF)
+          </a>
+          <a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/docs/paper.md" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+            📄 Read Academic Paper
+          </a>
+        </div>
+
+        <!-- Metric Stat Cards -->
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-value highlight">1.147</div>
+            <div class="stat-label">Fertility (Tokens / Word)</div>
+            <div class="stat-desc">60.4% lower sequence length than LLaMA 3.2; 24.1% better than XLM-R</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value highlight">88.6%</div>
+            <div class="stat-label">Single-Token Words</div>
+            <div class="stat-desc">Words preserved intact as single lexical units without over-splitting</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value highlight">0.0000%</div>
+            <div class="stat-label">Character Drop Loss</div>
+            <div class="stat-desc">100% round-trip fidelity with byte-level fallback protection</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">64,000</div>
+            <div class="stat-label">Flagship Vocab Size</div>
+            <div class="stat-desc">Empirical sweet spot balancing fertility with parameter size</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Interactive Tokenizer Playground -->
+      <section class="doc-section" id="playground">
+        <span class="section-tag">Interactive Simulation</span>
+        <h2 class="section-title">Subword Tokenization Playground</h2>
+        <p class="section-lead">
+          Inspect how different tokenizers break down authentic Sindhi text. Compare the flagship Custom 64k Unigram model against baseline multilingual LLM architectures and Sindhi-adapted models.
+        </p>
+
+        <div class="playground-container">
+          <div class="playground-controls">
+            <div class="form-group">
+              <label class="form-label" for="sindhi-input">Sindhi Input Sentence</label>
+              <textarea id="sindhi-input" class="form-textarea" rows="2" placeholder="هتي سنڌي جملو لکو..."></textarea>
+              <div class="sample-pills" id="sample-pills"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="model-select">Select Tokenizer Model</label>
+              <select id="model-select" class="form-select">
+                <option value="custom_64k" selected>Custom Sindhi 64k (Unigram Flagship)</option>
+                <option value="tinyllama">TinyLlama Sindhi (42k vocab)</option>
+                <option value="xlm_roberta">XLM-RoBERTa Base (250k vocab)</option>
+                <option value="llama3">LLaMA 3.2 Multilingual (128k vocab)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Token Visualization Chip Container -->
+          <div class="form-group">
+            <label class="form-label">Subword Token Segmentation (Color-Coded Chips)</label>
+            <div class="token-output-box" id="token-box"></div>
+          </div>
+
+          <!-- Dynamic Stats -->
+          <div class="playground-stats">
+            <div class="pg-stat-item">
+              <div class="pg-stat-val" id="stat-tokens">0</div>
+              <div class="pg-stat-lbl">Tokens Generated</div>
+            </div>
+            <div class="pg-stat-item">
+              <div class="pg-stat-val" id="stat-words">0</div>
+              <div class="pg-stat-lbl">Original Words</div>
+            </div>
+            <div class="pg-stat-item">
+              <div class="pg-stat-val" id="stat-fertility">0.00</div>
+              <div class="pg-stat-lbl">Fertility Ratio</div>
+            </div>
+            <div class="pg-stat-item">
+              <div class="pg-stat-val" id="stat-fidelity" style="color: var(--accent-emerald);">100%</div>
+              <div class="pg-stat-lbl">Round-Trip Fidelity</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-info">
+          <div>
+            <div class="callout-title">Why Subword Fragmentation Matters</div>
+            <div class="callout-content">
+              Notice how LLaMA 3.2 fragments Sindhi words into individual characters and whitespace tokens, consuming up to 3× more context window space. Custom 64k preserves stems, prefixes, and loanwords intact.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Comprehensive Benchmark Matrix -->
+      <section class="doc-section" id="benchmarks">
+        <span class="section-tag">Empirical Results</span>
+        <h2 class="section-title">Macro Benchmark Matrix (18 Models)</h2>
+        <p class="section-lead">
+          Evaluated at full scale across four independent registers: <strong>FLORES+ (snd_Arab)</strong>, <strong>Wikipedia Formal</strong> (25,480 sentences), <strong>Sentiment Informal</strong> (3,536 sentences), and <strong>Sindh Line Daily News</strong> (87,158 sentences).
+        </p>
+
+        <div class="benchmark-toolbar">
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">All Models</button>
+            <button class="filter-tab" data-filter="custom">Custom Models</button>
+            <button class="filter-tab" data-filter="sindhi">Sindhi Baselines</button>
+            <button class="filter-tab" data-filter="multilingual">Multilingual LLMs</button>
+          </div>
+
+          <div class="search-box" style="width: 220px;">
+            <input type="text" id="table-search" placeholder="Filter table...">
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Vocab Size</th>
+                <th>Fertility ↓</th>
+                <th>Single-Token % ↑</th>
+                <th>UNK Rate % ↓</th>
+                <th>Worst Round-Trip Loss ↓</th>
+                <th>Diagnostic Notes</th>
+              </tr>
+            </thead>
+            <tbody id="benchmark-tbody">
+              <!-- Rendered dynamically by script.js -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout callout-danger" style="margin-top: 1.5rem;">
+          <div>
+            <div class="callout-title">Critical Data Integrity Defect Discovered</div>
+            <div class="callout-content">
+              <strong>TinyLlama_Sindhi</strong> silently deletes native Sindhi letter <code>U+06C1</code> (HEH GOAL) and corrupts text formatted with Arabic presentation forms, altering up to <strong>24.9% of sentences</strong> in FLORES+. <strong>FahadQazi_BPE</strong> silently drops Latin characters in code-switched text (corrupting 16.2% of Wikipedia sentences). Custom models prevent this via full character coverage and byte fallback.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Linguistic & Morpheme Analysis -->
+      <section class="doc-section" id="linguistics">
+        <span class="section-tag">Linguistic Validation</span>
+        <h2 class="section-title">Targeted 22-Word Morpheme Suite</h2>
+        <p class="section-lead">
+          To verify that vocabulary expansion did not simply memorize high-frequency fragments, all candidate models were evaluated against a targeted linguistic test suite across four orthographic categories:
+        </p>
+
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-title">1. Genitive Postpositions</div>
+            <div class="card-desc">
+              Words like <span class="sindhi-text">دنيا جو</span>, <span class="sindhi-text">خدا جو</span>, and <span class="sindhi-text">پاڻي جي</span> are cleanly segmented into the base noun and the clitic postposition without corrupting word boundaries.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">2. Inflectional Suffixes</div>
+            <div class="card-desc">
+              Plurals and case inflections such as <span class="sindhi-text">ڪتابن</span>, <span class="sindhi-text">شهرن</span>, and <span class="sindhi-text">توهانڪي</span> are preserved as single intact tokens in 64k models.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">3. Digraphs & Implosives</div>
+            <div class="card-desc">
+              Letters unique to Sindhi (<span class="sindhi-text">ٻ, ڄ, ڏ, ڳ, ڀ, ٿ, ڇ, ٺ, ڻ</span>) are never fragmented into isolated base letters or raw byte errors.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">4. Borrowed Loanwords</div>
+            <div class="card-desc">
+              Technical terms (<span class="sindhi-text">ڪمپيوٽر</span>, <span class="sindhi-text">انٽرنيٽ</span>, <span class="sindhi-text">اسڪول</span>) remain whole words thanks to the 15% regional language anchor.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Corpus & Datasets -->
+      <section class="doc-section" id="datasets">
+        <span class="section-tag">Data Architecture</span>
+        <h2 class="section-title">Training Corpus & Benchmark Datasets</h2>
+        <p class="section-lead">
+          The 1.46M+ sentence training corpus was assembled to ensure true non-overlapping genre diversity. See <a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/DATA_SOURCES.md" target="_blank" rel="noopener noreferrer">DATA_SOURCES.md</a> for provenance and license details.
+        </p>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Corpus Source</th>
+                <th>Volume</th>
+                <th>Role</th>
+                <th>Cleaning & Normalization Rules</th>
+                <th>License</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Sindhi Wikipedia</strong> (<code>20231101.sd</code>)</td>
+                <td>6,000 articles</td>
+                <td>Training</td>
+                <td>Articles 2,001–8,000 (first 2k reserved for test). Filtered to 3–100 words.</td>
+                <td>CC BY-SA 3.0</td>
+              </tr>
+              <tr>
+                <td><strong>Sindhi-NLP Dataset</strong></td>
+                <td>4 CSV sets</td>
+                <td>Training</td>
+                <td>Kawish & Awami Awaz newspapers + Twitter discourse.</td>
+                <td>MIT</td>
+              </tr>
+              <tr>
+                <td><strong>shaikhsalman Corpus</strong></td>
+                <td>20,000 rows</td>
+                <td>Training</td>
+                <td>Seed 7 shuffle. Filtered out sentences with >30% Latin characters.</td>
+                <td>Research-only</td>
+              </tr>
+              <tr>
+                <td><strong>Multilingual Anchor</strong> (Urdu, Persian, Arabic)</td>
+                <td>1,500 articles each</td>
+                <td>Training</td>
+                <td>Calibrated to 15% of total corpus characters to prevent loanword fragmentation.</td>
+                <td>CC BY-SA 3.0</td>
+              </tr>
+              <tr>
+                <td><strong>FLORES+ (<code>snd_Arab</code>)</strong></td>
+                <td>1,012 sentences</td>
+                <td>Evaluation</td>
+                <td>Canonical cross-lingual benchmark anchor.</td>
+                <td>CC BY-SA 4.0</td>
+              </tr>
+              <tr>
+                <td><strong>Sindh Line News</strong></td>
+                <td>87,158 sentences</td>
+                <td>Evaluation</td>
+                <td>Contemporary daily journalism corpus via Mozilla Data Collective.</td>
+                <td>CC BY-SA 4.0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section: Training Pipeline -->
+      <section class="doc-section" id="methodology">
+        <span class="section-tag">Methodology</span>
+        <h2 class="section-title">Training Pipeline & Negative Findings</h2>
+        <p class="section-lead">
+          Trained with the optimal SentencePiece Unigram objective. Standalone script available at <a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/training/train_tokenizer.py" target="_blank" rel="noopener noreferrer"><code>training/train_tokenizer.py</code></a>.
+        </p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <span>training/train_tokenizer.py</span>
+            <button class="btn-copy" data-target="#code-train">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              Copy
+            </button>
+          </div>
+          <pre id="code-train"><code>python training/train_tokenizer.py \
+  --corpus data/corpus.txt \
+  --vocab_size 64000 \
+  --model_prefix models/sindhi_custom_64000 \
+  --character_coverage 1.0 \
+  --byte_fallback True \
+  --split_by_whitespace True</code></pre>
+        </div>
+
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-title">Negative Result: Forced Tokens</div>
+            <div class="card-desc">
+              Forcing common postpositions (<span class="sindhi-text">جو, جي, کي</span>) to remain single tokens degraded the training objective (perplexity rose from 9.6 unforced to 14.9 forced at 32k). Unconstrained Unigram naturally discovers superior subword distributions.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Negative Result: Clitic Splitting</div>
+            <div class="card-desc">
+              Rule-based whitespace separation of supposed clitics proved harmful. Empirical auditing revealed that suspected "fused forms" were simply incidental grapheme sequences inside legitimate root nouns.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Quickstart & Python API -->
+      <section class="doc-section" id="usage">
+        <span class="section-tag">Developer Guide</span>
+        <h2 class="section-title">Installation & Quickstart</h2>
+        <p class="section-lead">
+          Load models directly from the Hugging Face Hub or use the local <code>SPMTokenizerAdapter</code> wrapper.
+        </p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <span>Terminal</span>
+            <button class="btn-copy" data-target="#code-pip">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              Copy
+            </button>
+          </div>
+          <pre id="code-pip"><code>pip install sentencepiece transformers huggingface_hub</code></pre>
+        </div>
+
+        <div class="code-container">
+          <div class="code-header">
+            <span>Python Script</span>
+            <button class="btn-copy" data-target="#code-py">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              Copy
+            </button>
+          </div>
+          <pre id="code-py"><code>from huggingface_hub import hf_hub_download
+import sentencepiece as spm
+
+# Download the recommended 64k flagship model from Hugging Face
+model_path = hf_hub_download(
+    repo_id="alinawazmahar/sindhi-tokenizer", 
+    filename="sindhi_custom_64000.model"
+)
+
+# Initialize SentencePiece Processor
+sp = spm.SentencePieceProcessor(model_file=model_path)
+
+text = "خداوند ڪريم کيس اعليٰ ذهانت سان نوازيو هو"
+
+# Encode to subword tokens & token IDs
+tokens = sp.encode(text, out_type=str)
+token_ids = sp.encode(text, out_type=int)
+
+print("Subword Tokens:", tokens)
+print("Token IDs:", token_ids)
+print("Decoded Text:", sp.decode(token_ids))</code></pre>
+        </div>
+
+        <div class="callout callout-warning">
+          <div>
+            <div class="callout-title">Important Note on Transformers LlamaTokenizer</div>
+            <div class="callout-content">
+              Do not use <code>transformers.LlamaTokenizer</code> to load the <code>.model</code> file directly: it can silently fail on custom SentencePiece Unigram models and return a 3-token vocabulary. Always use <code>spm.SentencePieceProcessor</code> or the provided <code>SPMTokenizerAdapter</code> in <a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/evaluation/metrics.py" target="_blank" rel="noopener noreferrer"><code>evaluation/metrics.py</code></a>.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Downstream NLP Applications -->
+      <section class="doc-section" id="downstream">
+        <span class="section-tag">Applications</span>
+        <h2 class="section-title">Downstream NLP Applications</h2>
+        <p class="section-lead">
+          Optimizing subword fertility directly translates to dramatic efficiency gains in downstream transformer architectures:
+        </p>
+
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-title">Sindhi Large Language Models (LLMs)</div>
+            <div class="card-desc">
+              By reducing tokens per word from 2.89 (LLaMA) to 1.14, context windows can fit up to <strong>2.5× more text</strong>, halving computational pretraining costs.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Machine Translation</div>
+            <div class="card-desc">
+              Retains proper clitic and postposition boundaries, preventing hallucinations on inflectional affixes.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Sentiment & Text Classification</div>
+            <div class="card-desc">
+              Preserves emotional valence markers and full grammatical particles without scattering them across fragmented byte tokens.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Named Entity Recognition (NER)</div>
+            <div class="card-desc">
+              Eliminates the character-drop failure modes observed in competing models that corrupt person and location names.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Repository Architecture Map -->
+      <section class="doc-section" id="repository-map">
+        <span class="section-tag">Codebase Index</span>
+        <h2 class="section-title">Repository Architecture & Source Links</h2>
+        <p class="section-lead">
+          Navigate directly to verified source files in the GitHub repository:
+        </p>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>File / Module</th>
+                <th>Repository Location</th>
+                <th>Description</th>
+                <th>Source Link</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Academic Paper</strong></td>
+                <td><code>docs/paper.md</code></td>
+                <td>Formal research paper describing benchmark study and results</td>
+                <td><a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/docs/paper.md" target="_blank" rel="noopener noreferrer">View Source</a></td>
+              </tr>
+              <tr>
+                <td><strong>Technical Explainer</strong></td>
+                <td><code>docs/explainer.md</code></td>
+                <td>21-page companion log detailing negative findings & corrections</td>
+                <td><a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/docs/explainer.md" target="_blank" rel="noopener noreferrer">View Source</a></td>
+              </tr>
+              <tr>
+                <td><strong>Evaluation Metrics</strong></td>
+                <td><code>evaluation/metrics.py</code></td>
+                <td>Evaluation engine (fertility, single-token, UNK, byte fallback, fidelity)</td>
+                <td><a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/evaluation/metrics.py" target="_blank" rel="noopener noreferrer">View Source</a></td>
+              </tr>
+              <tr>
+                <td><strong>Training Pipeline</strong></td>
+                <td><code>training/train_tokenizer.py</code></td>
+                <td>SentencePiece Unigram training script with verified flags</td>
+                <td><a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/training/train_tokenizer.py" target="_blank" rel="noopener noreferrer">View Source</a></td>
+              </tr>
+              <tr>
+                <td><strong>Interactive App</strong></td>
+                <td><code>demo/app.py</code></td>
+                <td>Streamlit / Gradio live multi-model comparison web app</td>
+                <td><a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/demo/app.py" target="_blank" rel="noopener noreferrer">View Source</a></td>
+              </tr>
+              <tr>
+                <td><strong>Dataset Card</strong></td>
+                <td><code>DATA_SOURCES.md</code></td>
+                <td>Complete dataset provenance, volumes, and license documentation</td>
+                <td><a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/DATA_SOURCES.md" target="_blank" rel="noopener noreferrer">View Source</a></td>
+              </tr>
+              <tr>
+                <td><strong>Packaging Metadata</strong></td>
+                <td><code>pyproject.toml</code></td>
+                <td>Standard PEP 517/621 packaging and dependency manifest</td>
+                <td><a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/pyproject.toml" target="_blank" rel="noopener noreferrer">View Source</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section: Team & Supervision -->
+      <section class="doc-section" id="team">
+        <span class="section-tag">Authors & Guidance</span>
+        <h2 class="section-title">Research Team & Supervision</h2>
+        <p class="section-lead">
+          Developed at the Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan:
+        </p>
+
+        <div class="team-grid">
+          <div class="team-card">
+            <div class="team-avatar">AN</div>
+            <div class="team-name">Ali Nawaz</div>
+            <div class="team-role">Lead Developer & Researcher</div>
+            <div class="team-affil">Shaikh Ayaz University, Shikarpur</div>
+            <div class="team-links">
+              <a href="https://github.com/alinawazcode" target="_blank" rel="noopener noreferrer" class="btn-icon" title="GitHub">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="team-card">
+            <div class="team-avatar">MF</div>
+            <div class="team-name">Muqadas Fareed</div>
+            <div class="team-role">Researcher & Co-Author</div>
+            <div class="team-affil">Shaikh Ayaz University, Shikarpur</div>
+            <div class="team-links">
+              <a href="https://www.linkedin.com/in/muqadas-fareed-24a07837b/" target="_blank" rel="noopener noreferrer" class="btn-icon" title="LinkedIn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="team-card">
+            <div class="team-avatar">SS</div>
+            <div class="team-name">Soonh Sadaf</div>
+            <div class="team-role">Researcher & Co-Author</div>
+            <div class="team-affil">Shaikh Ayaz University, Shikarpur</div>
+            <div class="team-links">
+              <a href="https://www.linkedin.com/in/sadaf-khaliq-a69215411/" target="_blank" rel="noopener noreferrer" class="btn-icon" title="LinkedIn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="team-card">
+            <div class="team-avatar" style="background: linear-gradient(135deg, #10b981, #0284c7);">AS</div>
+            <div class="team-name">Dr. Attaullah Sahito</div>
+            <div class="team-role">Academic Supervisor</div>
+            <div class="team-affil">Department of Computer Science</div>
+            <div class="team-links">
+              <a href="https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false" target="_blank" rel="noopener noreferrer" class="btn-icon" title="LinkedIn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Citation & License -->
+      <section class="doc-section" id="citation">
+        <span class="section-tag">Academic Reference</span>
+        <h2 class="section-title">Citation & Licensing</h2>
+        <p class="section-lead">
+          If you utilize this tokenizer, benchmark numbers, or code in your research, please cite our work:
+        </p>
+
+        <div class="code-container">
+          <div class="code-header">
+            <span>BibTeX Citation</span>
+            <button class="btn-copy" data-target="#code-bib">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              Copy
+            </button>
+          </div>
+          <pre id="code-bib"><code>@misc{nawaz2026sindhitokenizer,
+  author = {Nawaz, Ali and Fareed, Muqadas and Sadaf, Soonh and Sahito, Attaullah},
+  title  = {Sindhi Tokenizer: A Corpus-Driven SentencePiece Unigram Tokenizer for Sindhi, Benchmarked Against 14 Existing Tokenizers},
+  year   = {2026},
+  howpublished = {\url{https://github.com/alinawazcode/sindhi-tokenizer}},
+  note   = {Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan}
+}</code></pre>
+        </div>
+
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 1rem;">
+          Code licensed under <a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT</a>. Trained tokenizer models hosted on Hugging Face licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>.
+        </p>
+      </section>
+
+      <!-- Section: FAQ -->
+      <section class="doc-section" id="faq">
+        <span class="section-tag">Common Inquiries</span>
+        <h2 class="section-title">Frequently Asked Questions (FAQ)</h2>
+
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Why choose the 64k model over 32k or 150k?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+              The 64,000 vocabulary size represents the empirical sweet spot between fertility efficiency (1.147 tokens/word) and embedding matrix parameter overhead. The 150k model provides marginal fertility gains (1.103) while doubling embedding weight size, and the 32k model exhibits one minor loss on the standardized FLORES+ benchmark.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>How does the round-trip character fidelity check operate?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+              It normalizes test sentences using Unicode NFKC, strips formatting marks, encodes the text to tokens, decodes it back to a string, and computes character loss. This revealed that TinyLlama silently drops native letter U+06C1 and FahadQazi BPE deletes Latin letters, whereas our model achieves 0.0000% character drop.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Why is there a 15% mix of Urdu, Persian, and Arabic in the corpus?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+              Sindhi shares extensive religious, legal, and cultural vocabulary with Persian, Arabic, and Urdu. Without a controlled 15% regional anchor, shared loanwords frequently shatter into single-character fragments.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Can this tokenizer handle code-switched English text?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+              Yes. SentencePiece byte-fallback with 1.0 character coverage guarantees that Latin letters, numerals, and punctuation decompose into valid UTF-8 byte tokens rather than triggering unknown token errors or silent deletions.
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <strong>Sindhi Tokenizer Project</strong> · Department of Computer Science, Shaikh Ayaz University, Shikarpur
+      </div>
+      <div>
+        Maintained by <a href="https://github.com/alinawazcode" target="_blank" rel="noopener noreferrer" style="color: var(--text-accent);">Ali Nawaz</a>, Muqadas Fareed, Soonh Sadaf · Supervised by Dr. Attaullah Sahito
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-notice"></div>
+
+  <!-- JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>

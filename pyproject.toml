@@ -10,7 +10,7 @@ readme = "README.md"
 authors = [
   { name = "Ali Nawaz" },
   { name = "Muqadas Fareed" },
-  { name = "Snooh Sadaf" }
+  { name = "Soonh Sadaf" }
 ]
 license = { text = "MIT" }
 keywords = ["sindhi", "tokenizer", "sentencepiece", "unigram", "nlp", "low-resource-languages"]
