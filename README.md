@@ -101,13 +101,19 @@ The training corpus is not included in this repo. `training/README.md` explains 
 
 ```bibtex
 @misc{nawaz2026sindhitokenizer,
-  author = {Nawaz, Ali},
+  author = {Nawaz, Ali and Fareed, Muqadas and Sadaf, Snooh and Sahito, Attaullah},
   title  = {Sindhi Tokenizer: a SentencePiece Unigram tokenizer for Sindhi, benchmarked against 14 existing tokenizers},
   year   = {2026},
-  howpublished = {\url{https://github.com/Ali-Nawaz-devt/sindhi-tokenizer}}
+  howpublished = {\url{https://github.com/alinawazcode/sindhi-tokenizer}}
 }
 ```
 
-## Acknowledgments
+## Team & Acknowledgments
 
-Developed at the Department of Computer Science, Shaikh Ayaz University, under the supervision of Engr. Attaullah Sahito.
+This project was developed at the Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan, under the supervision of **Dr. Attaullah Sahito** ([LinkedIn](https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false)).
+
+### Authors & Contributors
+- **Ali Nawaz** (Lead Developer): [GitHub (@alinawazcode)](https://github.com/alinawazcode)
+- **Muqadas Fareed**: [LinkedIn](https://www.linkedin.com/in/muqadas-fareed-24a07837b/)
+- **Snooh Sadaf (Sadaf Khaliq)**: [LinkedIn](https://www.linkedin.com/in/sadaf-khaliq-a69215411/)
+

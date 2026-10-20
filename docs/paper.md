@@ -1,8 +1,8 @@
 **A Corpus-Driven Sindhi Subword Tokenizer: Design, Empirical Validation, and Benchmark Comparison Against Fourteen Existing Tokenizers**
 
-Ali Nawaz
+**Ali Nawaz**¹, **Muqadas Fareed**¹, **Snooh Sadaf (Sadaf Khaliq)**¹
 
-*Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan*
+¹*Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan*
 
 *Supervised by Dr. Attaullah Sahito*
 
@@ -188,6 +188,13 @@ The byte-fallback detection correction made earlier in this project (Section 7) 
 We presented a new Sindhi subword tokenizer trained on a broad, multi-source, deliberately non-overlapping corpus, and validated it against fourteen existing tokenizers across four full-scale evaluation registers, five quantitative metrics, and a targeted linguistic test set. At vocabulary sizes of 64,000 and above the tokenizer achieves a clean sweep with no exceptions; at 32,000 one exception exists against a fine-tuned competitor on one register. Round-trip fidelity testing, introduced in this work after discovering a real defect in a competitor, found zero measurable content loss in the new tokenizer and two distinct, real defects in competitors that standard metrics alone would have missed entirely.
 
 Future work includes: resolving the classical/literary register gap; establishing full independence between the Sentiment evaluation register and the training corpus; selecting a text-to-speech architecture and determining whether this tokenizer\'s subword representation is appropriate for it; running a final discoverability check for additional Sindhi tokenizers immediately before publication; and, pending a data-source licensing review, publishing the tokenizer and accompanying model card.
+
+# **Acknowledgments** {#acknowledgments}
+
+This research and software development were conducted at the Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan, under the supervision and academic guidance of **Dr. Attaullah Sahito** ([LinkedIn](https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false)). The tokenizer engineering and evaluation suite were co-developed by:
+- **Ali Nawaz** (Lead Developer): [GitHub](https://github.com/alinawazcode)
+- **Muqadas Fareed**: [LinkedIn](https://www.linkedin.com/in/muqadas-fareed-24a07837b/)
+- **Snooh Sadaf (Sadaf Khaliq)**: [LinkedIn](https://www.linkedin.com/in/sadaf-khaliq-a69215411/)
 
 # **References**
 

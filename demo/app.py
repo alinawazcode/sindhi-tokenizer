@@ -221,6 +221,14 @@ with gr.Blocks(title="Sindhi Tokenizer Comparison") as demo:
     compare_btn = gr.Button("Compare", variant="primary")
     output = gr.Markdown()
     compare_btn.click(fn=compare_tokenizers, inputs=[sentence_input, model_selector], outputs=output)
+    gr.Markdown(
+        "---\n"
+        "**Sindhi Tokenizer Project** · Developed at Department of Computer Science, Shaikh Ayaz University, Shikarpur\n\n"
+        "**Team:** Ali Nawaz ([GitHub](https://github.com/alinawazcode)), "
+        "Muqadas Fareed ([LinkedIn](https://www.linkedin.com/in/muqadas-fareed-24a07837b/)), "
+        "Snooh Sadaf ([LinkedIn](https://www.linkedin.com/in/sadaf-khaliq-a69215411/)) · "
+        "**Supervision:** [Dr. Attaullah Sahito](https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false)"
+    )
 
 if __name__ == "__main__":
     demo.launch()

@@ -8,7 +8,9 @@ version = "1.0.0"
 description = "A SentencePiece Unigram tokenizer purpose-built for the Sindhi language with byte-fallback and full character coverage."
 readme = "README.md"
 authors = [
-  { name = "Ali Nawaz" }
+  { name = "Ali Nawaz" },
+  { name = "Muqadas Fareed" },
+  { name = "Snooh Sadaf" }
 ]
 license = { text = "MIT" }
 keywords = ["sindhi", "tokenizer", "sentencepiece", "unigram", "nlp", "low-resource-languages"]
@@ -35,8 +37,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Ali-Nawaz-devt/sindhi-tokenizer"
-Repository = "https://github.com/Ali-Nawaz-devt/sindhi-tokenizer"
+Homepage = "https://github.com/alinawazcode/sindhi-tokenizer"
+Repository = "https://github.com/alinawazcode/sindhi-tokenizer"
 Models = "https://huggingface.co/alinawazmahar/sindhi-tokenizer"
 
 [tool.setuptools.packages.find]
