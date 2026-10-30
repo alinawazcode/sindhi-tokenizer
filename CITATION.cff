@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this tokenizer or code, please cite it as below."
-title: "Sindhi Tokenizer: a SentencePiece Unigram tokenizer for Sindhi, benchmarked against 14 existing tokenizers"
+title: "Sindhi Tokenizer: SentencePiece Unigram tokenizer for Sindhi with a draft 14-baseline benchmark study"
 type: software
 authors:
   - family-names: "Nawaz"
@@ -18,7 +18,7 @@ authors:
 repository-code: "https://github.com/alinawazcode/sindhi-tokenizer"
 url: "https://huggingface.co/alinawazmahar/sindhi-tokenizer"
 license: MIT
-abstract: "A subword tokenizer for Sindhi trained with SentencePiece Unigram and byte-level fallback, benchmarked at full scale against 14 existing tokenizers on four test sets, with a round-trip fidelity check for tokenizers that silently delete characters."
+abstract: "A SentencePiece Unigram tokenizer for Sindhi with byte fallback, evaluated against 14 baseline tokenizers across four test sets. The associated manuscript is a draft for future publication and has not yet been published."
 keywords:
   - sindhi
   - tokenizer

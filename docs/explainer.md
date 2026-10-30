@@ -32,7 +32,7 @@ Start here, because the goal at the end is not the goal we started with, and tha
 
 The project started as: build a Sindhi tokenizer that beats every existing tokenizer on every metric. That goal was rejected early --- not because it was unambitious, but because it was incoherent. Metrics trade off against each other by construction: a tokenizer tuned for low fertility on one register (XLM-RoBERTa\'s huge vocabulary, for example) will not automatically also have the lowest UNK rate, the lowest byte-fallback rate, AND the best performance on rare proper nouns. You can\'t maximize five things that pull against each other at once; you can only find the best achievable balance and report it honestly.
 
-The goal was then narrowed and made concrete: build a general-purpose Sindhi subword tokenizer, benchmark it rigorously and honestly against everything else that exists, and publish both the tokenizer and the full benchmark. Two downstream uses were considered and explicitly ruled out along the way:
+The goal was then narrowed and made concrete: build a general-purpose Sindhi subword tokenizer, benchmark it rigorously and honestly against available alternatives, and publish the tokenizer with a full benchmark. The tokenizer is hosted publicly; the associated paper is a draft for future publication and has not yet been published. Two downstream uses were considered and explicitly ruled out along the way:
 
 - Speech recognition (ASR): ruled out early. Whisper, the ASR system already in use, has its own fixed tokenizer baked into the trained model. A better standalone tokenizer can\'t plug into it without retraining the whole ASR model from scratch --- a completely different, much bigger project.
 
@@ -82,9 +82,9 @@ Source: the same wikimedia/wikipedia dataset, but the Urdu, Persian, and Arabic 
 
 25,480 sentences (435,947 words), after cleaning. The raw Wikipedia text was first split into sentences with a simple rule-based splitter, which produced some junk: short fragments like page titles ("List of all pages beginning with \'Pakistani\'") and the occasional very long unsplit block. A filter was added --- keep only sentences with between 3 and 100 words --- which removed both extremes. This exact definition was used consistently everywhere in the project after it was introduced; early on there was a real inconsistency where two different sentence counts for "Wikipedia" (25,480 vs. 33,512) were floating around from before vs. after this filter, and that had to be tracked down and resolved to one single definition.
 
-### **Sentiment (informal / social)** {#sentiment-informal-social}
+### **Sentiment-labeled newspaper text** {#sentiment-labeled-newspaper-text}
 
-3,536 sentences (47,156 words). This is Ali\'s own existing dataset, built earlier from Kawish and Awami Awaz newspaper corpora using semi-supervised pseudo-labeling. One honest limitation: this register and the Sindhi-NLP training source both draw from Kawish/Awami Awaz-adjacent news --- not the exact same files, but similar enough in style and vocabulary that this register isn\'t perfectly independent from part of the training data. Stated plainly in the report rather than hidden.
+3,536 sentences (47,156 words). This is Ali\'s existing dataset, built from Kawish and Awami Awaz newspaper corpora using semi-supervised pseudo-labeling. It is newspaper-derived sentiment text, not a social-media register. The Sindhi-NLP training source draws from publisher-adjacent news; although specific files are reported as distinct, genre-level independence has not been established.
 
 **Link:** [[https://huggingface.co/datasets/alinawazmahar/Sindhi_Sentiment_dataset]{.underline}](https://huggingface.co/datasets/alinawazmahar/Sindhi_Sentiment_dataset)
 
@@ -196,9 +196,9 @@ The percentage of output tokens that are the tokenizer\'s "I don\'t know this" p
 
 The percentage of output tokens that are raw byte fragments rather than real linguistic pieces --- what happens when a tokenizer with byte_fallback=True meets something it doesn\'t recognize: instead of UNK, it falls back to representing the raw bytes. Lower is better, but it\'s not inherently bad the way UNK is --- it\'s a safety net, not a failure, as long as it\'s rare.
 
-### **Round-trip character fidelity (added partway through the project)**
+### **Normalized-length round-trip check (added partway through the project)**
 
-This one didn\'t exist in the original plan. It measures: if you encode a sentence into tokens and then decode those tokens back into text, do you get the same sentence back? Specifically, the percentage of characters that go missing in that round trip. This was added after discovering that neither UNK rate nor byte-fallback rate can catch a tokenizer that just silently DELETES characters without marking them in any way at all --- see Part 7 for exactly how that was found.
+This one didn\'t exist in the original plan. It normalizes input and decoded text, removes formatting characters and whitespace, then compares their lengths. It detects shortening that neither UNK rate nor byte-fallback rate can catch, but can miss substitutions or reorderings that preserve length; it does not prove exact text identity. The affected examples were inspected separately --- see Part 7.
 
 # **Part 7 --- Every bug found during the project, in order** {#part-7-every-bug-found-during-the-project-in-order}
 
@@ -256,7 +256,7 @@ Found by the same round-trip fidelity check. Where TinyLlama\'s bug is concentra
 
 ## **7.11 The round-trip fidelity check itself needed fixing, twice** {#the-round-trip-fidelity-check-itself-needed-fixing-twice}
 
-The first version of the fidelity check just compared raw string lengths before and after a round trip. That flagged a lot of false positives --- things like double spaces getting collapsed to single spaces, or non-breaking spaces being normalized, which is completely normal, expected tokenizer behavior, not a real bug. The check was rewritten to first normalize both the original and the decoded text (standard Unicode normalization, plus stripping invisible formatting/direction-control characters and all whitespace) before comparing lengths --- only what\'s left after that normalization counts as genuine lost content. This stricter version is what actually found the two real bugs described above (7.9 and 7.10), separating them cleanly from completely harmless, expected normalization.
+The first version compared raw string lengths before and after a round trip. That flagged false positives such as collapsed spaces and non-breaking spaces. The check was rewritten to normalize both strings and strip invisible formatting/direction-control characters and whitespace before comparing lengths. It detects shortening after those normalizations, but it cannot detect same-length substitutions or reordering; affected examples were inspected to identify the specific character deletions described above (7.9 and 7.10).
 
 ## **7.12 Sindhi text was hand-typed incorrectly --- four separate times, in this very explainer\'s companion paper** {#sindhi-text-was-hand-typed-incorrectly-four-separate-times-in-this-very-explainers-companion-paper}
 
@@ -309,7 +309,7 @@ Genitive/possessive, inflectional suffixes, the seven special digraph letters, a
 
 # **Part 9 --- What got decided, and why** {#part-9-what-got-decided-and-why}
 
-- 64,000 is the recommended size to publish as the default/flagship, not 32,000 or 150,000. Reasoning: 64k is the smallest size with a completely clean sweep (wins every metric, every register, no exceptions). 32k has one real, confirmed exception (loses to TinyLlama_Sindhi on the FLORES+ register specifically --- double-checked to make sure this wasn\'t just an artifact of TinyLlama\'s character-deletion bug, and it wasn\'t, it\'s a genuine result). 100k and 150k are only marginally better than 64k, not enough to justify the larger file size for most uses.
+- 64,000 is the recommended size to publish as the default/flagship, not 32,000 or 150,000. It is the selected balance for fertility and single-token retention across registers, not the best size on every metric: byte-fallback is lower for 32k in the reported macro table, and Gemma 3 has lower fallback than custom variants. The 32k model has one confirmed fertility and single-token-retention loss to TinyLlama_Sindhi on FLORES+.
 
 - Publish name: sindhi-tokenizer, flat, no extra branding, matching every other real tokenizer in this space (SindhiLM-Tokenizer-v1, Sindhi-BPE-Tokenizer, mbert-sindhi-tokenizer, etc.) --- and matching the literal phrase someone would type into a search bar or ask an AI assistant. "CustomSindhi" was always just an internal label for the benchmark tables, the same way a paper might just call its own result "Ours" --- never meant to be the actual public name.
 
@@ -321,15 +321,15 @@ Genitive/possessive, inflectional suffixes, the seven special digraph letters, a
 
 - The classical/literary register (Part 3) --- still unresolved. Next concrete steps identified: try a free (non-paid) IEEE DataPort account, or email the AMBILE institute directly and ask for the dataset for academic use.
 
-- License check on two training sources (Sindhi-NLP GitHub, shaikhsalman\'s corpus) --- never formally verified. This needs to happen before the tokenizer is published under any specific license, since the model\'s license is constrained by the most restrictive license among anything it was trained on.
+- Licensing review remains open: the scope of the Sindhi-NLP MIT notice for corpus text and the absence of a stated shaikhsalman corpus license need confirmation before making stronger claims about model-file reuse terms.
 
-- GitHub repo and Hugging Face model card --- built, but still reference the earlier 14-tokenizer numbers from before Group C was added. Need updating to match the final report.
+- The GitHub documentation is being aligned with the final benchmark report. The Hugging Face model card still needs a parity review for counts, metrics, limitations, authorship, draft-paper status, and license wording.
 
 - The Gradio comparison demo (letting anyone type a sentence and see how every tokenizer, including this one, splits it) --- planned, not yet built as of this document.
 
 - Final discoverability check immediately before publishing --- to catch any further tokenizers that might have appeared since Group C was found, the same way Group C itself was found by checking before publishing the first time.
 
-- arXiv submission --- planned as the first publication venue (fast, free, highly citable/searchable), with a peer-reviewed regional NLP venue as a follow-up target. Submission requires an endorsement for a first-time author in most categories; this was being looked into but not resolved as of this document.
+- The manuscript has not yet been published; a future venue and submission timeline remain undecided.
 
 # **Appendix --- Every special character and every test word** {#appendix-every-special-character-and-every-test-word}
 

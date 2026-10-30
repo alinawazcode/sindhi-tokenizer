@@ -1,9 +1,9 @@
 # Benchmark Results
 
-This directory contains benchmark tables and evaluation outputs for all evaluated tokenizers across the four independent registers:
+This directory contains benchmark tables and evaluation outputs for all evaluated tokenizers across four evaluation registers (with a documented publisher-proximity limitation for the sentiment set):
 - **`flores200_anchor`**: Standardized cross-lingual anchor (FLORES+ `snd_Arab`).
 - **`wikipedia_formal`**: Canonical 3–100 word filtered encyclopedic prose (25,480 sentences).
-- **`sentiment_informal`**: Sindhi news sentiment sentences (3,536 sentences).
+- **`sentiment_informal`** (legacy ID): newspaper text with sentiment labels (3,536 sentences).
 - **`sindh_line_news`**: Contemporary daily news (87,158 sentences).
 
 ## Key Findings Summary
@@ -11,6 +11,6 @@ This directory contains benchmark tables and evaluation outputs for all evaluate
 Across all registers evaluated at full scale:
 - **CustomSindhi (64k, 100k, 150k)** outperforms all 14 baseline tokenizers on fertility and single-token retention without exception.
 - **CustomSindhi (32k)** outperforms all baselines on 3 registers, narrowly trailing TinyLlama on FLORES+.
-- **Zero Character Loss**: Custom models achieve 0.0000% character loss on round-trip fidelity, while detecting critical defects in competitors (silent deletion of `U+06C1` in TinyLlama and Latin character loss in FahadQazi BPE).
+- **Round-trip length check**: Custom models show 0.0000% normalized-length loss on evaluated text. This length-based check detects shortening but does not prove exact character identity; it also exposed length loss in TinyLlama and FahadQazi BPE.
 
-The full tables and methodology can be found in [`docs/paper.md`](../docs/paper.md) and [`docs/explainer.md`](../docs/explainer.md).
+The 64k+ variants lead the baselines on fertility and single-token retention; byte-fallback has a separate trade-off. The full tables and methodology can be found in [`docs/paper.md`](../docs/paper.md) and [`docs/explainer.md`](../docs/explainer.md).

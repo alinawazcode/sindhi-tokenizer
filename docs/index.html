@@ -16,7 +16,7 @@
   <!-- Open Graph -->
   <meta property="og:title" content="Sindhi Tokenizer Documentation">
   <meta property="og:description"
-    content="Production-grade SentencePiece Unigram subword tokenizer with 100% character coverage, byte-fallback, and 0.0000% character loss benchmarked across 17 models.">
+    content="Sindhi SentencePiece Unigram tokenizer documentation and benchmark. Fourteen baseline tokenizers and four custom vocabulary variants are compared across four evaluation registers.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://alinawazcode.github.io/sindhi-tokenizer/">
 
@@ -155,9 +155,9 @@
         <!-- Technical Intro Box -->
         <div class="intro-box">
           <p>
-            The <strong>Sindhi Tokenizer Project</strong> provides production-grade, lossless subword tokenizers for the
+            The <strong>Sindhi Tokenizer Project</strong> provides SentencePiece Unigram subword tokenizers for the
             Sindhi language in its standard 52-letter Perso-Arabic script. By training a Byte-Fallback SentencePiece
-            Unigram model on a balanced 1.49M sentence corpus, this project resolves severe character fragmentation and
+            Unigram model on a 1.46M+ sentence corpus, this project measures character fragmentation and
             silent deletion defects observed in current general-purpose multilingual LLMs and existing monolingual
             models.
           </p>
@@ -181,7 +181,7 @@
           </a>
           <a href="#benchmarks" class="quick-nav-card">
             <div class="quick-nav-card-title">Benchmark Matrix →</div>
-            <div class="quick-nav-card-desc">Comparative evaluation of 17 models across 5 metrics.</div>
+            <div class="quick-nav-card-desc">Comparative evaluation of 18 benchmark rows across 5 metrics.</div>
           </a>
           <a href="#defects" class="quick-nav-card">
             <div class="quick-nav-card-title">Defect Analysis →</div>
@@ -225,8 +225,8 @@
           <div class="callout callout-tip">
             <div class="callout-title">Core Contribution</div>
             We release four custom SentencePiece Unigram tokenizers trained with 100% character coverage and byte
-            fallback enabled, completely eliminating UNK tokens and character loss while achieving state-of-the-art
-            fertility.
+            fallback enabled. The custom models produced no UNK tokens and no normalized-length loss on the evaluated
+            text; this length-based check does not prove exact character identity for arbitrary inputs.
           </div>
         </section>
 
@@ -273,9 +273,9 @@ print("Subword Pieces:", pieces)
 # [' سنڌ', ' جي', ' تاريخ', ' تمام', ' قديم', ' ۽', ' وسيع', ' ثقافتي', ' ورثي', ' تي', ' مشتمل', ' آهي']
 print("Token IDs:", ids)
 
-# Lossless decode
+# Round-trip decode example
 decoded = sp.decode_pieces(pieces)
-assert decoded == text, "Lossless reconstruction guaranteed"</code></pre>
+assert decoded == text, "This example should round-trip exactly"</code></pre>
           </div>
 
           <h3>3. Hugging Face Transformers Integration</h3>
@@ -356,7 +356,7 @@ print(tokens)</code></pre>
                 </div>
                 <div class="pg-stat">
                   <span class="pg-stat-val" id="stat-fidelity" style="color:var(--bc-c);">100%</span>
-                  <span class="pg-stat-lbl">Reconstruction Fidelity</span>
+                  <span class="pg-stat-lbl">Normalized-Length Check</span>
                 </div>
               </div>
             </div>
@@ -681,7 +681,7 @@ def normalize_sindhi(text: str) -> str:
               <code>&lt;unk&gt;</code> token. Must be 0.000%.</li>
             <li><strong>Byte-Fallback Rate % ↓:</strong> Percentage of tokens emitted as raw UTF-8 byte pieces (e.g.,
               <code>&lt;0xD8&gt;</code>).</li>
-            <li><strong>Round-Trip Character Loss % ↓:</strong> Character deletion rate between original string $S$
+            <li><strong>Normalized-Length Loss % ↓:</strong> Length decrease between normalized input string $S$
               and $S' = \text{decode}(\text{encode}(S))$ after NFKC canonicalization: $\frac{\text{len}(S) - \text{len}(S')}{\text{len}(S)}$. Evaluated unconditionally across all registers.
             </li>
           </ul>
@@ -735,7 +735,7 @@ def normalize_sindhi(text: str) -> str:
 
           <h3>Key Takeaways from the Matrix</h3>
           <ol>
-            <li><strong>Efficiency Sweep at ≥64k:</strong> CustomSindhi (64k, 100k, 150k) outperforms all 13
+            <li><strong>Fertility and Retention at ≥64k:</strong> CustomSindhi (64k, 100k, 150k) outperforms all 14
               baseline tokenizers across all 4 registers in subword fertility and single-token retention simultaneously.
               (On byte fallback, Gemma 3 achieves 0.105% vs Custom 64k's 0.138% due to Gemma's 256k multilingual vocabulary,
               though Custom maintains far superior fertility: 1.147 vs 1.344). At 32k, only TinyLlama_Sindhi records
@@ -743,8 +743,8 @@ def normalize_sindhi(text: str) -> str:
             <li><strong>Drastic Multilingual Fragmentation:</strong> LLaMA 3.2 fragments Sindhi at 2.896 tokens per word
               with 28.5% byte fallback, while BLOOM fragments at 2.627 with 31.7% byte fallback. Our 64k model improves
               efficiency by 60.4% over LLaMA 3.2.</li>
-            <li><strong>Zero Data Loss:</strong> CustomSindhi achieves an absolute <strong>0.0000% character error
-                rate</strong> across all tested corpora.</li>
+            <li><strong>Round-trip length check:</strong> CustomSindhi records <strong>0.0000% normalized-length loss</strong>
+                across the evaluated corpora. This does not establish exact character identity.</li>
           </ol>
         </section>
 
@@ -760,7 +760,7 @@ def normalize_sindhi(text: str) -> str:
             <div class="callout-title">Defect 1: TinyLlama_Sindhi Silently Deletes U+06C1 (HEH GOAL)</div>
             <p>
               <code>TinyLlama_Sindhi</code> (a 42,681-vocab community model) exhibits a <strong>0.4147% worst-case
-                character loss</strong>, corrupting <strong>24.9% of all evaluated Sindhi sentences</strong>. Because
+                normalized-length decrease</strong>, shortening <strong>24.9% of FLORES+ sentences</strong>. Because
               the character <span class="sd">ہ</span> (U+06C1) was omitted from its training vocabulary and byte
               fallback was disabled, the tokenizer deletes the character without warning:
             </p>
@@ -775,7 +775,7 @@ def normalize_sindhi(text: str) -> str:
           <div class="callout callout-danger">
             <div class="callout-title">Defect 2: FahadQazi_BPE Silently Deletes ASCII/Latin Characters</div>
             <p>
-              <code>FahadQazi_BPE</code> (a 13,031-vocab BPE model) exhibits a <strong>0.8461% character loss</strong>,
+              <code>FahadQazi_BPE</code> (a 13,031-vocab BPE model) exhibits a <strong>0.8461% normalized-length decrease</strong>,
               corrupting <strong>16.2% of sentences</strong>. It silently discards Latin alphabet characters (A–Z, a–z),
               destroying URLs, brand names, code snippets, and English loanwords.
             </p>
@@ -870,7 +870,7 @@ python training/train.py --vocab_size 64000 --model_type unigram --output_dir to
               <span>bash</span>
               <button class="btn-copy" data-target="#code-repro-bench">Copy</button>
             </div>
-            <pre><code id="code-repro-bench"># Run comparative evaluation across all 17 models and 4 registers
+            <pre><code id="code-repro-bench"># Run comparative evaluation across 18 benchmark rows and 4 evaluation registers
 python evaluation/benchmark.py --output results/macro_benchmark_results.json</code></pre>
           </div>
         </section>
@@ -879,8 +879,8 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
         <section id="citations">
           <h2>Paper &amp; Citation</h2>
           <p>
-            If you utilize this tokenizer, datasets, or benchmark suites in your research, please cite our technical
-            paper (<a href="paper.md">read the complete paper preprint</a>):
+            If you utilize this tokenizer, datasets, or benchmark suites in your research, please cite the research
+            manuscript draft (<a href="paper.md">read the draft, not yet published</a>):
           </p>
 
           <div class="code-block">
@@ -888,12 +888,11 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
               <span>BibTeX</span>
               <button class="btn-copy" data-target="#code-bibtex">Copy</button>
             </div>
-            <pre><code id="code-bibtex">@article{nawaz2026sindhitokenizer,
+            <pre><code id="code-bibtex">@misc{nawaz2026sindhitokenizer,
   title={Sindhi Tokenizer: High-Coverage SentencePiece Unigram Subword Tokenization for the Perso-Arabic Script},
   author={Nawaz, Ali and Fareed, Muqadas and Sadaf, Soonh and Sahito, Attaullah},
-  journal={arXiv preprint},
   year={2026},
-  publisher={Shaikh Ayaz University, Shikarpur},
+  note={Unpublished manuscript draft for future publication},
   url={https://github.com/alinawazcode/sindhi-tokenizer}
 }</code></pre>
           </div>
@@ -938,7 +937,8 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
                 When <code>byte_fallback=True</code> is specified in SentencePiece, any character absent from the
                 subword vocabulary is decomposed into its individual raw UTF-8 byte tokens (values from 0x00 to 0xFF).
                 Because every Unicode character has a well-defined UTF-8 byte representation, the model never emits an
-                unknown token symbol and decoding remains perfectly lossless.
+                unknown token symbol for otherwise representable UTF-8 input. Round-trip behavior should still be checked
+                for each tokenizer and text-normalization path.
               </div>
             </div>
 
@@ -948,7 +948,7 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
                 <span class="faq-chevron">▼</span>
               </button>
               <div class="faq-answer">
-                TinyLlama's vocabulary (built with <code>LlamaTokenizer</code>) entirely omitted key Perso-Arabic characters such as U+06C1 (HEH GOAL) without defining byte fallback. Because the missing codepoints had no valid mapping or explicit fallback subword, the decoder emitted empty strings for those slices rather than an explicit <code>&lt;unk&gt;</code> symbol. This masked the defect as 0.000% UNK while silently dropping characters across 24.9% of sentences. Our round-trip character-loss evaluation ($S \to \text{encode} \to \text{decode} \to S'$ after NFKC canonicalization) exposed this silent data loss.
+                TinyLlama's vocabulary (built with <code>LlamaTokenizer</code>) omitted key Perso-Arabic characters such as U+06C1 (HEH GOAL) without defining byte fallback. Because the missing codepoints had no valid mapping or explicit fallback subword, the decoder emitted empty strings for those slices rather than an explicit <code>&lt;unk&gt;</code> symbol. This masked the defect as 0.000% UNK while shortening text in 24.9% of FLORES+ sentences. The round-trip normalized-length check exposed this shortening; it does not establish exact identity for all other inputs.
               </div>
             </div>
 
@@ -1015,7 +1015,7 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
               <div class="author-initials" style="background:#fde8e8;color:#c0392b;">AS</div>
               <div>
                 <div class="author-name">Dr. Attaullah Sahito</div>
-                <div class="author-role">Project Supervisor &amp; Associate Professor</div>
+                <div class="author-role">Academic Supervisor</div>
                 <div class="author-links">
                   <a href="https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false" target="_blank"
                     rel="noopener noreferrer" class="author-link">LinkedIn Academic Profile</a>
@@ -1029,9 +1029,9 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
         <section id="license">
           <h2>License &amp; Attribution</h2>
           <p>
-            The Sindhi Tokenizer codebase, models, and documentation are published under the open-source <strong>Apache
-              License 2.0</strong>. You are free to use, modify, distribute, and commercialize the tokenizers with
-            appropriate academic attribution.
+            The repository code is licensed under MIT. The tokenizer models are currently labeled CC BY-SA 4.0 on the
+            project listing, but compatibility with all training-source terms remains under review. See
+            <a href="../DATA_SOURCES.md">Data Sources and Licensing</a> before relying on the model-file license.
           </p>
         </section>
 

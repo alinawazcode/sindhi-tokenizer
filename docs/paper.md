@@ -1,20 +1,20 @@
 **A Corpus-Driven Sindhi Subword Tokenizer: Design, Empirical Validation, and Benchmark Comparison Against Fourteen Existing Tokenizers**
 
-**Ali Nawaz**¹, **Muqadas Fareed**¹, **Soonh Sadaf (Sadaf Khaliq)**¹
+**Ali Nawaz**¹, **Muqadas Fareed**¹, **Soonh Sadaf (Sadaf Khaliq)**¹, **Dr. Attaullah Sahito**¹
 
 ¹*Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan*
 
-*Supervised by Dr. Attaullah Sahito*
+*Ali Nawaz is the lead author and project lead; Dr. Attaullah Sahito is the academic supervisor. This manuscript is a draft for future publication and has not yet been published.*
 
 # **Abstract**
 
-Sindhi, an under-resourced Indo-Aryan language written in a Perso-Arabic script with retroflex and implosive consonants absent from Arabic, Urdu, and Persian, lacks a subword tokenizer purpose-built for its orthography. We benchmark fourteen existing tokenizers against a new one at full scale across four independent registers (a standardized multilingual benchmark, formal encyclopedic text, informal social text, and contemporary news), using five metrics: fertility, single-token retention, UNK rate, byte-fallback rate, and round-trip character fidelity, the last introduced in this work after standard metrics were found to miss a real failure mode. Fourteen baseline tokenizers were identified in total: the original ten (four marketed as Sindhi-specific, six general-purpose multilingual models) plus four additional Sindhi-adjacent tokenizers found during a pre-publication search after initial benchmarking was complete. Our tokenizer, trained with SentencePiece Unigram and byte-level fallback on a four-source, disjoint, non-overlapping corpus, achieves a clean sweep with no exceptions at vocabulary sizes of 64,000 and above; at 32,000 one exception exists, a narrow loss to a fine-tuned general-purpose tokenizer on the standardized benchmark register specifically. Round-trip fidelity testing, introduced after a competing tokenizer was found to silently delete characters without producing UNK or byte-fallback tokens, found our tokenizer has zero measurable content loss across all four registers, while two competitors show real, mechanistically distinct data-integrity defects: one systematically drops individual Latin letters in code-switched text, the other silently deletes a native Sindhi letter and severely corrupts text in an alternate Unicode encoding of Arabic script. We report these findings, including the two reversed design decisions and the three methodological corrections made over the course of the project, and the limitations of the present work, including a still-unresolved classical/literary Sindhi evaluation register.
+Sindhi, an under-resourced Indo-Aryan language written in a Perso-Arabic script with retroflex and implosive consonants absent from Arabic, Urdu, and Persian, lacks a subword tokenizer purpose-built for its orthography. We benchmark fourteen baseline tokenizers against a new one at full scale across four evaluation registers (a standardized multilingual benchmark, formal encyclopedic text, sentiment-labeled newspaper text, and contemporary news), using fertility, single-token retention, UNK rate, byte-fallback rate, and a normalized-length round-trip check. The benchmark contains 18 rows: fourteen baselines and four vocabulary sizes of the new tokenizer. At vocabulary sizes of 64,000 and above, the new tokenizer leads the baselines on fertility and single-token retention across all four registers; byte-fallback is a separate trade-off. The round-trip check found zero normalized-length loss for the new tokenizer on the evaluated text, while two competitors showed measurable shortening. Because this check compares normalized string lengths, it does not establish exact character identity. We also report two reversed design decisions, three methodological corrections, and limitations including a missing classical/literary Sindhi evaluation register and publisher-adjacent provenance for one evaluation set.
 
 # **1 Introduction** {#introduction}
 
 Sindhi is spoken by an estimated 25--30 million people, primarily in the Sindh province of Pakistan and parts of India, and is written predominantly in a Perso-Arabic script extended with letters for retroflex and implosive consonants (ٻ, ڄ, ڏ, ڳ, ڀ, ٿ, ڇ, ٺ, ڻ) that do not occur in Arabic, Urdu, or Persian. Despite this substantial speaker population, Sindhi remains severely under-resourced in NLP: no large, clean, openly licensed text corpus comparable to those available for high-resource languages exists, and no subword tokenizer has been purpose-built and rigorously validated against the language\'s specific orthographic and morphological properties.
 
-This work makes four contributions. First, we conduct a systematic benchmark of fourteen existing tokenizers across four independent evaluation registers and show that no single existing tokenizer performs well on all axes simultaneously; each tokenizer\'s strengths trace directly and explainably to its training data and vocabulary size. Second, we design, train, and validate a new tokenizer, testing two design choices that prior literature on morphologically rich, low-resource languages would suggest, explicit marking of clitic boundaries and forcing target vocabulary items to remain single tokens, and empirically demonstrating that both are unnecessary or counterproductive given a sufficiently large and diverse training corpus. Third, we introduce round-trip character fidelity as a fifth evaluation metric after discovering, during pre-publication verification, that a competing tokenizer silently deletes characters in a way neither UNK rate nor byte-fallback rate can detect; applying this check across all fourteen baselines surfaces two previously undocumented data-integrity defects. Fourth, we document every methodological correction made during this project, most consequentially a byte-fallback detection method that was found to silently under-report fallback for four tokenizers, including one that was not expected to need correction, as a record of the verification process and a caution for future comparative tokenizer studies.
+This work makes four contributions. First, we conduct a systematic benchmark of fourteen baseline tokenizers across four evaluation registers and show that no single existing tokenizer performs well on all axes simultaneously; each tokenizer\'s strengths trace directly and explainably to its training data and vocabulary size. Second, we design, train, and validate a new tokenizer, testing two design choices that prior literature on morphologically rich, low-resource languages would suggest, explicit marking of clitic boundaries and forcing target vocabulary items to remain single tokens, and empirically demonstrating that both are unnecessary or counterproductive given a sufficiently large and diverse training corpus. Third, we introduce a normalized-length round-trip check after discovering, during pre-publication verification, that a competing tokenizer silently shortened text in a way neither UNK rate nor byte-fallback rate can detect; applying the check and inspecting affected examples surfaced two previously undocumented data-integrity defects. Fourth, we document methodological corrections made during this project, most consequentially a byte-fallback detection method that was found to silently under-report fallback for four tokenizers, including one that was not expected to need correction, as a record of the verification process and a caution for future comparative tokenizer studies.
 
 We deliberately state the limitations of this work alongside its results. A classical and literary Sindhi evaluation register, represented by, among other works, Shah Jo Risalo, remains absent: five independent candidate sources were investigated over the course of this project, each failing for a distinct, documented reason. We also note a partial, non-identical overlap in source publications between one evaluation register and a component of the training corpus, and that our new tokenizer\'s advantage over the strongest competitors, while real and consistent, is narrower than its advantage over the weakest ones. These limitations are discussed in Section 6.
 
@@ -59,16 +59,16 @@ Two design choices motivated by patterns reported for morphologically rich, clit
 
 ## **3.3 Evaluation Registers** {#evaluation-registers}
 
-Every tokenizer was evaluated at full scale (no sampling) against four independent registers:
+Every tokenizer was evaluated at full scale (no sampling) against four evaluation registers. The sentiment register is newspaper-derived and shares publisher-adjacent provenance with part of the training data:
 
 | **Register** | **Source** | **Sentences** | **Words** | **Character** |
 |:--:|----|----|----|----|
 | FLORES+ (snd_Arab, devtest) | openlanguagedata/flores_plus | 1,012 | 25,356 | Standardized anchor |
 | Wikipedia (formal) | wikimedia/wikipedia (20231101.sd), 3--100 words/sentence filter | 25,480 | 435,947 | Formal / encyclopedic |
-| Sentiment (informal) | alinawazmahar/Sindhi_Sentiment_dataset | 3,536 | 47,156 | Informal / social⁵ |
+| Sentiment-labeled news | alinawazmahar/Sindhi_Sentiment_dataset | 3,536 | 47,156 | Newspaper text with sentiment labels⁵ |
 | Sindh Line Publishers | Mozilla Data Collective, CC-BY-SA-4.0 | 87,158 | 1,014,998 | Contemporary news⁶ |
 
-*Table 2. Evaluation registers, all disjoint from the tokenizer\'s training corpus with the caveat noted below.*
+*Table 2. Evaluation registers; records are separated where known, with the source-proximity caveat noted below.*
 
 ⁵ The Sentiment register and the Sindhi-NLP component of the training corpus both draw from Kawish- and Awami Awaz-adjacent Sindhi news sources; the specific files do not overlap, but genre-level independence between this register and the training corpus is not fully established. ⁶ The Sindh Line Publishers register has no overlap with any training source; the corpus was obtained via manual download under its stated CC-BY-SA-4.0 license, as no scriptable download interface was available.
 
@@ -84,7 +84,7 @@ The Wikipedia register is defined once, applied consistently throughout this stu
 
 - Byte-fallback rate --- percentage of output tokens that, decoded individually, yield a UTF-8 replacement character. An initial regex-based implementation was found to silently report 0% for four tokenizers with substantial true fallback, discussed further in Section 5.
 
-- Round-trip character fidelity (introduced in this work) --- the percentage of characters lost when a sentence is encoded then decoded, after NFKC normalization and removal of zero-width/bidirectional control characters on both sides to exclude benign, expected normalization from the measurement. Neither UNK rate nor byte-fallback rate can detect a tokenizer that silently omits characters from its output without marking them in any way; this metric was added specifically because such a defect was found in a competitor during pre-publication verification (Section 4.3).
+- Round-trip normalized-length loss (introduced in this work) --- the decrease in string length after encoding and decoding, after NFKC normalization and removal of zero-width/bidirectional control characters and whitespace. This detects shortening but can miss equal-length substitutions or reorderings, so it is not proof of exact character identity. It was added after standard UNK and byte-fallback metrics failed to detect a competitor that silently shortened text (Section 4.3).
 
 # **4 Results** {#results}
 
@@ -114,7 +114,7 @@ Table 3 reports each tokenizer\'s performance averaged across all four evaluatio
 
 *Table 3. Mean performance across all four registers. ¹ Zero UNK/byte-fallback reflects silent character deletion rather than genuine robustness (see Section 4.3). ² Distinct tokenizers despite similar naming, confirmed via direct comparison (Section 2). ³ Shows real, severe content loss on round-trip fidelity testing (see Section 4.3). ⁴ SindhiLM_v2 is numerically identical to Qwen2.5.*
 
-At vocabulary sizes of 64,000 and above, the new tokenizer wins every metric in every register with no exceptions. At 32,000 one exception exists: on the FLORES+ register specifically, TinyLlama_Sindhi beats CustomSindhi_32k on both fertility (1.193 vs. 1.233) and single-token retention (84.4% vs. 82.4%). We tested whether this exception was an artifact of TinyLlama\'s character-deletion defect (Section 4.3) by normalizing the deleted character to its standard form and re-measuring; fertility changed by less than 0.002 in both directions, confirming the exception is genuine rather than an artifact of the defect. We therefore recommend 64,000 as the flagship vocabulary size: it is the smallest size with a clean sweep, and the quantitative gain from 100,000 or 150,000 is marginal by comparison.
+At vocabulary sizes of 64,000 and above, the new tokenizer leads the baselines on fertility and single-token retention across all four registers. It also records zero UNK tokens and zero normalized-length loss under the stated check on these test sets. Byte-fallback is not a clean sweep: Gemma3 has lower byte-fallback on some registers and a lower macro average. At 32,000 one exception exists on FLORES+: TinyLlama_Sindhi beats CustomSindhi_32k on fertility (1.193 vs. 1.233) and single-token retention (84.4% vs. 82.4%). We checked whether this exception was an artifact of TinyLlama\'s length-loss defect (Section 4.3); the result remained effectively unchanged. We recommend 64,000 as the flagship size because it is the smallest size with the reported fertility and single-token-retention lead across registers; byte-fallback rates should be compared separately.
 
 Three tokenizers beat XLM-RoBERTa, previously the strongest baseline, on both fertility and single-token retention: TinyLlama_Sindhi, hellosindh_SindhiBERT_NER, and mBERT_Sindhi_Kashif786. None approaches the new tokenizer\'s performance, but this materially changes the framing of the comparison: the relevant competitive set is these three fine-tuned, Sindhi-adapted general-purpose tokenizers, not XLM-RoBERTa alone.
 
@@ -122,11 +122,11 @@ Three tokenizers beat XLM-RoBERTa, previously the strongest baseline, on both fe
 
 Comparing the best-performing candidate vocabulary size against the best competitor in each register and metric (16 cells: four registers × four metrics) yields 15 outright wins or ties for the new tokenizer and one loss: CustomSindhi_32k against TinyLlama_Sindhi on FLORES+ fertility and single-token retention, counted as a single exception since both metrics reflect the same underlying segmentation. At 64,000 and above, the same comparison yields a clean 16 of 16.
 
-## **4.3 Round-Trip Fidelity** {#round-trip-fidelity}
+## **4.3 Normalized-Length Round-Trip Check** {#normalized-length-round-trip-check}
 
-Round-trip fidelity was introduced after the following was observed during adversarial testing of TinyLlama_Sindhi: encoding and decoding emoji, Chinese, Cyrillic, and mathematical-symbol strings produced neither UNK tokens nor byte-fallback tokens, yet the decoded output was shorter than the input: characters had been silently omitted. Applying the same check to real register text, after excluding benign whitespace and Unicode-normalization differences, found this defect is real but narrow for TinyLlama (concentrated on one character), and found a second, independently discovered defect in FahadQazi_BPE affecting a much larger share of sentences.
+The normalized-length check was introduced after adversarial testing of TinyLlama_Sindhi: encoding and decoding emoji, Chinese, Cyrillic, and mathematical-symbol strings produced neither UNK tokens nor byte-fallback tokens, yet the normalized decoded output was shorter than the input. The check compares normalized string lengths, so it can miss same-length substitutions or reorderings. Applying it to real register text, then inspecting affected examples, surfaced a TinyLlama defect concentrated on one character and a second defect in FahadQazi_BPE affecting more sentences.
 
-| **Tokenizer** | **FLORES+ loss%** | **FLORES+ aff.%** | **Wiki loss%** | **Wiki aff.%** | **Sent. loss%** | **Sent. aff.%** | **Sindh Line loss%** | **Sindh Line aff.%** |
+| **Tokenizer** | **FLORES+ length decrease %** | **FLORES+ shortened sentences %** | **Wiki length decrease %** | **Wiki shortened sentences %** | **Sent. length decrease %** | **Sent. shortened sentences %** | **Sindh Line length decrease %** | **Sindh Line shortened sentences %** |
 |:--:|----|----|----|----|----|----|----|----|
 | CustomSindhi_32k/64k/100k/150k | 0.0000 | 0.00 | 0.0000 | 0.00 | 0.0000 | 0.00 | 0.0000 | 0.00 |
 | Qwen2.5 / SindhiLM_v2 | 0.0000 | 0.00 | 0.0000 | 0.00 | 0.0000 | 0.00 | 0.0000 | 0.00 |
@@ -143,13 +143,13 @@ Round-trip fidelity was introduced after the following was observed during adver
 | TinyLlama_Sindhi¹ | 0.4147 | 24.90 | 0.3114 | 6.95 | 0.0409 | 1.67 | 0.0413 | 1.44 |
 | FahadQazi_BPE³ | 0.4105 | 15.81 | 0.8461 | 16.15 | 0.0847 | 1.87 | 0.2272 | 6.08 |
 
-*Table 4. Round-trip character fidelity, all 14 baselines plus the new tokenizer (all four sizes identical at 0.0000%). "Loss%" is the percentage of characters lost after normalization; "Aff.%" is the percentage of sentences in that register containing at least one lost character.*
+*Table 4. Normalized-length round-trip check, all 14 baselines plus the new tokenizer (all four sizes identical at 0.0000%). "Length decrease %" is the normalized input-to-output length reduction; "shortened sentences %" is the share of sentences with a shorter normalized output. These measures do not detect equal-length substitutions or reorderings.*
 
 FahadQazi_BPE shows severe, systematic loss on a specific content type: individual Latin letters scattered throughout code-switched text (e.g. "An update on my situation, stay safe everyone" decodes with the letters A, p, f, and v silently removed, among others), affecting up to 16.15% of sentences in the Wikipedia register, where embedded citations and transliterations are common.
 
 TinyLlama_Sindhi shows a different, also severe defect: the native Sindhi letter ہ (ARABIC LETTER HEH GOAL, used in common function words including تہ "that/so," بہ "also," and نہ "not") is silently deleted in every occurrence, and text encoded in the Arabic Presentation Forms Unicode block is severely corrupted, in the worst observed case reducing a full sentence to seven isolated characters. ہ appears in 24.8% of FLORES+ sentences and 6.2% of Wikipedia sentences, explaining the register-dependent severity of this tokenizer\'s fidelity loss.
 
-Every other tokenizer, including the new tokenizer at all four vocabulary sizes, shows either exactly zero loss or loss below 0.08% concentrated in a handful of sentences, consistent with rare, incidental encoding artifacts in the source text rather than a systematic defect in the tokenizer.
+Every other tokenizer, including the new tokenizer at all four vocabulary sizes, shows either zero normalized-length decrease or a decrease below 0.08% concentrated in a handful of sentences. A length comparison alone cannot determine whether these cases are benign encoding artifacts or other content changes.
 
 ## **4.4 Qualitative Morpheme and Category Analysis** {#qualitative-morpheme-and-category-analysis}
 
@@ -171,7 +171,7 @@ The byte-fallback detection correction made earlier in this project (detailed in
 
 - Partial source overlap between one evaluation register and the training corpus. The Sentiment register and a component of the training corpus share adjacent news-source provenance; full genre-level independence is not established for this pair.
 
-- Narrowing margin against the strongest competitors. Against TinyLlama_Sindhi, hellosindh_SindhiBERT_NER, and mBERT_Sindhi_Kashif786, the advantage is real but modest; against FLORES+ specifically, CustomSindhi_32k has one confirmed loss. The headline "clean sweep" claim holds unconditionally only at 64,000 and above.
+- Metric-specific results. Against FLORES+ specifically, CustomSindhi_32k has one confirmed loss on fertility and single-token retention. The all-register lead at 64k and above refers to those two measures; it does not include byte-fallback.
 
 - Qualitative test no longer differentiates at the word level. On the 22-word morpheme/category list, the new tokenizer ties rather than beats the best competitor on 21 of 22 words once the four newly identified tokenizers are included; the advantage shown in this work is aggregate, not example-level.
 
@@ -183,13 +183,13 @@ The byte-fallback detection correction made earlier in this project (detailed in
 
 # **7 Conclusion and Future Work** {#conclusion-and-future-work}
 
-We presented a new Sindhi subword tokenizer trained on a broad, multi-source, deliberately non-overlapping corpus, and validated it against fourteen existing tokenizers across four full-scale evaluation registers, five quantitative metrics, and a targeted linguistic test set. At vocabulary sizes of 64,000 and above the tokenizer achieves a clean sweep with no exceptions; at 32,000 one exception exists against a fine-tuned competitor on one register. Round-trip fidelity testing, introduced in this work after discovering a real defect in a competitor, found zero measurable content loss in the new tokenizer and two distinct, real defects in competitors that standard metrics alone would have missed entirely.
+We present a new Sindhi subword tokenizer trained on a broad, multi-source corpus and evaluate it against fourteen baseline tokenizers across four full-scale evaluation registers, five quantitative metrics, and a targeted linguistic test set. At vocabulary sizes of 64,000 and above, it leads the baselines on fertility and single-token retention across registers. Byte-fallback is a separate trade-off, and the normalized-length round-trip check does not establish exact character identity.
 
-Future work includes: resolving the classical/literary register gap; establishing full independence between the Sentiment evaluation register and the training corpus; selecting a text-to-speech architecture and determining whether this tokenizer\'s subword representation is appropriate for it; running a final discoverability check for additional Sindhi tokenizers immediately before publication; and, pending a data-source licensing review, publishing the tokenizer and accompanying model card.
+The tokenizer is hosted on Hugging Face; this manuscript remains a draft for future publication and has not yet been published. Remaining work includes resolving the classical/literary register gap, further characterizing source proximity for the sentiment evaluation set, selecting a text-to-speech architecture if that use is pursued, and completing the data-source licensing review before making stronger reuse claims.
 
 # **Acknowledgments** {#acknowledgments}
 
-This research and software development were conducted at the Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan, under the supervision and academic guidance of **Dr. Attaullah Sahito** ([LinkedIn](https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false)). The tokenizer engineering and evaluation suite were co-developed by:
+This research and software development were conducted at the Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan. Ali Nawaz led the project, Dr. Attaullah Sahito supervised the work, and all four listed authors are included on the manuscript:
 - **Ali Nawaz** (Lead Developer): [GitHub](https://github.com/alinawazcode)
 - **Muqadas Fareed**: [LinkedIn](https://www.linkedin.com/in/muqadas-fareed-24a07837b/)
 - **Soonh Sadaf (Sadaf Khaliq)**: [LinkedIn](https://www.linkedin.com/in/sadaf-khaliq-a69215411/)

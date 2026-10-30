@@ -9,16 +9,16 @@
 [![Hugging Face Models](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-alinawazmahar%2Fsindhi--tokenizer-yellow)](https://huggingface.co/alinawazmahar/sindhi-tokenizer)
 [![Documentation](https://img.shields.io/badge/Docs-GitHub%20Pages-informational)](https://alinawazcode.github.io/sindhi-tokenizer/)
 [![Tests](https://github.com/alinawazcode/sindhi-tokenizer/actions/workflows/python-tests.yml/badge.svg)](https://github.com/alinawazcode/sindhi-tokenizer/actions)
-[![Fidelity: 0.000% Loss](https://img.shields.io/badge/Character%20Fidelity-100%25%20Lossless-brightgreen)](#round-trip-character-fidelity)
+[![Round-trip check: 0.000% normalized-length loss](https://img.shields.io/badge/Round--trip%20check-0.000%25%20normalized--length%20loss-brightgreen)](#round-trip-character-fidelity)
 
-A benchmark-validated subword tokenizer purpose-built for the **Sindhi language** (سنڌي) in the Perso-Arabic script. Trained with **SentencePiece Unigram** with full character coverage and byte-level fallback across 1.46M+ diverse sentences, and systematically benchmarked against **14 baseline tokenizers** (across 18 candidate models) on four independent registers with **0.0000% character loss after Unicode normalization**.
+A subword tokenizer purpose-built for the **Sindhi language** (سنڌي) in the Perso-Arabic script. Trained with **SentencePiece Unigram** with full observed-character coverage and byte-level fallback on 1.46M+ sentences. It was benchmarked against **14 baseline tokenizers** across four evaluation registers. The benchmark has 18 rows: 14 baselines and four custom vocabulary sizes. The round-trip check reports **0.0000% normalized-length loss** on evaluated text; this does not establish exact identity for arbitrary input.
 
 ---
 
 ### Quick Links
 - 🌐 **Documentation Site**: [https://alinawazcode.github.io/sindhi-tokenizer/](https://alinawazcode.github.io/sindhi-tokenizer/)
 - 🤗 **Hugging Face Hub**: [alinawazmahar/sindhi-tokenizer](https://huggingface.co/alinawazmahar/sindhi-tokenizer)
-- 📄 **Academic Paper**: [`docs/paper.md`](docs/paper.md)
+- 📄 **Research Manuscript Draft (Not Yet Published)**: [`docs/paper.md`](docs/paper.md)
 - 🔬 **Technical Explainer**: [`docs/explainer.md`](docs/explainer.md)
 - 📊 **Benchmark Results**: [`results/README.md`](results/README.md)
 - 💻 **Interactive Web Demo**: [`demo/app.py`](demo/app.py)
@@ -57,9 +57,9 @@ Existing modern Large Language Models (LLMs) and multilingual tokenizers (such a
 
 This repository provides:
 - **Four Trained Models**: Pretrained SentencePiece Unigram models at 32k, 64k (flagship recommended), 100k, and 150k vocabulary sizes.
-- **Corpus Engineering Pipeline**: A balanced 1.46M+ sentence training corpus combining native Sindhi news, Wikipedia, Twitter discourse, and a controlled 15% multilingual regional anchor (Urdu, Persian, Arabic) to prevent subword pollution.
+- **Corpus Engineering Pipeline**: A 1.46M+ sentence corpus drawn from Sindhi and regional Wikipedia, mostly news text, a small Twitter component, and a 15% Urdu/Persian/Arabic anchor by character count.
 - **Full-Scale Benchmark Suite**: Standardized evaluation of 18 tokenizers across 4 distinct registers (FLORES+, Wikipedia, Sentiment, Sindh Line News).
-- **Novel Round-Trip Fidelity Metric**: An automated evaluation routine that uncovers silent character deletion in competing tokenizers.
+- **Round-Trip Length Check**: A normalized-length check that can flag text shortening; targeted examples were also inspected for deleted characters.
 - **Interactive UI**: A Gradio web application for real-time subword tokenization inspection.
 
 ---
@@ -73,10 +73,10 @@ Sindhi uses a 52-letter extended Perso-Arabic alphabet containing implosive cons
 When a tokenizer splits a single word into 3–5 subword fragments, context window efficiency drops proportionally. A 2048-token context window accommodates only ~707 Sindhi words under LLaMA 3.2 (fertility 2.896) or ~1,354 words under XLM-RoBERTa (1.512), compared to ~1,786 Sindhi words under CustomSindhi_64k (1.147).
 
 ### 3. Silent Character Deletion in Competing Models
-Standard tokenizer benchmarks only record token fertility and `UNK` rate. However, during pre-publication auditing for this project, our new **round-trip character fidelity check** revealed that existing tokenizers silently destroy text:
+Standard tokenizer benchmarks often report token fertility and `UNK` rate without checking decoded output. During this project's audit, a **normalized-length round-trip check**, followed by inspection of affected examples, surfaced text-shortening defects in existing tokenizers:
 - **`TinyLlama_Sindhi`**: Drops native Sindhi letters such as `U+06C1` (HEH GOAL) and corrupts text encoded with Arabic Presentation Forms, destroying data in up to **24.9%** of sentences.
 - **`FahadQazi_BPE`**: Silently deletes Latin characters in code-switched technical text, corrupting up to **16.2%** of sentences.
-- **Our Model**: Achieves **0.0000% character loss after Unicode normalization** with byte-level fallback.
+- **Our model**: Shows **0.0000% normalized-length loss** under this check on evaluated text with byte-level fallback; the metric is not proof of exact character identity.
 
 ---
 
@@ -84,7 +84,7 @@ Standard tokenizer benchmarks only record token fertility and `UNK` rate. Howeve
 
 ### Primary Objectives
 1. **Deliver Flagship Tokenizer**: Train and release a high-efficiency Sindhi subword tokenizer achieving the lowest fertility and highest single-token preservation across diverse registers.
-2. **Ensure Lossless Round-Trip Integrity**: Implement byte-fallback with 1.0 character coverage to eliminate `UNK` tokens and silent character deletions.
+2. **Measure Round-Trip Integrity**: Use byte fallback and full observed-character coverage, then report the limits of the normalized-length check.
 3. **Rigorous Empirical Comparison**: Benchmark 14 baseline tokenizers under identical, unsampled test conditions.
 4. **Transparent Documentation**: Document negative results (what didn't work), corpus preparation heuristics, and evaluation caveats.
 
@@ -105,7 +105,7 @@ Standard tokenizer benchmarks only record token fertility and `UNK` rate. Howeve
 - **SentencePiece Unigram Architecture**: Statistically models subword probabilities using maximum likelihood estimation, proven superior to standard greedy BPE for morphologically rich languages.
 - **100% Character Coverage + Byte Fallback**: Zero unknown (`<unk>`) token emissions. Unknown Unicode characters decompose cleanly into raw UTF-8 byte tokens without data corruption.
 - **Flagship 64k Model**: Balances vocabulary efficiency (1.147 fertility) with embedding table size, yielding an **88.6% single-token word retention** rate.
-- **Validated Round-Trip Fidelity**: 0.0000% character drop rate across all evaluation corpora.
+- **Round-Trip Check Result**: 0.0000% normalized-length loss across the evaluated corpora; this does not establish exact character identity.
 - **Clean Subword Boundaries**: Preserves leading whitespace symbols (` `, `\u2581`) for precise detokenization without text corruption.
 
 ---
@@ -119,7 +119,7 @@ Standard tokenizer benchmarks only record token fertility and `UNK` rate. Howeve
 | **Datasets** | [Hugging Face Datasets](https://github.com/huggingface/datasets), Pandas, NumPy | Corpus ingestion, normalization, filtering, metrics computation |
 | **Interactive Demo** | [Gradio](https://gradio.app/) | Real-time interactive subword visualization UI |
 | **Quality & CI/CD** | Pytest, GitHub Actions | Automated regression tests across Python 3.9–3.12 |
-| **Documentation** | GitHub Pages, Markdown, Mermaid.js | Static web docs, academic paper, technical explainer |
+| **Documentation** | GitHub Pages, Markdown, Mermaid.js | Static web docs, draft research manuscript, technical explainer |
 
 ---
 
@@ -141,7 +141,7 @@ sindhi-tokenizer/
 │   ├── README.md                   # Instructions for running and deploying the demo
 │   └── app.py                      # Interactive Gradio comparison web app
 ├── docs/
-│   ├── paper.md                    # Formal academic paper (14-baseline benchmark study)
+│   ├── paper.md                    # Draft research manuscript, not yet published (14-baseline study)
 │   └── explainer.md                # 21-page technical companion log and negative results
 ├── evaluation/
 │   ├── README.md                   # Evaluation metrics guide and CLI/API documentation
@@ -189,7 +189,7 @@ flowchart TD
         REG2["Wikipedia Formal (25.4k sent)"] --> E
         REG3["Sentiment Informal (3.5k sent)"] --> E
         REG4["Sindh Line News (87.1k sent)"] --> E
-        E --> MET["Metrics Computed:<br/>• Token Fertility<br/>• Single-Token Word %<br/>• UNK Rate (0.000%)<br/>• Byte Fallback Rate<br/>• Round-Trip Fidelity Loss (0.000%)"]
+        E --> MET["Metrics Computed:<br/>• Token Fertility<br/>• Single-Token Word %<br/>• UNK Rate (0.000%)<br/>• Byte Fallback Rate<br/>• Normalized-Length Loss (0.000%)"]
     end
 
     subgraph Downstream["4. Downstream Deployment"]
@@ -209,21 +209,21 @@ sequenceDiagram
     participant Tokenizer as SPMTokenizerAdapter
     participant Tokens as Subword Tokens / Byte IDs
     participant Output as Decoded Reconstructed Text
-    participant Audit as Round-Trip Fidelity Auditor
+    participant Audit as Normalized-Length Check
 
     Input->>Norm: Normalize Unicode (NFKC) & remove zero-width formatting
     Norm->>Tokenizer: Clean text string
     Tokenizer->>Tokens: Encode via Unigram Viterbi path (out_type=int)
     Tokens->>Output: Decode token IDs back to string
     Output->>Audit: Compare Original vs Decoded
-    Note over Audit: Character Loss Rate = (Lost Chars / Total Chars) * 100%<br/>Custom Model Result: 0.0000% Loss
+    Note over Audit: Loss = max(0, input_length - decoded_length) / input_length<br/>Custom Model Result: 0.0000% normalized-length loss
 ```
 
 ---
 
 ## Dataset Documentation
 
-The tokenizer was trained on a strictly non-overlapping, multi-source corpus. Detailed licensing, extraction rules, and volumes are maintained in [`DATA_SOURCES.md`](DATA_SOURCES.md).
+Training and evaluation records are separated where known, but the sentiment evaluation set shares publisher-adjacent provenance with a training source. See [`DATA_SOURCES.md`](DATA_SOURCES.md) for source details and licensing status.
 
 ### Training Corpus (1.46M+ Sentences)
 
@@ -240,7 +240,7 @@ The tokenizer was trained on a strictly non-overlapping, multi-source corpus. De
 |---|---|---|---|
 | **`flores200_anchor`** | `openlanguagedata/flores_plus` (`snd_Arab`) | 1,012 | Standardized translation benchmark; formal and modern register. |
 | **`wikipedia_formal`** | `wikimedia/wikipedia` (`20231101.sd`) | 25,480 | Formal encyclopedic Sindhi prose (first 2,000 articles, disjoint from train). |
-| **`sentiment_informal`** | `alinawazmahar/Sindhi_Sentiment_dataset` | 3,536 | Kawish/Awami Awaz news texts pseudo-labeled for sentiment analysis. |
+| **`sentiment_informal`** (legacy ID) | `alinawazmahar/Sindhi_Sentiment_dataset` | 3,536 | Newspaper text pseudo-labeled for sentiment; this is news, not social-media text. |
 | **`sindh_line_news`** | Mozilla Data Collective (`Sindh Line Publishers`) | 87,158 | Contemporary, daily regional news coverage (CC BY-SA 4.0). |
 
 ---
@@ -271,7 +271,7 @@ $$\text{خداوند ڪريم کيس اعليٰ ذهانت سان نوازيو �
    ```text
    [12450, 4812, 1089, 7543, 14210, 521, 18920, 412]
    ```
-5. **Lossless Reconstruction**: Every token preserves boundary information, enabling exact detokenization with **0 character loss**.
+5. **Round-trip check**: Evaluated text showed 0.0000% normalized-length loss. This length-based check can miss equal-length substitutions or reorderings.
 
 ---
 
@@ -344,7 +344,7 @@ All 18 candidate tokenizers were evaluated across the four evaluation registers 
 
 ### Macro Benchmark Summary (Unweighted Mean across 4 Registers)
 
-| Tokenizer | Vocab Size | Fertility (tokens/word) ↓ | Single-Token Word % ↑ | UNK Rate % ↓ | Byte-Fallback % ↓ | Worst Round-Trip Loss % ↓ |
+| Tokenizer | Vocab Size | Fertility (tokens/word) ↓ | Single-Token Word % ↑ | UNK Rate % ↓ | Byte-Fallback % ↓ | Worst Normalized-Length Loss % ↓ |
 |---|---|---|---|---|---|---|
 | **CustomSindhi_150k** | 150,000 | **1.125** | **89.7%** | **0.000%** | 0.154% | **0.0000%** |
 | **CustomSindhi_100k** | 100,000 | **1.133** | **89.3%** | **0.000%** | 0.149% | **0.0000%** |
@@ -368,8 +368,8 @@ All 18 candidate tokenizers were evaluated across the four evaluation registers 
 
 ### Evaluation Takeaways
 1. **Unconditional Superiority at ≥64k for Fertility & Single-Token Retention**: CustomSindhi (64k, 100k, 150k) achieves the lowest fertility and highest single-token retention across all four registers simultaneously. At 32k, one narrow exception exists: TinyLlama_Sindhi beats CustomSindhi_32k on FLORES+ fertility (though it carries a critical character-deletion defect). On byte-fallback, CustomSindhi_64k (0.138%) achieves near-lowest fallback, with Gemma 3 slightly lower at 0.105%.
-2. **Clean Sweep at 64k**: Fertility improves by **24.1% over XLM-RoBERTa** and **60.4% over LLaMA 3.2**.
-3. **Flawless Data Integrity**: Custom models demonstrate 0.0000% character drop after Unicode normalization across all four registers, while two competitors — TinyLlama_Sindhi and FahadQazi_BPE — exhibit real, mechanistically distinct data-integrity defects.
+2. **Efficiency gains at 64k**: Mean fertility improves by **24.1% over XLM-RoBERTa** and **60.4% over LLaMA 3.2**. This describes fertility and single-token retention, not every metric.
+3. **Round-trip check results**: Custom models show 0.0000% normalized-length loss under the stated check on all four registers. This length-based check does not prove exact character identity; TinyLlama_Sindhi and FahadQazi_BPE show measurable length loss.
 
 ---
 
@@ -406,7 +406,7 @@ In accordance with rigorous academic transparency (see [`docs/paper.md` §6](doc
 
 1. **Absence of Classical / Literary Register**: No classical or literary Sindhi register is included. Five independent candidate sources were investigated: a corrupted CSV export, an unrelated SQL dump, two unusable OCR scans (one incompatibly licensed), and a government-affiliated platform gated behind an institutional subscription.
 2. **Partial Source Overlap in Evaluation**: The Sentiment register and the Sindhi-NLP component of the training corpus share adjacent news-source provenance; full genre-level independence is not established for this pair.
-3. **Narrowing Margin Against Strongest Competitors**: Against TinyLlama_Sindhi, hellosindh_SindhiBERT_NER, and mBERT_Sindhi, the advantage is real but modest; against FLORES+ specifically, CustomSindhi_32k has one confirmed loss. The "clean sweep" holds unconditionally only at 64,000 and above.
+3. **Metric-specific results**: Against FLORES+ specifically, CustomSindhi_32k has one confirmed loss on fertility and single-token retention. The all-register lead at 64k and above refers to those two measures; byte-fallback is a separate trade-off.
 4. **Qualitative Test Does Not Differentiate at Word Level**: On the 22-word test list, the new tokenizer ties rather than beats the best competitor on 21 of 22 words; the demonstrated advantage is aggregate across full corpora, not example-level.
 5. **Search for Existing Tokenizers May Be Incomplete**: Four additional tokenizers were discovered after initial benchmarking; while subsequent searches found no further models, the open-source NLP space is active enough that this cannot be guaranteed exhaustive.
 6. **Downstream Applications Undetermined**: The tokenizer's target use is future Sindhi language modeling. It is not validated for Automatic Speech Recognition (ASR) or Text-to-Speech (TTS).
@@ -419,7 +419,7 @@ In accordance with rigorous academic transparency (see [`docs/paper.md` §6](doc
 | Document | Path | Purpose |
 |---|---|---|
 | **Root Guide & Navigation Hub** | [`README.md`](README.md) | Central repository overview, quickstart, and full benchmark summary |
-| **Formal Academic Paper** | [`docs/paper.md`](docs/paper.md) | Complete preprint manuscript with state of the art analysis, methodology, and 18-tokenizer tables |
+| **Research Manuscript Draft** | [`docs/paper.md`](docs/paper.md) | Draft for future publication; not yet published. Includes methodology and 18 benchmark rows |
 | **Technical Explainer Log** | [`docs/explainer.md`](docs/explainer.md) | In-depth engineering explainer into empirical failures, metric corrections, and design rationale |
 | **Dataset Provenance Card** | [`DATA_SOURCES.md`](DATA_SOURCES.md) | Complete documentation of all training corpora and evaluation sets, licensing, and volumes |
 | **Evaluation Module Guide** | [`evaluation/README.md`](evaluation/README.md) | Technical documentation of metrics algorithms, CLI arguments, and Python API |
@@ -449,11 +449,11 @@ In accordance with rigorous academic transparency (see [`docs/paper.md` §6](doc
 
 This research and tokenizer implementation were developed at the **Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan**, under the supervision of **Dr. Attaullah Sahito**.
 
-### Authors & Project Contributors
-- **Ali Nawaz** (Lead Developer & NLP Researcher): [GitHub (@alinawazcode)](https://github.com/alinawazcode)
-- **Muqadas Fareed**: [LinkedIn Profile](https://www.linkedin.com/in/muqadas-fareed-24a07837b/)
-- **Soonh Sadaf (Sadaf Khaliq)**: [LinkedIn Profile](https://www.linkedin.com/in/sadaf-khaliq-a69215411/)
-- **Academic Supervisor**: **Dr. Attaullah Sahito** ([LinkedIn Profile](https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false)), Department of Computer Science, Shaikh Ayaz University.
+### Authors and Roles
+- **Ali Nawaz** (Lead author and project lead): [GitHub (@alinawazcode)](https://github.com/alinawazcode)
+- **Muqadas Fareed** (author): [LinkedIn Profile](https://www.linkedin.com/in/muqadas-fareed-24a07837b/)
+- **Soonh Sadaf (Sadaf Khaliq)** (author): [LinkedIn Profile](https://www.linkedin.com/in/sadaf-khaliq-a69215411/)
+- **Dr. Attaullah Sahito** (author and academic supervisor): [LinkedIn Profile](https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false), Department of Computer Science, Shaikh Ayaz University.
 
 ---
 
@@ -461,7 +461,7 @@ This research and tokenizer implementation were developed at the **Department of
 
 ### License
 - **Software Code**: Licensed under the open-source [MIT License](LICENSE).
-- **Trained Tokenizer Models**: Distributed via Hugging Face under the [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/) license as a cautious default pending community licensing clarification of raw corpora.
+- **Trained Tokenizer Models**: The Hugging Face listing currently states [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Compatibility with every training source has not been confirmed; see [`DATA_SOURCES.md`](DATA_SOURCES.md).
 - **Corpus Texts**: Refer to [`DATA_SOURCES.md`](DATA_SOURCES.md) for original source licenses.
 
 ### Citation
@@ -487,8 +487,8 @@ The 64,000 vocabulary size represents the empirical sweet spot between fertility
 </details>
 
 <details>
-<summary><b>2. How does the round-trip character fidelity check work?</b></summary>
-It takes a test sentence, normalizes it using Unicode NFKC, strips zero-width formatters and whitespace, encodes it through the tokenizer, decodes it back to text, and computes the normalized character loss rate (`diff = len(original) - len(decoded)`). If characters were silently dropped by the tokenizer, this metric flags the exact affected sentences and characters.
+<summary><b>2. What does the round-trip length check measure?</b></summary>
+It applies Unicode NFKC, removes zero-width formatting characters and whitespace, then compares normalized input and decoded-output lengths. This detects shortening but can miss substitutions or reorderings that preserve length; 0.0000% is not proof of exact text identity.
 </details>
 
 <details>

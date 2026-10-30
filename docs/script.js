@@ -328,10 +328,10 @@ function initPlayground() {
     if (statFertility) statFertility.textContent = fertility;
     if (statFidelity) {
       if (model === "tinyllama") {
-        statFidelity.textContent = "99.58% (Drops U+06C1)";
+        statFidelity.textContent = "Text shortened (U+06C1)";
         statFidelity.style.color = "var(--cd-b)";
       } else {
-        statFidelity.textContent = "100.00% (Lossless)";
+        statFidelity.textContent = "No length loss in this input";
         statFidelity.style.color = "var(--ct-b)";
       }
     }
