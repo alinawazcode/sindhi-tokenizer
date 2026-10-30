@@ -321,9 +321,9 @@ Genitive/possessive, inflectional suffixes, the seven special digraph letters, a
 
 - The classical/literary register (Part 3) --- still unresolved. Next concrete steps identified: try a free (non-paid) IEEE DataPort account, or email the AMBILE institute directly and ask for the dataset for academic use.
 
-- Licensing review remains open: the scope of the Sindhi-NLP MIT notice for corpus text and the absence of a stated shaikhsalman corpus license need confirmation before making stronger claims about model-file reuse terms.
+- The project lead reports that the training sources are free to use, mostly under MIT and other open licenses. Source-specific conditions still apply; the shaikhsalman dataset card does not state its exact license, and the scope of the Sindhi-NLP MIT notice for underlying text should be confirmed.
 
-- The GitHub documentation is being aligned with the final benchmark report. The Hugging Face model card still needs a parity review for counts, metrics, limitations, authorship, draft-paper status, and license wording.
+- The Hugging Face model-card draft has been aligned with the benchmark count, duplicate-pair note, metric caveat, author roles, unpublished-manuscript status, and source-license wording.
 
 - The Gradio comparison demo (letting anyone type a sentence and see how every tokenizer, including this one, splits it) --- planned, not yet built as of this document.
 

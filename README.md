@@ -11,7 +11,7 @@
 [![Tests](https://github.com/alinawazcode/sindhi-tokenizer/actions/workflows/python-tests.yml/badge.svg)](https://github.com/alinawazcode/sindhi-tokenizer/actions)
 [![Round-trip check: 0.000% normalized-length loss](https://img.shields.io/badge/Round--trip%20check-0.000%25%20normalized--length%20loss-brightgreen)](#round-trip-character-fidelity)
 
-A subword tokenizer purpose-built for the **Sindhi language** (سنڌي) in the Perso-Arabic script. Trained with **SentencePiece Unigram** with full observed-character coverage and byte-level fallback on 1.46M+ sentences. It was benchmarked against **14 baseline tokenizers** across four evaluation registers. The benchmark has 18 rows: 14 baselines and four custom vocabulary sizes. The round-trip check reports **0.0000% normalized-length loss** on evaluated text; this does not establish exact identity for arbitrary input.
+A subword tokenizer purpose-built for the **Sindhi language** (سنڌي) in the Perso-Arabic script. Trained with **SentencePiece Unigram** with full observed-character coverage and byte-level fallback on 1.46M+ sentences. It was benchmarked against **14 baseline tokenizers** across four evaluation registers. The benchmark has 18 entries: 14 baseline entries and four custom vocabulary sizes. **Qwen2.5 and SindhiLM_v2 are identical in this evaluation**, so the entries represent 17 distinct tokenizer behaviors. The round-trip check reports **0.0000% normalized-length loss** on evaluated text; this does not establish exact identity for arbitrary input.
 
 ---
 
@@ -231,7 +231,7 @@ Training and evaluation records are separated where known, but the sentiment eva
 |---|---|---|---|---|
 | **Sindhi Wikipedia** | `wikimedia/wikipedia` (`20231101.sd`) | 6,000 articles | Articles 2,001–8,000 (first 2,000 reserved for evaluation). Filtered to 3–100 words. | CC BY-SA 3.0 |
 | **Sindhi-NLP** | `GitHub: Sindhi-NLP/sindhi-NLP-dataset` | 4 CSV collections | Primarily news (98.4% Awami Awaz and Daily Kawish articles) with 1.6% social tweets. | MIT |
-| **shaikhsalman Corpus** | `shaikhsalman/sindhi-llm-corpus` | 20,000 rows | Seed 7 shuffle. Sentences with >30% Latin characters dropped (removed ~11% noise). | Unstated on card (Research-use; see DATA_SOURCES.md) |
+| **shaikhsalman Corpus** | `shaikhsalman/sindhi-llm-corpus` | 20,000 rows | Seed 7 shuffle. Sentences with >30% Latin characters dropped (removed ~11% noise). | Project owner reports free use; exact license and conditions are not shown on the card (see DATA_SOURCES.md) |
 | **Multilingual Anchor** | Urdu, Persian, Arabic Wikipedia | 1,500 articles each | Balanced to represent 15% of total corpus characters. Exposes model to shared Perso-Arabic roots. | CC BY-SA 3.0 |
 
 ### Evaluation Registers (Unsampled Benchmarks)
@@ -340,7 +340,7 @@ print("Decoded:", sp.decode(token_ids))
 
 ## Evaluation and Comprehensive Benchmarks
 
-All 18 candidate tokenizers were evaluated across the four evaluation registers without subsampling.
+All 18 benchmark entries were evaluated across the four evaluation registers without subsampling. SindhiLM_v2 is identical to Qwen2.5 for this evaluation; the entries therefore represent 17 distinct tokenizer behaviors.
 
 ### Macro Benchmark Summary (Unweighted Mean across 4 Registers)
 
@@ -453,7 +453,7 @@ This research and tokenizer implementation were developed at the **Department of
 - **Ali Nawaz** (Lead author and project lead): [GitHub (@alinawazcode)](https://github.com/alinawazcode)
 - **Muqadas Fareed** (author): [LinkedIn Profile](https://www.linkedin.com/in/muqadas-fareed-24a07837b/)
 - **Soonh Sadaf (Sadaf Khaliq)** (author): [LinkedIn Profile](https://www.linkedin.com/in/sadaf-khaliq-a69215411/)
-- **Dr. Attaullah Sahito** (author and academic supervisor): [LinkedIn Profile](https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false), Department of Computer Science, Shaikh Ayaz University.
+- **Dr. Attaullah Sahito** (co-author and academic supervisor): [LinkedIn Profile](https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false), Department of Computer Science, Shaikh Ayaz University.
 
 ---
 
@@ -461,7 +461,7 @@ This research and tokenizer implementation were developed at the **Department of
 
 ### License
 - **Software Code**: Licensed under the open-source [MIT License](LICENSE).
-- **Trained Tokenizer Models**: The Hugging Face listing currently states [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Compatibility with every training source has not been confirmed; see [`DATA_SOURCES.md`](DATA_SOURCES.md).
+- **Trained Tokenizer Models**: The Hugging Face listing states [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Source datasets are reported by the project lead to be free to use, mostly under MIT and other open licenses; exact terms and attribution conditions vary by source and are summarized in [`DATA_SOURCES.md`](DATA_SOURCES.md).
 - **Corpus Texts**: Refer to [`DATA_SOURCES.md`](DATA_SOURCES.md) for original source licenses.
 
 ### Citation
