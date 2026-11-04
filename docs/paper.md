@@ -1,10 +1,10 @@
 **A Corpus-Driven Sindhi Subword Tokenizer: Design, Empirical Validation, and Benchmark Comparison Against Fourteen Existing Tokenizers**
 
-**Ali Nawaz**¹, **Muqadas Fareed**¹, **Soonh Sadaf (Sadaf Khaliq)**¹, **Dr. Attaullah Sahito**¹
+**Ali Nawaz**¹, **Muqadas Fareed**¹, **Soonh Sadaf (Sadaf Khaliq)**¹
 
 ¹*Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan*
 
-*Ali Nawaz is the lead author and project lead; Dr. Attaullah Sahito is a co-author and academic supervisor. This manuscript is a draft for future publication and has not yet been published.*
+*Ali Nawaz is the lead author and project lead; Dr. Attaullah Sahito is the academic supervisor. This is an earlier draft; the arXiv version supersedes it where the two differ.*
 
 # **Abstract**
 
@@ -40,12 +40,12 @@ The training corpus was assembled from four sources, chosen to be independent of
 |:--:|----|
 | Sindhi Wikipedia | 6,000-article slice, disjoint from the evaluation sample (same seeded shuffle, training begins after the eval cutoff index) |
 | Sindhi-NLP (GitHub) | Two Twitter accounts, Awami Awaz articles, Daily Kawish articles |
-| shaikhsalman/sindhi-llm-corpus | 20,000-row sample; Latin-script contamination (11.3% majority-English sentences) detected and filtered before training |
-| Urdu + Persian + Arabic Wikipedia | \~15% of the corpus by character count, for cross-script/loanword coverage |
+| shaikhsalman/sindhi-llm-corpus | 20,000-row sample (seed 7); about 11.3% of sampled sentences were mostly Latin script, and no language filter was applied |
+| Urdu + Persian + Arabic Wikipedia | 89,449 unique sentences repeated four times, 16.1% of the corpus by character count, for cross-script/loanword coverage |
 
-*Table 1. Training corpus composition. The Sindhi-side sources are mixed with the cross-lingual slice at an approximately 85:15 ratio by character count.*
+*Table 1. Training corpus composition. The Sindhi-side sources are mixed with the cross-lingual slice at about 84:16 by character count.*
 
-A Latin-script contamination issue was identified in the shaikhsalman/sindhi-llm-corpus source during a pre-training diagnostic: 11.3% of sampled sentences were majority-Latin-character text. This was filtered (Latin-character-ratio threshold of 0.3) before the corpus was finalized; the fix was verified by re-running the same diagnostic and confirming 0.0% majority-Latin sentences post-filter.
+A Latin-script contamination issue was identified in the shaikhsalman/sindhi-llm-corpus source during a pre-training diagnostic: 11.3% of sampled sentences were majority-Latin-character text. No filter was applied before training, so this text is part of the training corpus. This is recorded as a limitation.
 
 ## **3.2 Tokenizer Architecture and Design Decisions** {#tokenizer-architecture-and-design-decisions}
 
@@ -171,6 +171,12 @@ The byte-fallback detection correction made earlier in this project (detailed in
 
 - Partial source overlap between one evaluation register and the training corpus. The Sentiment register and a component of the training corpus share adjacent news-source provenance; full genre-level independence is not established for this pair.
 
+- No language filter on training text. About 11.3% of a diagnostic sample of the shaikhsalman text was mostly Latin script, and it remains in the training corpus.
+
+- Repeated cross-lingual text. The Urdu, Persian and Arabic part of the corpus is 89,449 unique sentences repeated four times (16.1% of characters).
+
+- Possible overlap with baseline training data. The SindhiLM model card names the ambile-official Sindhi Mega Corpus, which lists Sindhi Wikipedia among its sources, so SindhiLM may have seen our Wikipedia evaluation text. That would favor the baseline.
+
 - Metric-specific results. Against FLORES+ specifically, CustomSindhi_32k has one confirmed loss on fertility and single-token retention. The all-register lead at 64k and above refers to those two measures; it does not include byte-fallback.
 
 - Qualitative test no longer differentiates at the word level. On the 22-word morpheme/category list, the new tokenizer ties rather than beats the best competitor on 21 of 22 words once the four newly identified tokenizers are included; the advantage shown in this work is aggregate, not example-level.
@@ -189,7 +195,7 @@ The tokenizer is hosted on Hugging Face; this manuscript remains a draft for fut
 
 # **Acknowledgments** {#acknowledgments}
 
-This research and software development were conducted at the Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan. Ali Nawaz is the lead author and project lead; Dr. Attaullah Sahito is a co-author and academic supervisor; all four listed authors are included on this unpublished manuscript draft:
+This research and software development were conducted at the Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan. Ali Nawaz is the lead author and project lead; Dr. Attaullah Sahito is the academic supervisor; the three listed authors are included on this unpublished manuscript draft:
 - **Ali Nawaz** (Lead Developer): [GitHub](https://github.com/alinawazcode)
 - **Muqadas Fareed**: [LinkedIn](https://www.linkedin.com/in/muqadas-fareed-24a07837b/)
 - **Soonh Sadaf (Sadaf Khaliq)**: [LinkedIn](https://www.linkedin.com/in/sadaf-khaliq-a69215411/)

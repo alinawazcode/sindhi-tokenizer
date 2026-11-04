@@ -7,13 +7,13 @@ Nothing listed here is redistributed in this repository. The tokenizer is a voca
 | Source | Used for | License |
 |---|---|---|
 | [wikimedia/wikipedia](https://huggingface.co/datasets/wikimedia/wikipedia), Sindhi (`20231101.sd`) | 6,000 articles, kept separate from the test articles | Creative Commons Attribution-ShareAlike (version as stated on the dataset card) |
-| Wikipedia in Urdu, Persian and Arabic (same dataset) | About 15% of the corpus, for shared script and loanwords | Creative Commons Attribution-ShareAlike (version as stated on the dataset card) |
+| Wikipedia in Urdu, Persian and Arabic (same dataset) | 16.1% of the corpus by characters (89,449 unique sentences repeated four times), for shared script and loanwords | Creative Commons Attribution-ShareAlike (version as stated on the dataset card) |
 | [Sindhi-NLP/sindhi-NLP-dataset](https://github.com/Sindhi-NLP/sindhi-NLP-dataset) | Mostly Awami Awaz and Daily Kawish news, plus a small share of Twitter data | Repository includes an MIT notice; whether it covers all underlying text is unverified (notice below) |
-| [shaikhsalman/sindhi-llm-corpus](https://huggingface.co/datasets/shaikhsalman/sindhi-llm-corpus) | A 20,000-row sample, after removing mostly-English rows | Project owner reports this source is free to use; the dataset card does not specify the exact license or conditions |
+| [shaikhsalman/sindhi-llm-corpus](https://huggingface.co/datasets/shaikhsalman/sindhi-llm-corpus) | A 20,000-row sample (seed 7), with no language filtering; about 11.3% of sampled sentences were mostly Latin script | Project owner reports this source is free to use; the dataset card does not specify the exact license or conditions |
 
 ### Note on source-specific license terms
 
-The project lead reports that the shaikhsalman corpus is free to use. Its dataset card does not state a specific license or conditions, so record the source-specific terms and any attribution requirements with the maintainer before making a more precise license claim. It supplied roughly a third of the Sindhi-side training sentences and was used to learn the tokenizer vocabulary; no source text is redistributed here. The model-file license label does not replace the source license or its conditions.
+The project lead reports that the shaikhsalman corpus is free to use. Its dataset card does not state a specific license or conditions, so record the source-specific terms and any attribution requirements with the maintainer before making a more precise license claim. It supplied about 57% of the Sindhi-side training sentences (630,180 of 1,098,119) and was used to learn the tokenizer vocabulary; no source text is redistributed here. The model-file license label does not replace the source license or its conditions.
 
 ### MIT notice in the Sindhi-NLP repository
 

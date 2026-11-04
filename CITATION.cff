@@ -12,9 +12,6 @@ authors:
   - family-names: "Sadaf"
     given-names: "Soonh"
     affiliation: "Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan"
-  - family-names: "Sahito"
-    given-names: "Attaullah"
-    affiliation: "Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan"
 repository-code: "https://github.com/alinawazcode/sindhi-tokenizer"
 url: "https://huggingface.co/alinawazmahar/sindhi-tokenizer"
 license: MIT

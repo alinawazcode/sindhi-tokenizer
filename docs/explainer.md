@@ -60,13 +60,13 @@ Source: a GitHub repository containing scraped Sindhi social media and news cont
 
 ### **shaikhsalman/sindhi-llm-corpus**
 
-Source: a large, recent Sindhi corpus on Hugging Face. A 20,000-row sample was used, for modern/contemporary vocabulary coverage. A real problem was found and fixed here: 11.3% of the sampled sentences were majority English text, not Sindhi at all (English contamination inside a dataset labeled as Sindhi). This was detected with a simple character-ratio check and filtered out before training --- any sentence where more than 30% of characters were Latin letters was dropped. After the filter, a re-check confirmed 0.0% majority-Latin sentences remained.
+Source: a large, recent Sindhi corpus on Hugging Face. A 20,000-row sample was used, for modern/contemporary vocabulary coverage. A real problem was found and fixed here: 11.3% of the sampled sentences were majority English text, not Sindhi at all (English contamination inside a dataset labeled as Sindhi). This was detected with a simple character-ratio check. No filter was applied before training, so this text remains in the training corpus (correction, November 2026: an earlier version of this document said it was filtered).
 
 **Link:** [[https://huggingface.co/datasets/shaikhsalman/sindhi-llm-corpus]{.underline}](https://huggingface.co/datasets/shaikhsalman/sindhi-llm-corpus)
 
 ### **Urdu + Persian + Arabic Wikipedia** {#urdu-persian-arabic-wikipedia}
 
-Source: the same wikimedia/wikipedia dataset, but the Urdu, Persian, and Arabic language configurations instead of Sindhi. Mixed in at roughly 15% of the total corpus by character count (the Sindhi-side sources make up the other 85%). The reasoning: Sindhi shares script and vocabulary with these three languages, especially for loanwords, so some cross-lingual exposure should help the tokenizer handle borrowed words without needing to see every one of them in Sindhi text specifically.
+Source: the same wikimedia/wikipedia dataset, but the Urdu, Persian, and Arabic language configurations instead of Sindhi. Mixed in at 16.1% of the total corpus by character count (the Sindhi-side sources make up the other 83.9%). The unique cross-lingual text (89,449 sentences) was smaller than the 15% target, so it was repeated four times. The reasoning: Sindhi shares script and vocabulary with these three languages, especially for loanwords, so some cross-lingual exposure should help the tokenizer handle borrowed words without needing to see every one of them in Sindhi text specifically.
 
 *Total final training corpus after all fixes: roughly 1.46 million sentences, combined from all four sources above.*
 

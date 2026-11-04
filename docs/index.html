@@ -11,7 +11,7 @@
     content="Technical documentation, benchmark matrix, and interactive tokenizer explorer for the Sindhi Tokenizer project. Production-grade SentencePiece Unigram models with 100% character coverage and byte-fallback for the Perso-Arabic Sindhi script.">
   <meta name="keywords"
     content="Sindhi Tokenizer, SentencePiece Unigram, Sindhi NLP, Subword Tokenization, Perso-Arabic Script, Byte Fallback, Low-Resource Language">
-  <meta name="author" content="Ali Nawaz, Muqadas Fareed, Soonh Sadaf, Dr. Attaullah Sahito">
+  <meta name="author" content="Ali Nawaz, Muqadas Fareed, Soonh Sadaf">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Sindhi Tokenizer Documentation">
@@ -735,10 +735,10 @@ def normalize_sindhi(text: str) -> str:
 
           <h3>Key Takeaways from the Matrix</h3>
           <ol>
-            <li><strong>Fertility and Retention at ≥64k:</strong> CustomSindhi (64k, 100k, 150k) outperforms all 14
-              baseline tokenizers across all 4 registers in subword fertility and single-token retention simultaneously.
+            <li><strong>Fertility and Retention at ≥64k:</strong> CustomSindhi (64k, 100k, 150k) has the lowest fertility and highest single-token retention of all 14
+              baseline tokenizers in all 4 registers. On FLORES+ the margin at 64k is 0.002 fertility (parity), and no significance tests were run.
               (On byte fallback, Gemma 3 achieves 0.105% vs Custom 64k's 0.138% due to Gemma's 256k multilingual vocabulary,
-              though Custom maintains far superior fertility: 1.147 vs 1.344). At 32k, only TinyLlama_Sindhi records
+              though Custom maintains far superior fertility: 1.147 vs 2.308). At 32k, only TinyLlama_Sindhi records
               lower fertility on the FLORES+ split, but it carries a fatal character-deletion defect.</li>
             <li><strong>Drastic Multilingual Fragmentation:</strong> LLaMA 3.2 fragments Sindhi at 2.896 tokens per word
               with 28.5% byte fallback, while BLOOM fragments at 2.627 with 31.7% byte fallback. Our 64k model improves
@@ -782,9 +782,9 @@ def normalize_sindhi(text: str) -> str:
           </div>
 
           <p>
-            In contrast, <strong>CustomSindhi models guarantee 100% character preservation</strong>. Every valid Unicode
-            codepoint is either matched by a dedicated subword piece or cleanly decomposed into reversible UTF-8 byte
-            tokens.
+            In contrast, <strong>CustomSindhi models show no character loss</strong> in our round-trip check on all four evaluation sets. Byte fallback
+            decomposes characters without a dedicated piece into UTF-8 byte tokens. The check counts net deletions only, so it does not
+            prove exact identity for arbitrary input.
           </p>
         </section>
 
@@ -890,7 +890,7 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
             </div>
             <pre><code id="code-bibtex">@misc{nawaz2026sindhitokenizer,
   title={Sindhi Tokenizer: High-Coverage SentencePiece Unigram Subword Tokenization for the Perso-Arabic Script},
-  author={Nawaz, Ali and Fareed, Muqadas and Sadaf, Soonh and Sahito, Attaullah},
+  author={Nawaz, Ali and Fareed, Muqadas and Sadaf, Soonh},
   year={2026},
   note={Unpublished manuscript draft for future publication},
   url={https://github.com/alinawazcode/sindhi-tokenizer}

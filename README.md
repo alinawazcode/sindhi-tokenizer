@@ -57,7 +57,7 @@ Existing modern Large Language Models (LLMs) and multilingual tokenizers (such a
 
 This repository provides:
 - **Four Trained Models**: Pretrained SentencePiece Unigram models at 32k, 64k (flagship recommended), 100k, and 150k vocabulary sizes.
-- **Corpus Engineering Pipeline**: A 1.46M+ sentence corpus drawn from Sindhi and regional Wikipedia, mostly news text, a small Twitter component, and a 15% Urdu/Persian/Arabic anchor by character count.
+- **Corpus Engineering Pipeline**: A 1.46M+ sentence corpus drawn from Sindhi and regional Wikipedia, mostly news text, a small Twitter component, and an Urdu/Persian/Arabic anchor that makes up 16.1% of the corpus by character count (89,449 unique sentences, repeated four times).
 - **Full-Scale Benchmark Suite**: Standardized evaluation of 18 tokenizers across 4 distinct registers (FLORES+, Wikipedia, Sentiment, Sindh Line News).
 - **Round-Trip Length Check**: A normalized-length check that can flag text shortening; targeted examples were also inspected for deleted characters.
 - **Interactive UI**: A Gradio web application for real-time subword tokenization inspection.
@@ -168,10 +168,10 @@ sindhi-tokenizer/
 ```mermaid
 flowchart TD
     subgraph Data_Pipeline["1. Corpus Assembly & Preprocessing"]
-        A1["Sindhi Wikipedia<br/>(6,000 articles)"] --> P["Sentence Extraction & Cleaning<br/>Regex Split: [۔.!\n؟]+<br/>Length Filter: 3–100 words"]
+        A1["Sindhi Wikipedia<br/>(6,000 articles)"] --> P["Sentence Extraction & Cleaning<br/>Regex Split: [۔.!\n؟]+<br/>Drop fragments of 3 characters or fewer"]
         A2["Sindhi-NLP Dataset<br/>(Twitter + Kawish + Awami Awaz)"] --> P
-        A3["shaikhsalman Corpus<br/>(20k rows, >30% Latin filtered)"] --> P
-        A4["Multilingual Regional Anchor<br/>(Urdu, Persian, Arabic 15% mix)"] --> P
+        A3["shaikhsalman Corpus<br/>(20k rows, no language filter)"] --> P
+        A4["Multilingual Regional Anchor<br/>(Urdu, Persian, Arabic, repeated ×4, 16.1% of characters)"] --> P
         P --> C["Balanced Training Corpus<br/>(1.46M+ Sentences)"]
     end
 
@@ -229,10 +229,10 @@ Training and evaluation records are separated where known, but the sentiment eva
 
 | Source Dataset | Origin / Provider | Volume Used | Preprocessing & Filtering Rules | License |
 |---|---|---|---|---|
-| **Sindhi Wikipedia** | `wikimedia/wikipedia` (`20231101.sd`) | 6,000 articles | Articles 2,001–8,000 (first 2,000 reserved for evaluation). Filtered to 3–100 words. | CC BY-SA 3.0 |
+| **Sindhi Wikipedia** | `wikimedia/wikipedia` (`20231101.sd`) | 6,000 articles | Articles 2,001–8,000 (first 2,000 reserved for evaluation). Fragments of 3 characters or fewer dropped; no word-count limit (the 3–100 word filter is applied only to the evaluation set). | CC BY-SA 3.0 |
 | **Sindhi-NLP** | `GitHub: Sindhi-NLP/sindhi-NLP-dataset` | 4 CSV collections | Primarily news (98.4% Awami Awaz and Daily Kawish articles) with 1.6% social tweets. | MIT |
-| **shaikhsalman Corpus** | `shaikhsalman/sindhi-llm-corpus` | 20,000 rows | Seed 7 shuffle. Sentences with >30% Latin characters dropped (removed ~11% noise). | Project owner reports free use; exact license and conditions are not shown on the card (see DATA_SOURCES.md) |
-| **Multilingual Anchor** | Urdu, Persian, Arabic Wikipedia | 1,500 articles each | Balanced to represent 15% of total corpus characters. Exposes model to shared Perso-Arabic roots. | CC BY-SA 3.0 |
+| **shaikhsalman Corpus** | `shaikhsalman/sindhi-llm-corpus` | 20,000 rows | Seed 7 shuffle; 630,180 sentences, about 57% of the Sindhi-side corpus. **No language filter was applied.** A diagnostic found about 11.3% of sampled sentences were mostly Latin script, and they remain in the training text. | Project owner reports free use; exact license and conditions are not shown on the card (see DATA_SOURCES.md) |
+| **Multilingual Anchor** | Urdu, Persian, Arabic Wikipedia | 1,500 articles each | 89,449 unique sentences (4.9M characters) repeated four times to reach 16.1% of total corpus characters (target was 15%). Exposes model to shared Perso-Arabic roots. | CC BY-SA 3.0 |
 
 ### Evaluation Registers (Unsampled Benchmarks)
 
@@ -367,7 +367,7 @@ All 18 benchmark entries were evaluated across the four evaluation registers wit
 *\* TinyLlama_Sindhi and FahadQazi_BPE show apparent 0.000% UNK rates because both models silently delete unsupported characters rather than emitting a UNK token. FahadQazi_BPE shows real, severe character loss on round-trip fidelity testing alongside high byte-fallback. SindhiLM_v2 is numerically identical to Qwen2.5 across all metrics; both are listed in the table for completeness.*
 
 ### Evaluation Takeaways
-1. **Unconditional Superiority at ≥64k for Fertility & Single-Token Retention**: CustomSindhi (64k, 100k, 150k) achieves the lowest fertility and highest single-token retention across all four registers simultaneously. At 32k, one narrow exception exists: TinyLlama_Sindhi beats CustomSindhi_32k on FLORES+ fertility (though it carries a critical character-deletion defect). On byte-fallback, CustomSindhi_64k (0.138%) achieves near-lowest fallback, with Gemma 3 slightly lower at 0.105%.
+1. **Lowest fertility and highest single-token retention at ≥64k**: CustomSindhi (64k, 100k, 150k) has the lowest fertility and highest single-token retention in all four registers. The margin on FLORES+ at 64k is 0.002 fertility and 0.3 points of single-token retention, which we treat as parity; no significance tests were run. At 32k, one narrow exception exists: TinyLlama_Sindhi beats CustomSindhi_32k on FLORES+ fertility (though it carries a critical character-deletion defect). On byte-fallback, CustomSindhi_64k (0.138%) achieves near-lowest fallback, with Gemma 3 slightly lower at 0.105%.
 2. **Efficiency gains at 64k**: Mean fertility improves by **24.1% over XLM-RoBERTa** and **60.4% over LLaMA 3.2**. This describes fertility and single-token retention, not every metric.
 3. **Round-trip check results**: Custom models show 0.0000% normalized-length loss under the stated check on all four registers. This length-based check does not prove exact character identity; TinyLlama_Sindhi and FahadQazi_BPE show measurable length loss.
 
@@ -402,7 +402,7 @@ To verify that vocabulary expansion did not simply overfit high-frequency substr
 
 ## Limitations and Known Issues
 
-In accordance with rigorous academic transparency (see [`docs/paper.md` §6](docs/paper.md)), seven limitations are explicitly recorded:
+In accordance with rigorous academic transparency (see [`docs/paper.md` §6](docs/paper.md)), ten limitations are explicitly recorded:
 
 1. **Absence of Classical / Literary Register**: No classical or literary Sindhi register is included. Five independent candidate sources were investigated: a corrupted CSV export, an unrelated SQL dump, two unusable OCR scans (one incompatibly licensed), and a government-affiliated platform gated behind an institutional subscription.
 2. **Partial Source Overlap in Evaluation**: The Sentiment register and the Sindhi-NLP component of the training corpus share adjacent news-source provenance; full genre-level independence is not established for this pair.
@@ -411,6 +411,9 @@ In accordance with rigorous academic transparency (see [`docs/paper.md` §6](doc
 5. **Search for Existing Tokenizers May Be Incomplete**: Four additional tokenizers were discovered after initial benchmarking; while subsequent searches found no further models, the open-source NLP space is active enough that this cannot be guaranteed exhaustive.
 6. **Downstream Applications Undetermined**: The tokenizer's target use is future Sindhi language modeling. It is not validated for Automatic Speech Recognition (ASR) or Text-to-Speech (TTS).
 7. **Register Weighting Choice**: The four evaluation registers differ substantially in size; an unweighted macro mean was used rather than a token-pooled mean, which would have been dominated by Sindh Line News (~2.5× the other three combined).
+8. **No language filter on training text**: About 11.3% of a diagnostic sample of the shaikhsalman text was mostly Latin script. No filter was applied before training, so English text is part of the training corpus.
+9. **Repeated cross-lingual text**: The Urdu, Persian and Arabic part of the corpus is 89,449 unique sentences repeated four times. Its share by character count is 16.1%, but its unique content is much smaller.
+10. **Possible overlap with baseline training data**: The SindhiLM model card names the ambile-official Sindhi Mega Corpus as training data, and that corpus lists Sindhi Wikipedia among its sources. SindhiLM may therefore have seen text from our Wikipedia evaluation set, which would favor that baseline, not ours.
 
 ---
 
@@ -447,13 +450,13 @@ In accordance with rigorous academic transparency (see [`docs/paper.md` §6](doc
 
 ## Team and Acknowledgments
 
-This research and tokenizer implementation were developed at the **Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan**, under the supervision of **Dr. Attaullah Sahito**.
+This research and tokenizer implementation were developed at the **Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan**, under the supervision of **Dr. Attaullah Sahito** (academic supervisor, not an author).
 
 ### Authors and Roles
 - **Ali Nawaz** (Lead author and project lead): [GitHub (@alinawazcode)](https://github.com/alinawazcode)
 - **Muqadas Fareed** (author): [LinkedIn Profile](https://www.linkedin.com/in/muqadas-fareed-24a07837b/)
 - **Soonh Sadaf (Sadaf Khaliq)** (author): [LinkedIn Profile](https://www.linkedin.com/in/sadaf-khaliq-a69215411/)
-- **Dr. Attaullah Sahito** (co-author and academic supervisor): [LinkedIn Profile](https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false), Department of Computer Science, Shaikh Ayaz University.
+- **Dr. Attaullah Sahito** (academic supervisor): [LinkedIn Profile](https://www.linkedin.com/in/attaullah-sahito/?isSelfProfile=false), Department of Computer Science, Shaikh Ayaz University.
 
 ---
 
@@ -469,7 +472,7 @@ If you use this tokenizer, benchmark code, or findings in your academic research
 
 ```bibtex
 @misc{nawaz2026sindhitokenizer,
-  author = {Nawaz, Ali and Fareed, Muqadas and Sadaf, Soonh and Sahito, Attaullah},
+  author = {Nawaz, Ali and Fareed, Muqadas and Sadaf, Soonh},
   title  = {A Corpus-Driven Sindhi Subword Tokenizer: Design, Empirical Validation, and Benchmark Comparison Against Fourteen Existing Tokenizers},
   year   = {2026},
   howpublished = {\url{https://github.com/alinawazcode/sindhi-tokenizer}},
@@ -493,7 +496,7 @@ It applies Unicode NFKC, removes zero-width formatting characters and whitespace
 
 <details>
 <summary><b>3. Why is there a 15% mix of Urdu, Persian, and Arabic in the training corpus?</b></summary>
-Sindhi shares the Perso-Arabic alphabet and borrows significant religious, legal, and cultural vocabulary from Arabic and Persian, as well as shared regional terms with Urdu. This controlled 15% anchor was added by design to expose the subword vocabulary to shared Perso-Arabic root morphemes.
+Sindhi shares the Perso-Arabic alphabet and borrows significant religious, legal, and cultural vocabulary from Arabic and Persian, as well as shared regional terms with Urdu. This anchor (16.1% of characters, from 89,449 unique sentences repeated four times) was added by design to expose the subword vocabulary to shared Perso-Arabic root morphemes.
 </details>
 
 <details>
