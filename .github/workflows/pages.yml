@@ -1,4 +1,3 @@
-
 # .github/workflows/pages.yml
 name: Deploy GitHub Pages
 
@@ -12,9 +11,11 @@ permissions:
   pages: write
   id-token: write
 
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# Do NOT cancel in-progress runs as GitHub Pages requires the active deployment to finish cleanly.
 concurrency:
   group: "pages"
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
