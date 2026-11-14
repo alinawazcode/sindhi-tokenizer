@@ -299,42 +299,46 @@ In accordance with rigorous research standards, two negative experimental result
 
 ## Installation and Usage
 
-### Prerequisites
-- Python 3.9, 3.10, 3.11, or 3.12
-- `sentencepiece`, `transformers`, `huggingface_hub`
+### Install the Python SDK
+
+Requires Python 3.9 or newer. The SDK only installs SentencePiece and the Hugging Face Hub client; training and demo dependencies are optional.
+
+```bash
+pip install sindhi-tokenizer
+```
+
+### Quickstart
+
+```python
+from sindhi_tokenizer import SindhiTokenizer
+
+# Downloads the recommended 64k model once, then reuses the Hub cache.
+tokenizer = SindhiTokenizer.from_pretrained()
+text = "سنڌ جي تاريخ تمام قديم آهي"
+
+pieces = tokenizer.tokenize(text)
+token_ids = tokenizer.encode(text)
+
+print("Pieces:", pieces)
+print("Token IDs:", token_ids)
+print("Decoded:", tokenizer.decode(token_ids))
+print("Vocabulary size:", tokenizer.vocab_size)  # 64000
+```
+
+Choose another released vocabulary with `vocab_size=32000`, `100000`, or `150000`. You can also load a local `.model` file with `SindhiTokenizer.from_file(path)`. Batch methods are `encode_batch()` and `decode_batch()`.
+
+To work on the repository and its training/demo tools:
 
 ```bash
 git clone https://github.com/alinawazcode/sindhi-tokenizer.git
 cd sindhi-tokenizer
-pip install -e .
+pip install -e ".[dev,training,demo]"
 ```
 
-### Quickstart: Load from Hugging Face Hub
-```python
-from huggingface_hub import hf_hub_download
-import sentencepiece as spm
-
-# Download the recommended 64k flagship model
-model_path = hf_hub_download(
-    repo_id="alinawazmahar/sindhi-tokenizer", 
-    filename="sindhi_custom_64000.model"
-)
-
-# Load into SentencePiece processor
-sp = spm.SentencePieceProcessor(model_file=model_path)
-
-text = "سنڌ جي تاريخ تمام قديم آهي"
-tokens = sp.encode(text, out_type=str)
-token_ids = sp.encode(text, out_type=int)
-
-print("Tokens:", tokens)
-# [' سنڌ', ' جي', ' تاريخ', ' تمام', ' قديم', ' آهي']
-print("Token IDs:", token_ids)
-print("Decoded:", sp.decode(token_ids))
-```
+The model download is cached by Hugging Face Hub. The SDK code is MIT licensed; the model files are separately licensed under CC BY-SA 4.0. Review the model card for attribution and sharing terms before redistributing model files.
 
 > [!CAUTION]
-> **Do not use `transformers.LlamaTokenizer` to load raw `.model` files**: Hugging Face's `LlamaTokenizer` can silently fail on custom SPM Unigram files and return a 3-token fallback vocabulary. Always load using `sentencepiece.SentencePieceProcessor` or the provided [`evaluation.metrics.SPMTokenizerAdapter`](evaluation/metrics.py).
+> **Do not use `transformers.LlamaTokenizer` to load raw `.model` files**: it can silently return a 3-token fallback vocabulary for these custom SentencePiece Unigram files. Use `SindhiTokenizer`, `sentencepiece.SentencePieceProcessor`, or the benchmark adapter in [`evaluation/metrics.py`](evaluation/metrics.py).
 
 ---
 
