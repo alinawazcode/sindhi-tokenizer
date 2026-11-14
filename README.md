@@ -1,10 +1,11 @@
-# Sindhi Tokenizer: A Corpus-Driven SentencePiece Unigram Tokenizer
+# Sindhi Tokenizer: Corpus-Driven Models and Python SDK
 
 <p align="center">
   <img src="assets/banner.png" alt="Sindhi Tokenizer" width="100%">
 </p>
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/)
+[![PyPI version](https://img.shields.io/pypi/v/sindhi-tokenizer)](https://pypi.org/project/sindhi-tokenizer/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Hugging Face Models](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-alinawazmahar%2Fsindhi--tokenizer-yellow)](https://huggingface.co/alinawazmahar/sindhi-tokenizer)
 [![Documentation](https://img.shields.io/badge/Docs-GitHub%20Pages-informational)](https://alinawazcode.github.io/sindhi-tokenizer/)
@@ -16,6 +17,7 @@ A subword tokenizer purpose-built for the **Sindhi language** (سنڌي) in the 
 ---
 
 ### Quick Links
+- 📦 **Python SDK on PyPI**: [sindhi-tokenizer](https://pypi.org/project/sindhi-tokenizer/)
 - 🌐 **Documentation Site**: [https://alinawazcode.github.io/sindhi-tokenizer/](https://alinawazcode.github.io/sindhi-tokenizer/)
 - 🤗 **Hugging Face Hub**: [alinawazmahar/sindhi-tokenizer](https://huggingface.co/alinawazmahar/sindhi-tokenizer)
 - 📄 **Research Manuscript Draft (Not Yet Published)**: [`docs/paper.md`](docs/paper.md)
@@ -56,6 +58,7 @@ Sindhi is an Indo-Aryan language spoken by an estimated 25–30 million people, 
 Existing modern Large Language Models (LLMs) and multilingual tokenizers (such as XLM-RoBERTa, LLaMA, Qwen, and BLOOM) under-represent Sindhi orthography, causing high token fertility, extreme sequence bloat, out-of-vocabulary (UNK) fallbacks, or destructive character drops. 
 
 This repository provides:
+- **Python SDK on PyPI**: Install `sindhi-tokenizer` and load the released 32k, 64k, 100k, or 150k SentencePiece model through a small typed API.
 - **Four Trained Models**: Pretrained SentencePiece Unigram models at 32k, 64k (flagship recommended), 100k, and 150k vocabulary sizes.
 - **Corpus Engineering Pipeline**: A 1.46M+ sentence corpus drawn from Sindhi and regional Wikipedia, mostly news text, a small Twitter component, and an Urdu/Persian/Arabic anchor that makes up 16.1% of the corpus by character count (89,449 unique sentences, repeated four times).
 - **Full-Scale Benchmark Suite**: Standardized evaluation of 18 tokenizers across 4 distinct registers (FLORES+, Wikipedia, Sentiment, Sindh Line News).
@@ -114,8 +117,10 @@ Standard tokenizer benchmarks often report token fertility and `UNK` rate withou
 
 | Layer | Technologies | Purpose |
 |---|---|---|
-| **Core Engine** | Python 3.9+, [SentencePiece](https://github.com/google/sentencepiece) (C++ bindings) | Tokenizer training, Viterbi segmentation, byte fallback |
-| **NLP Framework** | [Hugging Face Transformers](https://github.com/huggingface/transformers), `huggingface_hub` | Adapter integration, model sharing and distribution |
+| **Python SDK** | Python 3.9+, `sindhi-tokenizer` on PyPI | Load pretrained models; tokenize, encode, decode, and process batches |
+| **Core Engine** | [SentencePiece](https://github.com/google/sentencepiece) (C++ bindings) | Subword model inference and training |
+| **Model Distribution** | [Hugging Face Hub](https://huggingface.co/alinawazmahar/sindhi-tokenizer), `huggingface_hub` | Download and cache the released model files |
+| **Optional NLP Frameworks** | [Hugging Face Transformers](https://github.com/huggingface/transformers) | Downstream model integration; not required by the SDK |
 | **Datasets** | [Hugging Face Datasets](https://github.com/huggingface/datasets), Pandas, NumPy | Corpus ingestion, normalization, filtering, metrics computation |
 | **Interactive Demo** | [Gradio](https://gradio.app/) | Real-time interactive subword visualization UI |
 | **Quality & CI/CD** | Pytest, GitHub Actions | Automated regression tests across Python 3.9–3.12 |
@@ -129,7 +134,9 @@ Standard tokenizer benchmarks often report token fertility and `UNK` rate withou
 sindhi-tokenizer/
 ├── .github/
 │   └── workflows/
-│       └── python-tests.yml        # Automated CI workflow testing Python 3.9-3.12
+│       ├── python-tests.yml        # Tests and linting on Python 3.9-3.12
+│       ├── release.yml             # Builds and publishes GitHub releases to PyPI
+│       └── pages.yml               # Deploys the documentation site
 ├── .gitignore                      # Excludes models, artifacts, cache, and virtualenvs
 ├── CITATION.cff                    # Citation File Format (v1.2.0)
 ├── DATA_SOURCES.md                 # Complete provenance, volume, and licensing documentation
@@ -137,6 +144,12 @@ sindhi-tokenizer/
 ├── README.md                       # Central documentation index and project guide
 ├── pyproject.toml                  # PEP 517/621 package metadata and dependency configuration
 ├── requirements.txt                # Exact runtime dependencies
+├── sindhi_tokenizer/                # Installable Python SDK
+│   ├── __init__.py                 # Public SindhiTokenizer import
+│   ├── tokenizer.py                 # Model loading, tokenization, encode/decode API
+│   └── py.typed                    # PEP 561 typing marker
+├── tests/
+│   └── test_tokenizer_sdk.py       # SDK behavior and input validation tests
 ├── demo/
 │   ├── README.md                   # Instructions for running and deploying the demo
 │   └── app.py                      # Interactive Gradio comparison web app
@@ -301,10 +314,29 @@ In accordance with rigorous research standards, two negative experimental result
 
 ### Install the Python SDK
 
-Requires Python 3.9 or newer. The SDK only installs SentencePiece and the Hugging Face Hub client; training and demo dependencies are optional.
+Install the published package in a Python 3.9–3.12 environment. The core SDK installs SentencePiece and the Hugging Face Hub client. Training, evaluation, and demo dependencies are optional.
+
+Create and activate a virtual environment first if you want to keep this install separate from other Python projects:
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install sindhi-tokenizer
+```
+
+On macOS or Linux, use `python3 -m venv .venv`, `source .venv/bin/activate`, then run the two `python -m pip` commands above.
+
+If you do not need a virtual environment, install directly with:
 
 ```bash
-pip install sindhi-tokenizer
+python -m pip install --upgrade sindhi-tokenizer
+```
+
+To pin the version documented here:
+
+```bash
+python -m pip install "sindhi-tokenizer==1.1.0"
 ```
 
 ### Quickstart
@@ -312,7 +344,7 @@ pip install sindhi-tokenizer
 ```python
 from sindhi_tokenizer import SindhiTokenizer
 
-# Downloads the recommended 64k model once, then reuses the Hub cache.
+# Downloads the recommended 64k model on first use, then reuses the Hub cache.
 tokenizer = SindhiTokenizer.from_pretrained()
 text = "سنڌ جي تاريخ تمام قديم آهي"
 
@@ -325,20 +357,54 @@ print("Decoded:", tokenizer.decode(token_ids))
 print("Vocabulary size:", tokenizer.vocab_size)  # 64000
 ```
 
-Choose another released vocabulary with `vocab_size=32000`, `100000`, or `150000`. You can also load a local `.model` file with `SindhiTokenizer.from_file(path)`. Batch methods are `encode_batch()` and `decode_batch()`.
+`from_pretrained()` downloads the model file from [Hugging Face](https://huggingface.co/alinawazmahar/sindhi-tokenizer); it does not bundle the model inside the PyPI wheel. The first use therefore needs network access, and Hugging Face Hub caches the downloaded file for later runs.
 
-To work on the repository and its training/demo tools:
+### Choose a model and output format
+
+The default model has a 64,000-piece vocabulary. To select another released size, pass `vocab_size=32000`, `100000`, or `150000`:
+
+```python
+tokenizer = SindhiTokenizer.from_pretrained(vocab_size=100000)
+
+# Encode to readable SentencePiece strings instead of integer IDs.
+pieces = tokenizer.encode("سنڌي ٻولي", out_type="pieces")
+print(pieces)
+```
+
+The API also supports `tokenize(text)`, `encode_batch(texts)`, `decode_batch(batch)`, `id_to_piece(token_id)`, and `piece_to_id(piece)`. To load a model file you already have, use `SindhiTokenizer.from_file("path/to/model.model")`.
+
+| API | Description |
+|---|---|
+| `SindhiTokenizer.from_pretrained(...)` | Download or load a cached Hub model. Supports `model_id`, `vocab_size`, `revision`, `cache_dir`, and `local_files_only`. |
+| `SindhiTokenizer.from_file(path)` | Load a local SentencePiece `.model` file. |
+| `tokenizer.tokenize(text)` | Return readable SentencePiece pieces. |
+| `tokenizer.encode(text, out_type="ids")` | Return token IDs; use `out_type="pieces"` for piece strings. |
+| `tokenizer.decode(tokens)` | Decode a sequence of IDs or piece strings. |
+| `tokenizer.encode_batch(texts)` / `decode_batch(batch)` | Encode or decode multiple texts. |
+| `tokenizer.id_to_piece(id)` / `piece_to_id(piece)` | Convert between individual IDs and piece strings. |
+
+After a model has been downloaded once, it can be loaded without network access by setting `local_files_only=True`:
+
+```python
+tokenizer = SindhiTokenizer.from_pretrained(local_files_only=True)
+```
+
+### Install from source or add optional tools
+
+For development, testing, training, or the Gradio demo, clone the repository and install the needed extras:
 
 ```bash
 git clone https://github.com/alinawazcode/sindhi-tokenizer.git
 cd sindhi-tokenizer
-pip install -e ".[dev,training,demo]"
+python -m pip install -e ".[dev,training,demo]"
 ```
 
-The model download is cached by Hugging Face Hub. The SDK code is MIT licensed; the model files are separately licensed under CC BY-SA 4.0. Review the model card for attribution and sharing terms before redistributing model files.
+The extras can be installed separately: `.[dev]` for tests and packaging tools, `.[training]` for corpus/model training, and `.[demo]` for the interactive Gradio app. A source checkout is not needed to use the published SDK.
+
+The SDK code is MIT licensed. The model files have separate licensing and attribution terms; review [`DATA_SOURCES.md`](DATA_SOURCES.md) and the [Hugging Face model card](https://huggingface.co/alinawazmahar/sindhi-tokenizer) before redistributing model files.
 
 > [!CAUTION]
-> **Do not use `transformers.LlamaTokenizer` to load raw `.model` files**: it can silently return a 3-token fallback vocabulary for these custom SentencePiece Unigram files. Use `SindhiTokenizer`, `sentencepiece.SentencePieceProcessor`, or the benchmark adapter in [`evaluation/metrics.py`](evaluation/metrics.py).
+> **Do not use `transformers.LlamaTokenizer` to load raw `.model` files**: it can silently return a 3-token fallback vocabulary for these custom SentencePiece Unigram files. Use the SDK's `SindhiTokenizer` or SentencePiece directly.
 
 ---
 
@@ -426,6 +492,7 @@ In accordance with rigorous academic transparency (see [`docs/paper.md` §6](doc
 | Document | Path | Purpose |
 |---|---|---|
 | **Root Guide & Navigation Hub** | [`README.md`](README.md) | Central repository overview, quickstart, and full benchmark summary |
+| **Python SDK on PyPI** | [PyPI project page](https://pypi.org/project/sindhi-tokenizer/) | Installable package and release history |
 | **Research Manuscript Draft** | [`docs/paper.md`](docs/paper.md) | Draft for future publication; not yet published. Includes methodology and 18 benchmark rows |
 | **Technical Explainer Log** | [`docs/explainer.md`](docs/explainer.md) | In-depth engineering explainer into empirical failures, metric corrections, and design rationale |
 | **Dataset Provenance Card** | [`DATA_SOURCES.md`](DATA_SOURCES.md) | Complete documentation of all training corpora and evaluation sets, licensing, and volumes |
@@ -505,5 +572,15 @@ Sindhi shares the Perso-Arabic alphabet and borrows significant religious, legal
 
 <details>
 <summary><b>4. Why should I avoid transformers.LlamaTokenizer for loading this model?</b></summary>
-Certain versions of Hugging Face Transformers' <code>LlamaTokenizer</code> fail to load custom SentencePiece Unigram models correctly, silently substituting an empty or 3-token fallback vocabulary without throwing an exception. Always use <code>sentencepiece.SentencePieceProcessor</code> directly or via our verified <code>SPMTokenizerAdapter</code>.
+Certain versions of Hugging Face Transformers' <code>LlamaTokenizer</code> fail to load custom SentencePiece Unigram models correctly, silently substituting an empty or 3-token fallback vocabulary without throwing an exception. Use the <code>SindhiTokenizer</code> SDK or <code>sentencepiece.SentencePieceProcessor</code> directly.
+</details>
+
+<details>
+<summary><b>5. Does pip install the tokenizer model too?</b></summary>
+No. The PyPI wheel installs the SDK and its runtime dependencies. The first call to <code>SindhiTokenizer.from_pretrained()</code> downloads the selected model from Hugging Face and caches it locally. Use <code>local_files_only=True</code> to require a cached model without network access.
+</details>
+
+<details>
+<summary><b>6. Which vocabulary sizes can I load?</b></summary>
+The released model sizes are <code>32000</code>, <code>64000</code> (the recommended default), <code>100000</code>, and <code>150000</code>. Pass one of these values to <code>SindhiTokenizer.from_pretrained(vocab_size=...)</code>.
 </details>

@@ -143,12 +143,12 @@
         <header>
           <h1>Sindhi Tokenizer Documentation</h1>
           <div class="page-meta">
-            <span class="page-meta-tag">Release: v1.0.0</span>
+            <span class="page-meta-tag">SDK release: v1.1.0</span>
             <span class="page-meta-tag">Script: Perso-Arabic (sd)</span>
             <span class="page-meta-tag">Algorithm: SentencePiece Unigram</span>
             <span class="page-meta-tag">Flagship Vocab: 64,000</span>
-            <span class="page-meta-tag" style="color:var(--bc-c);border-color:var(--bc-c);">0.0000% Character
-              Loss</span>
+            <span class="page-meta-tag" style="color:var(--bc-c);border-color:var(--bc-c);">0.0000% normalized-length
+              loss on evaluated text</span>
           </div>
         </header>
 
@@ -162,6 +162,12 @@
             models.
           </p>
           <p>
+            The <strong>Python SDK is published on PyPI</strong> as <code>sindhi-tokenizer</code>. Install it with pip
+            and use the <code>SindhiTokenizer</code> API to load a released model, tokenize text, encode IDs or pieces,
+            decode text, and process batches. The SDK supports Python 3.9–3.12; model files are downloaded separately
+            from Hugging Face and cached locally.
+          </p>
+          <p>
             The flagship <strong>CustomSindhi_64k</strong> model achieves an average subword fertility of <strong>1.147
               tokens per word</strong> and <strong>88.6% single-token word coverage</strong> across four evaluation
             registers, improving tokenization efficiency by <strong>24.1% over XLM-RoBERTa</strong> and <strong>60.4%
@@ -173,7 +179,7 @@
         <div class="quick-nav">
           <a href="#quickstart" class="quick-nav-card">
             <div class="quick-nav-card-title">Quick Start →</div>
-            <div class="quick-nav-card-desc">Install via pip and load models in SentencePiece or Hugging Face.</div>
+            <div class="quick-nav-card-desc">Install the Python SDK with pip and use its tokenizer API.</div>
           </a>
           <a href="#playground" class="quick-nav-card">
             <div class="quick-nav-card-title">Live Playground →</div>
@@ -232,79 +238,181 @@
 
         <!-- Section: Installation & Quickstart -->
         <section id="quickstart">
-          <h2>Installation &amp; Quick Start</h2>
+          <h2>Python SDK: Installation &amp; Quick Start</h2>
           <p>
-            The tokenizers can be used either through the official Google SentencePiece Python library or via Hugging
-            Face's <code>transformers</code> library.
+            The recommended way to use the released tokenizer models is the <code>sindhi-tokenizer</code> Python SDK
+            on PyPI. It supports Python 3.9–3.12 and installs the two runtime dependencies it needs: SentencePiece and
+            the Hugging Face Hub client. You do not need to clone this repository to use the SDK.
           </p>
 
-          <h3>1. Installation</h3>
+          <h3>1. Install from PyPI</h3>
           <div class="code-block">
             <div class="code-header">
-              <span>bash</span>
+              <span>PowerShell, macOS, or Linux</span>
               <button class="btn-copy" data-target="#code-install">Copy</button>
             </div>
-            <pre><code id="code-install"># Install required runtime dependencies
-pip install sentencepiece transformers tokenizers</code></pre>
+            <pre><code id="code-install">python -m pip install --upgrade sindhi-tokenizer</code></pre>
+          </div>
+          <p>
+            PyPI package: <a href="https://pypi.org/project/sindhi-tokenizer/">sindhi-tokenizer</a>. The SDK wheel
+            contains the Python package, not the model files. The first call to <code>from_pretrained()</code>
+            downloads the selected model from Hugging Face; later calls reuse the Hugging Face Hub cache. To pin the
+            release documented here, install <code>sindhi-tokenizer==1.1.0</code>.
+          </p>
+
+          <p>
+            A virtual environment is recommended to keep dependencies separate from other projects:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span>Windows PowerShell</span>
+              <button class="btn-copy" data-target="#code-venv">Copy</button>
+            </div>
+            <pre><code id="code-venv">py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install sindhi-tokenizer</code></pre>
+          </div>
+          <div class="code-block">
+            <div class="code-header">
+              <span>macOS or Linux</span>
+              <button class="btn-copy" data-target="#code-venv-unix">Copy</button>
+            </div>
+            <pre><code id="code-venv-unix">python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install sindhi-tokenizer</code></pre>
           </div>
 
-          <h3>2. Native SentencePiece Usage (Recommended)</h3>
+          <h3>2. Load the recommended model and tokenize</h3>
+          <div class="code-block">
+            <div class="code-header">
+              <span>python</span>
+              <button class="btn-copy" data-target="#code-sdk-basic">Copy</button>
+            </div>
+            <pre><code id="code-sdk-basic">from sindhi_tokenizer import SindhiTokenizer
+
+# Defaults to the recommended 64,000-piece model.
+tokenizer = SindhiTokenizer.from_pretrained()
+text = "سنڌ جي تاريخ تمام قديم آهي"
+
+pieces = tokenizer.tokenize(text)
+token_ids = tokenizer.encode(text)
+
+print("Pieces:", pieces)
+print("Token IDs:", token_ids)
+print("Vocabulary size:", tokenizer.vocab_size)  # 64000
+
+decoded = tokenizer.decode(token_ids)
+assert decoded == text
+print("Decoded:", decoded)</code></pre>
+          </div>
+
           <p>
-            Loading via SentencePiece directly is the most robust and performant interface:
+            Four vocabulary sizes are available: <code>32000</code>, <code>64000</code>, <code>100000</code>, and
+            <code>150000</code>. Pass the size when loading a different model:
           </p>
           <div class="code-block">
             <div class="code-header">
               <span>python</span>
-              <button class="btn-copy" data-target="#code-spm">Copy</button>
+              <button class="btn-copy" data-target="#code-sdk-size">Copy</button>
             </div>
-            <pre><code id="code-spm">import sentencepiece as spm
+            <pre><code id="code-sdk-size">from sindhi_tokenizer import SindhiTokenizer
 
-# Initialize processor with trained model file
-sp = spm.SentencePieceProcessor()
-sp.load("tokenizers/custom_unigram_64k/sindhi_unigram_64000.model")
-
-text = "سنڌ جي تاريخ تمام قديم ۽ وسيع ثقافتي ورثي تي مشتمل آهي"
-
-# Encode to subword tokens and IDs
-pieces = sp.encode_as_pieces(text)
-ids = sp.encode_as_ids(text)
-
-print("Subword Pieces:", pieces)
-# [' سنڌ', ' جي', ' تاريخ', ' تمام', ' قديم', ' ۽', ' وسيع', ' ثقافتي', ' ورثي', ' تي', ' مشتمل', ' آهي']
-print("Token IDs:", ids)
-
-# Round-trip decode example
-decoded = sp.decode_pieces(pieces)
-assert decoded == text, "This example should round-trip exactly"</code></pre>
+tokenizer_100k = SindhiTokenizer.from_pretrained(vocab_size=100000)
+pieces = tokenizer_100k.encode("سنڌي ٻولي", out_type="pieces")
+print(pieces)</code></pre>
           </div>
 
-          <h3>3. Hugging Face Transformers Integration</h3>
+          <h3>3. Batch processing and local model files</h3>
           <p>
-            You can load the published tokenizer directly from the Hugging Face Hub using
-            <code>PreTrainedTokenizerFast</code>:
+            <code>encode()</code> returns integer IDs by default. Use <code>out_type="pieces"</code> for readable
+            SentencePiece strings. The SDK also provides batch methods and can load a local SentencePiece
+            <code>.model</code> file.
           </p>
           <div class="code-block">
             <div class="code-header">
               <span>python</span>
-              <button class="btn-copy" data-target="#code-hf">Copy</button>
+              <button class="btn-copy" data-target="#code-sdk-batch">Copy</button>
             </div>
-            <pre><code id="code-hf">from transformers import PreTrainedTokenizerFast
+            <pre><code id="code-sdk-batch">from sindhi_tokenizer import SindhiTokenizer
 
-# Load from Hugging Face Model Hub
-tokenizer = PreTrainedTokenizerFast.from_pretrained("alinawazmahar/sindhi-tokenizer")
+tokenizer = SindhiTokenizer.from_pretrained()
+texts = ["سنڌ جي تاريخ", "هي سنڌي ٽوڪنائزر آهي"]
+batch_ids = tokenizer.encode_batch(texts)
+decoded_texts = tokenizer.decode_batch(batch_ids)
+assert decoded_texts == texts
 
-text = "خداوند ڪريم کيس اعليٰ ذهانت سان نوازيو هو"
-inputs = tokenizer(text, return_tensors="pt")
-tokens = tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
-print(tokens)</code></pre>
+pieces = tokenizer.encode(texts[0], out_type="pieces")
+ids = tokenizer.encode(texts[0])
+assert tokenizer.decode(pieces) == texts[0]
+assert tokenizer.id_to_piece(ids[0]) == pieces[0]
+assert tokenizer.piece_to_id(pieces[0]) == ids[0]
+
+# Replace this example path with a local model file.
+local_tokenizer = SindhiTokenizer.from_file("path/to/sindhi_custom_64000.model")</code></pre>
+          </div>
+
+          <p>
+            If a model has already been cached, <code>local_files_only=True</code> prevents an online lookup:
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span>python</span>
+              <button class="btn-copy" data-target="#code-sdk-offline">Copy</button>
+            </div>
+            <pre><code id="code-sdk-offline">from sindhi_tokenizer import SindhiTokenizer
+
+tokenizer = SindhiTokenizer.from_pretrained(local_files_only=True)</code></pre>
+          </div>
+
+          <h3>4. Test an installation</h3>
+          <p>
+            Run this short check after installation. The first model load requires internet access to Hugging Face;
+            later loads use the local Hub cache.
+          </p>
+          <div class="code-block">
+            <div class="code-header">
+              <span>python</span>
+              <button class="btn-copy" data-target="#code-sdk-check">Copy</button>
+            </div>
+            <pre><code id="code-sdk-check">from sindhi_tokenizer import SindhiTokenizer
+
+tokenizer = SindhiTokenizer.from_pretrained()
+text = "سنڌ جي تاريخ تمام قديم آهي"
+ids = tokenizer.encode(text)
+assert tokenizer.decode(ids) == text
+print("SDK works; vocabulary:", tokenizer.vocab_size)</code></pre>
+          </div>
+
+          <h3>5. API reference</h3>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr><th>API</th><th>Purpose</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>SindhiTokenizer.from_pretrained(...)</code></td><td>Load a Hub model. Options include <code>model_id</code>, <code>vocab_size</code>, <code>revision</code>, <code>cache_dir</code>, and <code>local_files_only</code>.</td></tr>
+                <tr><td><code>SindhiTokenizer.from_file(path)</code></td><td>Load a local SentencePiece <code>.model</code> file.</td></tr>
+                <tr><td><code>tokenizer.tokenize(text)</code></td><td>Return readable SentencePiece pieces.</td></tr>
+                <tr><td><code>tokenizer.encode(text, out_type="ids")</code></td><td>Return integer IDs; set <code>out_type="pieces"</code> for piece strings.</td></tr>
+                <tr><td><code>tokenizer.decode(tokens)</code></td><td>Decode a sequence of IDs or piece strings back to text.</td></tr>
+                <tr><td><code>encode_batch(texts)</code> / <code>decode_batch(batch)</code></td><td>Encode or decode multiple texts in order.</td></tr>
+                <tr><td><code>id_to_piece(id)</code> / <code>piece_to_id(piece)</code></td><td>Convert between a token ID and its piece string.</td></tr>
+                <tr><td><code>tokenizer.vocab_size</code></td><td>Read the loaded model's vocabulary size.</td></tr>
+              </tbody>
+            </table>
           </div>
 
           <div class="callout callout-warn">
-            <div class="callout-title">Critical Compatibility Note: Do Not Use LlamaTokenizer Directly</div>
-            Do not initialize <code>transformers.LlamaTokenizer</code> directly on the raw <code>.model</code> file.
-            <code>LlamaTokenizer</code> assumes a hard-coded 32k BPE structure and silently corrupts custom Unigram
-            vocabularies (often reducing them to 3 tokens). Always load via <code>PreTrainedTokenizerFast</code> or use
-            the provided <code>SPMTokenizerAdapter</code> class in <code>evaluation/metrics.py</code>.
+            <div class="callout-title">Model compatibility</div>
+            Do not pass these raw SentencePiece Unigram <code>.model</code> files directly to
+            <code>transformers.LlamaTokenizer</code>; some versions silently produce a fallback vocabulary. Use
+            <code>SindhiTokenizer</code> from this SDK or <code>sentencepiece.SentencePieceProcessor</code> directly.
+            The SDK code is MIT licensed. The model files have separate licensing and attribution terms; review
+            <a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/DATA_SOURCES.md">Data Sources and Licensing</a> and the
+            <a href="https://huggingface.co/alinawazmahar/sindhi-tokenizer">Hugging Face model card</a> before
+            redistributing model files.
           </div>
         </section>
 
@@ -535,41 +643,22 @@ print(tokens)</code></pre>
         <section id="repository">
           <h2>Repository Structure</h2>
           <p>
-            The project repository is structured cleanly with separated concerns for training, evaluation, data
-            preparation, documentation, and model artifacts:
+            The repository separates the installable inference SDK, model evaluation, training code, research materials,
+            and website source. Large datasets and downloaded model files are not included in the PyPI wheel.
           </p>
           <div class="repo-tree">sindhi-tokenizer/
-            ├── configs/ # Training hyperparameter configurations (YAML)
-            │ └── tokenizer_config.yaml
-            ├── datasets/ # Corpus preparation and register splits
-            │ ├── raw/ # Source raw texts (ignored from git)
-            │ └── processed/ # 1.49M clean normalized training lines
-            ├── docs/ # GitHub Pages documentation source
-            │ ├── index.html # Main documentation portal
-            │ ├── style.css # Technical documentation design system
-            │ ├── script.js # Interactive playground and table filters
-            │ └── paper.md # Complete scientific research paper
-            ├── evaluation/ # Comprehensive evaluation pipeline
-            │ ├── benchmark.py # Benchmark suite runner
-            │ ├── metrics.py # SPMTokenizerAdapter and metric calculators
-            │ └── registers/ # 4 evaluation test sets
-            ├── notebooks/ # Exploratory research notebooks
-            │ ├── 01_data_preprocessing.ipynb
-            │ ├── 02_tokenizer_training.ipynb
-            │ ├── 03_comparative_evaluation.ipynb
-            │ └── 04_linguistic_analysis.ipynb
-            ├── results/ # Serialized evaluation reports and JSON exports
-            │ └── macro_benchmark_results.json
-            ├── tokenizers/ # Trained SentencePiece binary models & configs
-            │ ├── custom_unigram_32k/
-            │ ├── custom_unigram_64k/ # Flagship model
-            │ ├── custom_unigram_100k/
-            │ └── custom_unigram_150k/
-            ├── training/ # Production training scripts
-            │ ├── train.py # SentencePiece trainer script
-            │ └── preprocessor.py # Unicode normalization routines
-            ├── pyproject.toml # Project packaging specification
-            └── README.md # Root technical repository documentation</div>
+            ├── .github/workflows/ # Tests, PyPI releases, and Pages deployment
+            ├── sindhi_tokenizer/ # Published Python SDK
+            ├── tests/ # SDK behavior and input validation tests
+            ├── evaluation/ # Metrics and SentencePiece adapter
+            ├── training/ # SentencePiece training script and guide
+            ├── demo/ # Gradio comparison application
+            ├── notebooks/ # Training and benchmark notebooks
+            ├── results/ # Benchmark summaries
+            ├── docs/ # GitHub Pages source and research documents
+            ├── DATA_SOURCES.md # Dataset provenance and license notes
+            ├── pyproject.toml # Package metadata and optional dependencies
+            └── README.md # Project guide and pip SDK quickstart</div>
         </section>
 
         <!-- Section: Corpus Composition & Preprocessing -->
@@ -843,7 +932,7 @@ def normalize_sindhi(text: str) -> str:
             provided in the repository:
           </p>
 
-          <h3>1. Clone Repository and Set Up Environment</h3>
+          <h3>1. Clone the repository and install development tools</h3>
           <div class="code-block">
             <div class="code-header">
               <span>bash</span>
@@ -851,28 +940,40 @@ def normalize_sindhi(text: str) -> str:
             </div>
             <pre><code id="code-repro-setup">git clone https://github.com/alinawazcode/sindhi-tokenizer.git
 cd sindhi-tokenizer
-pip install -r requirements.txt</code></pre>
+python -m pip install -e ".[dev,training]"</code></pre>
           </div>
+          <p>
+            This source install is for development and training. For ordinary tokenizer use, install the published
+            package with <code>python -m pip install sindhi-tokenizer</code> as shown above. Training requires a
+            prepared text corpus, which is not bundled in this repository; see the
+            <a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/training/README.md">training guide</a> and <a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/DATA_SOURCES.md">data source
+            notes</a>.
+          </p>
 
-          <h3>2. Retrain SentencePiece Models</h3>
+          <h3>2. Train a model from a prepared corpus</h3>
           <div class="code-block">
             <div class="code-header">
               <span>bash</span>
               <button class="btn-copy" data-target="#code-repro-train">Copy</button>
             </div>
-            <pre><code id="code-repro-train"># Train 64k flagship model on processed corpus
-python training/train.py --vocab_size 64000 --model_type unigram --output_dir tokenizers/custom_unigram_64k/</code></pre>
+            <pre><code id="code-repro-train"># One sentence per line; the model files are written to models/
+python training/train_tokenizer.py --corpus corpus.txt --out-dir models --vocab-sizes 64000</code></pre>
           </div>
 
-          <h3>3. Execute the Full Benchmark Matrix</h3>
+          <h3>3. Evaluate one local SentencePiece model</h3>
           <div class="code-block">
             <div class="code-header">
               <span>bash</span>
               <button class="btn-copy" data-target="#code-repro-bench">Copy</button>
             </div>
-            <pre><code id="code-repro-bench"># Run comparative evaluation across 18 benchmark rows and 4 evaluation registers
-python evaluation/benchmark.py --output results/macro_benchmark_results.json</code></pre>
+            <pre><code id="code-repro-bench"># The text file should contain one sentence per line.
+python evaluation/metrics.py --model models/sindhi_custom_64000.model --text data/test_sentences.txt</code></pre>
           </div>
+          <p>
+            This command evaluates one model against one text file; it does not recreate the full benchmark matrix.
+            For the benchmark materials and results, see the repository notebooks and
+            <a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/results/README.md">benchmark results guide</a>.
+          </p>
         </section>
 
         <!-- Section: Papers & Citation -->
@@ -958,9 +1059,10 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
                 <span class="faq-chevron">▼</span>
               </button>
               <div class="faq-answer">
-                Yes. The trained <code>.model</code> and Hugging Face <code>tokenizer.json</code> files can be used
-                directly as the base tokenizer or merged with existing multilingual vocabularies using vocabulary
-                expansion techniques (e.g., via <code>transformers.PreTrainedTokenizerFast</code>).
+                The SDK exposes SentencePiece IDs and pieces for downstream preprocessing and model workflows. For
+                Hugging Face Transformers or vocabulary expansion, use a tokenizer configuration supported by your
+                target architecture and validate that tokenizer IDs match the model embedding table. The SDK itself
+                is not a <code>transformers.PreTrainedTokenizer</code> subclass.
               </div>
             </div>
           </div>
@@ -1031,7 +1133,7 @@ python evaluation/benchmark.py --output results/macro_benchmark_results.json</co
           <p>
             The repository code is licensed under MIT. The tokenizer models are currently labeled CC BY-SA 4.0 on the
             project listing, but compatibility with all training-source terms remains under review. See
-            <a href="../DATA_SOURCES.md">Data Sources and Licensing</a> before relying on the model-file license.
+            <a href="https://github.com/alinawazcode/sindhi-tokenizer/blob/main/DATA_SOURCES.md">Data Sources and Licensing</a> before relying on the model-file license.
           </p>
         </section>
 
