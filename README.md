@@ -9,6 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Hugging Face Models](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-alinawazmahar%2Fsindhi--tokenizer-yellow)](https://huggingface.co/alinawazmahar/sindhi-tokenizer)
 [![Documentation](https://img.shields.io/badge/Docs-GitHub%20Pages-informational)](https://alinawazcode.github.io/sindhi-tokenizer/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23962474.svg)](https://doi.org/10.5281/zenodo.23962474)
 [![Tests](https://github.com/alinawazcode/sindhi-tokenizer/actions/workflows/python-tests.yml/badge.svg)](https://github.com/alinawazcode/sindhi-tokenizer/actions)
 [![Round-trip check: 0.000% normalized-length loss](https://img.shields.io/badge/Round--trip%20check-0.000%25%20normalized--length%20loss-brightgreen)](#round-trip-character-fidelity)
 
@@ -20,6 +21,7 @@ A subword tokenizer purpose-built for the **Sindhi language** (سنڌي) in the 
 - 📦 **Python SDK on PyPI**: [sindhi-tokenizer](https://pypi.org/project/sindhi-tokenizer/)
 - 🌐 **Documentation Site**: [https://alinawazcode.github.io/sindhi-tokenizer/](https://alinawazcode.github.io/sindhi-tokenizer/)
 - 🤗 **Hugging Face Hub**: [alinawazmahar/sindhi-tokenizer](https://huggingface.co/alinawazmahar/sindhi-tokenizer)
+- 📦 **Zenodo Archive (v1.0.0, citable DOI)**: [10.5281/zenodo.23962474](https://doi.org/10.5281/zenodo.23962474)
 - 📄 **Research Manuscript Draft (Not Yet Published)**: [`docs/paper.md`](docs/paper.md)
 - 🔬 **Technical Explainer**: [`docs/explainer.md`](docs/explainer.md)
 - 📊 **Benchmark Results**: [`results/README.md`](results/README.md)
@@ -502,6 +504,7 @@ In accordance with rigorous academic transparency (see [`docs/paper.md` §6](doc
 | **Notebook Reproduction Guide** | [`notebooks/README.md`](notebooks/README.md) | Instructions for Kaggle/Colab execution of training and benchmarking pipelines |
 | **Interactive Demo Guide** | [`demo/README.md`](demo/README.md) | Local execution and Hugging Face Spaces deployment guide for Gradio UI |
 | **Citation Specification** | [`CITATION.cff`](CITATION.cff) | Machine-readable CFF citation metadata |
+| **Zenodo Archive** | [10.5281/zenodo.23962474](https://doi.org/10.5281/zenodo.23962474) | Permanent, citable v1.0.0 software release with DOI |
 | **Project Packaging** | [`pyproject.toml`](pyproject.toml) | Modern build-system and packaging metadata |
 
 ---
@@ -539,7 +542,21 @@ This research and tokenizer implementation were developed at the **Department of
 - **Corpus Texts**: Refer to [`DATA_SOURCES.md`](DATA_SOURCES.md) for original source licenses.
 
 ### Citation
-If you use this tokenizer, benchmark code, or findings in your academic research or applications, please cite:
+The v1.0.0 software release is archived on Zenodo with a permanent DOI: [10.5281/zenodo.23962474](https://doi.org/10.5281/zenodo.23962474). To cite the released tokenizer and code, use:
+
+```bibtex
+@software{nawaz2026sindhitokenizer_zenodo,
+  author    = {Nawaz, Ali and Fareed, Muqadas and Sadaf, Soonh},
+  title     = {Sindhi Tokenizer: SentencePiece Unigram tokenizer for Sindhi with a draft 14-baseline benchmark study},
+  version   = {v1.0.0},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.23962474},
+  url       = {https://doi.org/10.5281/zenodo.23962474}
+}
+```
+
+To cite the benchmark findings or the manuscript draft, please cite:
 
 ```bibtex
 @misc{nawaz2026sindhitokenizer,
