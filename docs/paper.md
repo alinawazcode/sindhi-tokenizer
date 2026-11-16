@@ -4,7 +4,7 @@
 
 ¹*Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan*
 
-*Ali Nawaz is the lead author and project lead; Dr. Attaullah Sahito is the academic supervisor. This is an earlier draft; the arXiv version supersedes it where the two differ.*
+*Ali Nawaz is the lead author and project lead; Dr. Attaullah Sahito is the academic supervisor. This is an earlier draft; the Preprints.org version (10.20944/preprints202611.1598.v1) supersedes it where the two differ.*
 
 # **Abstract**
 

@@ -10,6 +10,7 @@
 [![Hugging Face Models](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-alinawazmahar%2Fsindhi--tokenizer-yellow)](https://huggingface.co/alinawazmahar/sindhi-tokenizer)
 [![Documentation](https://img.shields.io/badge/Docs-GitHub%20Pages-informational)](https://alinawazcode.github.io/sindhi-tokenizer/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23962474.svg)](https://doi.org/10.5281/zenodo.23962474)
+[![Preprint](https://img.shields.io/badge/Preprint-Preprints.org-2f6fb0)](https://doi.org/10.20944/preprints202611.1598.v1)
 [![Tests](https://github.com/alinawazcode/sindhi-tokenizer/actions/workflows/python-tests.yml/badge.svg)](https://github.com/alinawazcode/sindhi-tokenizer/actions)
 [![Round-trip check: 0.000% normalized-length loss](https://img.shields.io/badge/Round--trip%20check-0.000%25%20normalized--length%20loss-brightgreen)](#round-trip-character-fidelity)
 
@@ -22,7 +23,8 @@ A subword tokenizer purpose-built for the **Sindhi language** (سنڌي) in the 
 - 🌐 **Documentation Site**: [https://alinawazcode.github.io/sindhi-tokenizer/](https://alinawazcode.github.io/sindhi-tokenizer/)
 - 🤗 **Hugging Face Hub**: [alinawazmahar/sindhi-tokenizer](https://huggingface.co/alinawazmahar/sindhi-tokenizer)
 - 📦 **Zenodo Archive (v1.0.0, citable DOI)**: [10.5281/zenodo.23962474](https://doi.org/10.5281/zenodo.23962474)
-- 📄 **Research Manuscript Draft (Not Yet Published)**: [`docs/paper.md`](docs/paper.md)
+- 📄 **Preprint (Preprints.org, not peer-reviewed)**: [A Corpus-Driven SentencePiece Unigram Tokenizer for Sindhi: Design and Benchmark Against Fourteen Existing Tokenizers](https://www.preprints.org/manuscript/202611.1598)
+- 📝 **Earlier Manuscript Draft**: [`docs/paper.md`](docs/paper.md)
 - 🔬 **Technical Explainer**: [`docs/explainer.md`](docs/explainer.md)
 - 📊 **Benchmark Results**: [`results/README.md`](results/README.md)
 - 💻 **Interactive Web Demo**: [`demo/app.py`](demo/app.py)
@@ -156,7 +158,7 @@ sindhi-tokenizer/
 │   ├── README.md                   # Instructions for running and deploying the demo
 │   └── app.py                      # Interactive Gradio comparison web app
 ├── docs/
-│   ├── paper.md                    # Draft research manuscript, not yet published (14-baseline study)
+│   ├── paper.md                    # Earlier manuscript draft (14-baseline study); see the preprint
 │   └── explainer.md                # 21-page technical companion log and negative results
 ├── evaluation/
 │   ├── README.md                   # Evaluation metrics guide and CLI/API documentation
@@ -495,7 +497,8 @@ In accordance with rigorous academic transparency (see [`docs/paper.md` §6](doc
 |---|---|---|
 | **Root Guide & Navigation Hub** | [`README.md`](README.md) | Central repository overview, quickstart, and full benchmark summary |
 | **Python SDK on PyPI** | [PyPI project page](https://pypi.org/project/sindhi-tokenizer/) | Installable package and release history |
-| **Research Manuscript Draft** | [`docs/paper.md`](docs/paper.md) | Draft for future publication; not yet published. Includes methodology and 18 benchmark rows |
+| **Preprint** | [10.20944/preprints202611.1598.v1](https://doi.org/10.20944/preprints202611.1598.v1) | Paper on Preprints.org (version 1, not peer-reviewed): methodology and benchmark against 14 baseline tokenizers |
+| **Earlier Manuscript Draft** | [`docs/paper.md`](docs/paper.md) | Earlier draft; the preprint supersedes it where they differ. Includes methodology and 18 benchmark rows |
 | **Technical Explainer Log** | [`docs/explainer.md`](docs/explainer.md) | In-depth engineering explainer into empirical failures, metric corrections, and design rationale |
 | **Dataset Provenance Card** | [`DATA_SOURCES.md`](DATA_SOURCES.md) | Complete documentation of all training corpora and evaluation sets, licensing, and volumes |
 | **Evaluation Module Guide** | [`evaluation/README.md`](evaluation/README.md) | Technical documentation of metrics algorithms, CLI arguments, and Python API |
@@ -556,15 +559,17 @@ The v1.0.0 software release is archived on Zenodo with a permanent DOI: [10.5281
 }
 ```
 
-To cite the benchmark findings or the manuscript draft, please cite:
+To cite the benchmark findings and the paper, please cite the preprint (not peer-reviewed):
 
 ```bibtex
-@misc{nawaz2026sindhitokenizer,
-  author = {Nawaz, Ali and Fareed, Muqadas and Sadaf, Soonh},
-  title  = {A Corpus-Driven Sindhi Subword Tokenizer: Design, Empirical Validation, and Benchmark Comparison Against Fourteen Existing Tokenizers},
-  year   = {2026},
-  howpublished = {\url{https://github.com/alinawazcode/sindhi-tokenizer}},
-  note   = {Department of Computer Science, Shaikh Ayaz University, Shikarpur, Pakistan}
+@misc{nawaz2026sindhitokenizer_preprint,
+  author    = {Nawaz, Ali and Fareed, Muqadas and Sadaf, Soonh},
+  title     = {A Corpus-Driven SentencePiece Unigram Tokenizer for Sindhi: Design and Benchmark Against Fourteen Existing Tokenizers},
+  year      = {2026},
+  publisher = {Preprints.org},
+  doi       = {10.20944/preprints202611.1598.v1},
+  url       = {https://www.preprints.org/manuscript/202611.1598},
+  note      = {Preprint, version 1, not peer-reviewed}
 }
 ```
 
