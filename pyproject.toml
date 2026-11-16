@@ -47,6 +47,9 @@ dev = ["build>=1.2.0", "pytest>=7.4.0", "twine>=5.0.0"]
 Homepage = "https://github.com/alinawazcode/sindhi-tokenizer"
 Repository = "https://github.com/alinawazcode/sindhi-tokenizer"
 Models = "https://huggingface.co/alinawazmahar/sindhi-tokenizer"
+Documentation = "https://alinawazcode.github.io/sindhi-tokenizer/"
+Preprint = "https://doi.org/10.20944/preprints202611.1598.v1"
+Zenodo = "https://doi.org/10.5281/zenodo.23962474"
 
 [tool.setuptools.packages.find]
 where = ["."]

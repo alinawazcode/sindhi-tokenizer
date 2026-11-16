@@ -223,6 +223,7 @@ with gr.Blocks(title="Sindhi Tokenizer Comparison") as demo:
     compare_btn.click(fn=compare_tokenizers, inputs=[sentence_input, model_selector], outputs=output)
     gr.Markdown(
         "---\n"
+        "**Paper:** [Preprint on Preprints.org](https://doi.org/10.20944/preprints202611.1598.v1) (not peer-reviewed)\n\n"
         "**Sindhi Tokenizer Project** · Developed at Department of Computer Science, Shaikh Ayaz University, Shikarpur\n\n"
         "**Team:** Ali Nawaz ([GitHub](https://github.com/alinawazcode)), "
         "Muqadas Fareed ([LinkedIn](https://www.linkedin.com/in/muqadas-fareed-24a07837b/)), "

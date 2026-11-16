@@ -4,6 +4,8 @@
 
 *This is NOT the paper. It\'s the companion explainer: every dataset, every number, every bug, every decision, in full detail, in plain language, in the order things actually happened. Read this to understand the whole project top to bottom; use the paper (sindhi-tokenizer-report.docx) for the condensed, formal, citable version.*
 
+*The paper itself is available as a preprint: [A Corpus-Driven SentencePiece Unigram Tokenizer for Sindhi: Design and Benchmark Against Fourteen Existing Tokenizers](https://doi.org/10.20944/preprints202611.1598.v1) (Preprints.org, version 1, not peer-reviewed).*
+
 # **What\'s in this document**
 
 - Part 1 --- The goal, and how it changed
@@ -329,7 +331,7 @@ Genitive/possessive, inflectional suffixes, the seven special digraph letters, a
 
 - Final discoverability check immediately before publishing --- to catch any further tokenizers that might have appeared since Group C was found, the same way Group C itself was found by checking before publishing the first time.
 
-- The manuscript has not yet been published; a future venue and submission timeline remain undecided.
+- The manuscript is available as a preprint on Preprints.org ([10.20944/preprints202611.1598.v1](https://doi.org/10.20944/preprints202611.1598.v1); version 1, not peer-reviewed). A journal or conference venue remains undecided.
 
 # **Appendix --- Every special character and every test word** {#appendix-every-special-character-and-every-test-word}
 

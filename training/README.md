@@ -1,5 +1,7 @@
 # Training
 
+> Part of the [Sindhi Tokenizer](https://github.com/alinawazcode/sindhi-tokenizer) project. Paper: [preprint on Preprints.org](https://doi.org/10.20944/preprints202611.1598.v1) (not peer-reviewed).
+
 `train_tokenizer.py` holds the final settings. This file describes how the corpus was assembled; the exact code is in `notebooks/`.
 
 ## Settings

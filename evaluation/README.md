@@ -1,5 +1,7 @@
 # Tokenizer Evaluation & Metrics
 
+> Part of the [Sindhi Tokenizer](https://github.com/alinawazcode/sindhi-tokenizer) project. Paper: [preprint on Preprints.org](https://doi.org/10.20944/preprints202611.1598.v1) (not peer-reviewed).
+
 This module provides standard and novel evaluation metrics for assessing subword tokenizers on Sindhi text.
 
 ## Metrics Implemented

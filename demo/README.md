@@ -1,5 +1,7 @@
 # Interactive Tokenizer Comparison Demo
 
+> Part of the [Sindhi Tokenizer](https://github.com/alinawazcode/sindhi-tokenizer) project. Paper: [preprint on Preprints.org](https://doi.org/10.20944/preprints202611.1598.v1) (not peer-reviewed).
+
 A Gradio web interface to test and compare subword tokenization across multiple tokenizers in real time on any Sindhi text.
 
 ## Features

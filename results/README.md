@@ -14,3 +14,5 @@ Across all registers evaluated at full scale:
 - **Round-trip length check**: Custom models show 0.0000% normalized-length loss on evaluated text. This length-based check detects shortening but does not prove exact character identity; it also exposed length loss in TinyLlama and FahadQazi BPE.
 
 The 64k+ variants lead the baselines on fertility and single-token retention; byte-fallback has a separate trade-off. The full tables and methodology can be found in [`docs/paper.md`](../docs/paper.md) and [`docs/explainer.md`](../docs/explainer.md).
+
+The paper is also available as a [preprint on Preprints.org](https://doi.org/10.20944/preprints202611.1598.v1) (version 1, not peer-reviewed).

@@ -1,5 +1,7 @@
 # Notebooks
 
+> Part of the [Sindhi Tokenizer](https://github.com/alinawazcode/sindhi-tokenizer) project. Paper: [preprint on Preprints.org](https://doi.org/10.20944/preprints202611.1598.v1) (not peer-reviewed).
+
 Kaggle notebooks the published numbers were produced in. They are kept as run, so they contain diagnostic cells alongside the main pipeline.
 
 | Notebook | Purpose |
